@@ -83,10 +83,6 @@ input, select, textarea {
 		box-sizing: inherit;
 	}
 
-	body {
-		background: #fff;
-	}
-
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
 			-moz-animation: none !important;
 			-webkit-animation: none !important;
@@ -99,7 +95,7 @@ input, select, textarea {
 		}
 
 	body, input, select, textarea {
-		color: #666;
+		color: var(--primary-purple);
 		font-family: "Source Sans Pro", Helvetica, sans-serif;
 		font-size: 16pt;
 		font-weight: 300;
@@ -111,18 +107,22 @@ input, select, textarea {
 		-webkit-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 		-ms-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 		transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-		border-bottom: dotted 1px #666;
+		border-bottom: dotted 1px var(--primary-purple);
 		color: inherit;
 		text-decoration: none;
 	}
 
 		a:hover {
 			border-bottom-color: transparent !important;
-			color: #6bd4c8;
+
 		}
 
+.button:hover {
+	
+					background-color: var(--primary-pink);
+}
 	strong, b {
-		color: #555;
+		color: var(--primary-purple);
 		font-weight: 400;
 	}
 
@@ -135,7 +135,7 @@ input, select, textarea {
 	}
 
 	h1, h2, h3, h4, h5, h6 {
-		color: #555;
+		color: var(--primary-purple);
 		line-height: 1em;
 		margin: 0 0 1em 0;
 	}
@@ -2066,7 +2066,7 @@ input, select, textarea {
 	}
 
 	label {
-		color: #555;
+		color: var(--primary-purple);
 		display: block;
 		font-size: 0.9em;
 		font-weight: 400;
@@ -2107,7 +2107,7 @@ input, select, textarea {
 		input[type="email"]:focus,
 		select:focus,
 		textarea:focus {
-			border-color: #6bd4c8;
+			border-color: var(--primary-pink);
 		}
 
 	select {
@@ -2121,7 +2121,7 @@ input, select, textarea {
 	}
 
 		select option {
-			color: #555;
+		color: var(--primary-purple);
 			background: #fff;
 		}
 
@@ -2161,7 +2161,7 @@ input, select, textarea {
 		input[type="checkbox"] + label,
 		input[type="radio"] + label {
 			text-decoration: none;
-			color: #666;
+		color: var(--primary-purple);
 			cursor: pointer;
 			display: inline-block;
 			font-size: 1em;
@@ -2204,15 +2204,15 @@ input, select, textarea {
 
 		input[type="checkbox"]:checked + label:before,
 		input[type="radio"]:checked + label:before {
-			background: #666666;
-			border-color: #666666;
+		background: var(--primary-purple);
+			border-color: var(--primary-purple);
 			color: #ffffff;
 			content: '\f00c';
 		}
 
 		input[type="checkbox"]:focus + label:before,
 		input[type="radio"]:focus + label:before {
-			border-color: #6bd4c8;
+			border-color: var(--primary-pink);
 		}
 
 	input[type="checkbox"] + label:before {
@@ -2301,33 +2301,11 @@ input, select, textarea {
 			font-family: 'Font Awesome 5 Brands';
 		}
 
-		.icon.style1:before {
-			color: #c3e895;
-		}
 
-		.icon.style2:before {
-			color: #8addaa;
-		}
-
-		.icon.style3:before {
-			color: #6bd4c8;
-		}
-
-		.icon.style4:before {
-			color: #57aed3;
-		}
-
-		.icon.style5:before {
-			color: #4a87d3;
-		}
-
-		.icon.style6:before {
-			color: #6b88e6;
-		}
 
 		.icon.major {
 			text-decoration: none;
-			color: #555;
+		color: var(--primary-purple);
 			cursor: default;
 			display: inline-block;
 			margin: 0 0 1.5em 0;
@@ -2642,7 +2620,7 @@ input, select, textarea {
 		}
 
 		table th {
-			color: #555;
+		color: var(--primary-purple);
 			font-size: 0.9em;
 			font-weight: 400;
 			padding: 0 0.75em 0.75em 0.75em;
@@ -2701,8 +2679,8 @@ input, select, textarea {
 		background-color: transparent;
 		border-radius: 4px;
 		border: 0;
-		box-shadow: inset 0 0 0 1px rgba(144, 144, 144, 0.5);
-		color: #555 !important;
+		box-shadow: inset 0 0 0 1px var(--primary-purple);
+		color: var(--primary-purple);
 		cursor: pointer;
 		display: inline-block;
 		font-size: 0.9em;
@@ -2722,25 +2700,16 @@ input, select, textarea {
 		input[type="reset"]:hover,
 		input[type="button"]:hover,
 		button:hover,
-		.button:hover {
-			background-color: rgba(144, 144, 144, 0.075);
-		}
 
 		input[type="submit"]:active,
 		input[type="reset"]:active,
 		input[type="button"]:active,
 		button:active,
-		.button:active {
-			background-color: rgba(144, 144, 144, 0.2);
-		}
 
 		input[type="submit"].icon:before,
 		input[type="reset"].icon:before,
 		input[type="button"].icon:before,
 		button.icon:before,
-		.button.icon:before {
-			margin-right: 0.5em;
-		}
 
 		input[type="submit"].fit,
 		input[type="reset"].fit,
@@ -2779,7 +2748,7 @@ input, select, textarea {
 		input[type="button"].primary,
 		button.primary,
 		.button.primary {
-			background-color: #555;
+			background-color: var(--primary-purple);
 			box-shadow: none !important;
 			color: #fff !important;
 		}
@@ -2820,7 +2789,7 @@ input, select, textarea {
 	}
 
 		.main.style1 {
-			background: #fff;
+			/* background-color: var(--primary-pink); */
 		}
 
 		.main.style2 {
@@ -2864,7 +2833,7 @@ input, select, textarea {
 				.main.style2 input[type="reset"]:hover,
 				.main.style2 input[type="button"]:hover,
 				.main.style2 button:hover,
-				.main.style2 .button:hover {
+				.main.style2 .button:hover {		
 					background-color: rgba(255, 255, 255, 0.125);
 				}
 
@@ -2912,7 +2881,6 @@ input, select, textarea {
 			}
 
 /* Header */
-
 	#header {
 		padding: 9em 0 9em 0 ;
 		background-color: #4686a0;
