@@ -2058,6 +2058,10 @@ input, select, textarea {
 	header.special {
 		text-align: center;
 	}
+	.logo {
+		max-width: 20rem;
+		margin-bottom: 5rem;
+	}
 
 /* Form */
 
@@ -2789,7 +2793,7 @@ input, select, textarea {
 	}
 
 		.main.style1 {
-			/* background-color: var(--primary-pink); */
+			background-color: var(--primary-white);
 		}
 
 		.main.style2 {
