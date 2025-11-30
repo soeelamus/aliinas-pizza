@@ -3287,13 +3287,13 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	width: 10rem;
-	padding: 0.6rem;
+	width: 7rem;
+	padding: 0.25rem;
 	color: var(--primary-pink);
 	border: 1px solid var(--primary-pink);
-	border-radius: 0.3rem;
-	font-weight: 400;
-	font-size: 1.5rem;
+	border-radius: 0.25rem;
+	font-weight: 300;
+	font-size: 1.3rem;
 	text-transform: uppercase;
 	transition: all 0.2s ease-in-out;
 }
