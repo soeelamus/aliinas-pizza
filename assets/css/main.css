@@ -1983,20 +1983,6 @@ article.special {
 	text-align: center;
 }
 
-.logo {
-	max-width: 20rem;
-	margin-bottom: 5rem;
-	animation: pulse 3s infinite;
-	position: sticky;
-	top: 20px;
-  	left: 20px;
-	z-index: 5;
-}
-
-.logo.small {
-	max-width: 10rem;
-	animation: none;
-}
 
 .icon>.label {
 	display: none;
@@ -3228,13 +3214,13 @@ body {
 	transform: rotate(-90deg);
 	top: calc(50% - 5rem);
 	width: 10rem;
-	right: -2rem;
+	right: -3.5rem;
 	color: var(--primary-white);
 	text-transform: uppercase;
 	font-size: 1.5rem;
 }
 .left {
-	left: -2rem;
+	left: -3.5rem;
 }
 @keyframes scale {
     0% {
@@ -3284,4 +3270,37 @@ body {
 	left: 1rem;
 	top: 1rem;
 	z-index: 10;
+}
+
+.nav-box {
+	position: fixed;
+	top: 1rem;
+	right: 1rem;
+	z-index: 100;
+}
+.nav-box,
+.nav-btns {
+	display: flex;
+	gap: 1rem;
+}
+.nav-btn {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 10rem;
+	padding: 0.6rem;
+	color: var(--primary-pink);
+	border: 1px solid var(--primary-pink);
+	border-radius: 0.3rem;
+	font-weight: 400;
+	font-size: 1.5rem;
+	text-transform: uppercase;
+	transition: all 0.2s ease-in-out;
+}
+.nav-btn:hover {
+	background-color: rgba(255, 255, 255, 0.5);
+}
+.cta {
+	color: var(--primary-white);
+	background-color: var(--primary-pink);
 }
