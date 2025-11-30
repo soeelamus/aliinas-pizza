@@ -1966,6 +1966,15 @@ h6 {
 
 }
 
+/* Pulse */
+@keyframes pulse {
+  30% { transform: scale(1.1); }
+  40% { transform: rotate(-5deg) scale(1.1); }
+  50% { transform: rotate(5deg) scale(1.1); }
+  70% { transform: rotate(0deg) scale(1.1); }
+  100% { transform: scale(1); }
+}
+
 /* Section/Article */
 
 section.special,
@@ -1973,11 +1982,19 @@ article.special {
 	text-align: center;
 }
 
-
-
 .logo {
 	max-width: 20rem;
 	margin-bottom: 5rem;
+	animation: pulse 3s infinite;
+	position: sticky;
+	top: 20px;
+  	left: 20px;
+	z-index: 5;
+}
+
+.logo.small {
+	max-width: 10rem;
+	animation: none;
 }
 
 .icon>.label {
@@ -2001,17 +2018,16 @@ article.special {
 /* Image */
 
 .image {
-	border-radius: 4px;
 	border: 0;
 	display: inline-block;
 	position: relative;
 }
 
 .image img {
-	border-radius: 4px;
+	border-radius: 1rem;
 	display: block;
+	box-shadow: rgba(0, 0, 0, 0.30) 5px 5px 5px;
 }
-
 .image.left {
 	float: left;
 	padding: 0 1.5em 1em 0;
@@ -2042,6 +2058,20 @@ article.special {
 
 .image.fit img {
 	width: 100%;
+}
+.img-box {
+	border-radius: 1rem;
+	overflow: hidden;
+}
+.zoom,
+.slideshow-container {
+	transition: all 0.2s ease-in-out;
+}
+.zoom:hover {
+	scale: calc(110%);
+}
+.slideshow-container:hover {
+	scale: calc(150%);
 }
 
 /* List */
@@ -2437,6 +2467,10 @@ button.wide,
 .button.wide {
 	min-width: 12em;
 }
+a.wide {
+	
+  scroll-behavior: smooth;
+}
 
 input[type="submit"].primary,
 input[type="reset"].primary,
@@ -2489,21 +2523,15 @@ button:disabled,
 }
 
 .main.style2 {
-	background-color: #333;
+	background-color: var(--primary-purple);
 	color: rgba(255, 255, 255, 0.75);
-	background-attachment: fixed, fixed;
-	background-image: url("images/overlay1.png");
-	background-size: auto, cover;
 }
 
 .main.style2 a {
 	border-bottom-color: rgba(255, 255, 255, 0.5);
 }
 
-.main.style2 a:hover {
-	color: #ffffff;
-}
-
+.main.style2 a:hover,
 .main.style2 h1,
 .main.style2 h2,
 .main.style2 h3,
@@ -2511,10 +2539,7 @@ button:disabled,
 .main.style2 h5,
 .main.style2 h6,
 .main.style2 strong,
-.main.style2 b {
-	color: #ffffff;
-}
-
+.main.style2 b,
 .main.style2 header p {
 	color: #ffffff;
 }
@@ -3222,6 +3247,10 @@ body.is-preload #header:after {
 	max-width: 1000px;
 	position: relative;
 	margin: auto;
+}
+.slideshow-container img {
+	border-radius: 1rem;
+	box-shadow: rgba(0, 0, 0, 0.30) 5px 5px 5px;
 }
 
 /* Hide the images by default */

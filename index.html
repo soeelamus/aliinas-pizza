@@ -13,15 +13,14 @@
     <link rel="icon" type="image/png" sizes="16x16" href="assets/favicons/favicon-16x16.png">
     <link rel="apple-touch-icon" href="assets/favicons/apple-touch-icon.png">
     <link rel="manifest" href="assets/favicons/site.webmanifest">
-    
     <link rel="stylesheet" href="assets/css/main.css" />
 
   </head>
   <body class="is-preload">
     <!-- Header -->
     <section id="header">
-      <img class="logo" src="images/logo.png" alt="" />
       <div class="inner">
+        <a href="#1" class="scrolly"><img class="logo" src="images/logo.png" alt="" /></a>
         <h1>Our website is currently under construction</h1>
         <!-- <h1>Birthday party? Office lunch? Event? Aliina's brings the pizza party to you.</h1> -->
         <p>
@@ -34,6 +33,7 @@
       </div>
     </section>
 
+    
     <!-- Carousel -->
     <section id="1" class="main style1">
       <div class="container">
@@ -95,8 +95,26 @@
       </div>
     </section>
 
-    <!-- Packages -->
-    <section id="three" class="main style1 special">
+
+<!-- Contact -->
+<a href="#2" class="scrolly"><img class="logo small" src="images/logo.png" alt="" /></a>
+<section id="2" class="main style2 special">
+  <div class="container">
+    <header class="major">
+      <h2>Book us today!</h2>
+    </header>
+    <p>Turn your event into a success</p>
+    <ul class="actions special">
+      <li><a href="#3" class="button scrolly wide primary">Offers</a></li>
+      <li><a href="#" class="button wide">Contact</a></li>
+    </ul>
+  </div>
+</section>
+
+
+
+    <!-- Menu -->
+    <section id="3" class="main style1 special">
       <div class="container">
         <header class="major">
           <h2>Our Menu</h2>
@@ -104,56 +122,77 @@
         <p>Aliina's Pizza flavors come in one size: 30cm. that's 8 amazing slices for one hungry human. </p>
         <div class="row gtr-150">
           <div class="col-4 col-12-medium">
-            <span class="image fit"><img src="images/margherita.jpg" alt="" /></span>
+            <div class="image fit">
+              <div class="img-box">
+                <img class="zoom" src="images/margherita.jpg" alt="" />
+              </div>
+            </div>
             <h3>Margheriita</h3>
             <p>
               Tomato sauce - Mozzarella - Olive oil
             </p>
           </div>
           <div class="col-4 col-12-medium">
-            <span class="image fit"><img src="images/jaeger.jpg" alt="" /></span>
+            <span class="image fit">
+              <div class="img-box">
+
+                <img class="zoom" src="images/jaeger.jpg" alt="" /></span>
+              </div>
             <h3>Fungii</h3>
             <p>
               Tomato sauce - Mozzarella - Mushrooms - Olive oil
             </p>
           </div>
           <div class="col-4 col-12-medium">
-            <span class="image fit"><img src="images/veggi.jpg" alt="" /></span>
+            <span class="image fit"><div class="img-box">
+
+                <img class="zoom" src="images/veggi.jpg" alt="" /></div></span>
             <h3>Vegii</h3>
             <p>
               Tomato sauce - Mozzarella - Peppers - Apple Onion
             </p>
         </div>
           <div class="col-4 col-12-medium">
-            <span class="image fit"><img src="images/pepperoni.jpg" alt="" /></span>
+            <span class="image fit"><div class="img-box">
+
+                <img class="zoom" src="images/pepperoni.jpg" alt="" /></div>
+              </span>
             <h3>Pepperonii</h3>
             <p>
               Tomato sauce - Mozzarella - Pepperoni
             </p>
           </div>
           <div class="col-4 col-12-medium">
-            <span class="image fit"><img src="images/jaeger.jpg" alt="" /></span>
+            <span class="image fit"><div class="img-box">
+
+            <img class="zoom" src="images/jaeger.jpg" alt="" /></div></span>
             <h3>Jaeger</h3>
             <p>
               Tomato sauce - Mozzarella - Mushrooms - Smoked ham
             </p>
           </div>
           <div class="col-4 col-12-medium">
-            <span class="image fit"><img src="images/chicken.jpg" alt="" /></span>
+            <span class="image fit"><div class="img-box">
+
+                <img class="zoom" src="images/chicken.jpg" alt="" /></div></span>
             <h3>Sweet Chiicken</h3>
             <p>
               Tomato sauce - Mozzarella - Grilled chicken - Apple - Honey
             </p>
           </div>
           <div class="col-4 col-12-medium">
-            <span class="image fit"><img src="images/diavola.jpg" alt="" /></span>
+            <span class="image fit"><div class="img-box">
+
+                <img class="zoom" src="images/diavola.jpg" alt="" /></div></span>
             <h3>Diiavola</h3>
             <p>
               Tomato sauce - Mozzarella - Peppers - Jalapeno - Pepperoni
             </p>
         </div>
           <div class="col-4 col-12-medium">
-            <span class="image fit"><img src="images/diavola.jpg" alt="" /></span>
+            <span class="image fit"><div class="img-box">
+
+                <img class="zoom" src="images/diavola.jpg" alt="" /></div></span>
             <h3>Nduja</h3>
             <p>
                  Tomato sauce - Mozzarella - Jalapeno - Nduja - Chili honey
@@ -162,19 +201,6 @@
       </div>
     </section>
 
-    <!-- Contact -->
-    <section id="four" class="main style2 special">
-      <div class="container">
-        <header class="major">
-          <h2>Get in touch</h2>
-        </header>
-        <p>Send us a message</p>
-        <ul class="actions special">
-          <li><a href="#" class="button wide primary">Offers</a></li>
-          <li><a href="#" class="button wide">Contact</a></li>
-        </ul>
-      </div>
-    </section>
 
     <!-- Footer -->
     <section id="footer">
@@ -215,7 +241,6 @@
     <script src="assets/js/jquery.scrolly.min.js"></script>
     <script src="assets/js/browser.min.js"></script>
     <script src="assets/js/breakpoints.min.js"></script>
-    <script src="assets/js/util.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/carousel.js"></script>
   </body>
