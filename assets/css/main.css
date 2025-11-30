@@ -3339,3 +3339,12 @@ body.is-preload #header:after {
 		opacity: 1
 	}
 }
+
+.flex {
+	display: flex;
+	justify-content: center;
+	height: 3.5rem;
+}
+.price {
+	margin-left: 1rem;
+}
