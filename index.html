@@ -46,7 +46,8 @@
     </a>
 
     <!-- Carousel -->
-    <section id="1" class="main style1">
+    <br id="1"><br>
+    <section class="main style1">
       <div class="container">
         <div class="row gtr-150">
           <div class="col-6 col-12-medium">
@@ -109,16 +110,62 @@
 
 <!-- Contact -->
 <section id="2" class="main style2 special">
-  <div class="container">
-    <header class="major">
-      <h2>Book us today!</h2>
-    </header>
-    <p>Turn your event into a success</p>
-    <ul class="actions special">
-      <li><a href="#3" class="button scrolly wide primary">Offers</a></li>
-      <li><a href="#" class="button wide">Contact</a></li>
-    </ul>
+<h4 class="text-h4 monoton-regular">contact</h4>
+<img src="images/regular.png" class="planet-image side">
+<div class="custom-form-wrapper">
+  <div class="form-container">
+    <div class="progress-container">
+        <div class="progress-step active" id="prog1"></div>
+        <div class="progress-step" id="prog2"></div>
+        <div class="progress-step" id="prog3"></div>
+    </div>
+
+    <form id="multiForm" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="f5f89190-0e09-46e5-9b69-92b1e5419a42">
+
+        <!-- STEP 1 -->
+        <div class="step active">
+            <label>Voornaam</label>
+            <input type="text" id="voornaam" name="voornaam" required>
+            <span class="error-message" id="error-voornaam"></span>
+            <label>Email</label>
+            <input type="email" id="email" name="email" required>
+            <span class="error-message" id="error-email"></span>
+            <div class="clearfix">
+                <button type="button" class="next-btn" onclick="nextStep()">Verder</button>
+            </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step">
+            <label>Locatie van je event</label>
+            <input type="text" id="locatie" name="locatie" required>
+            <span class="error-message" id="error-locatie"></span>
+            <label>Datum van je event</label>
+            <input type="date" id="datum" name="datum" required>
+            <span class="error-message" id="error-datum"></span>
+            <div class="clearfix">
+                <button type="button" class="back-btn" onclick="prevStep()">Terug</button>
+                <button type="button" class="next-btn" onclick="nextStep()">Verder</button>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step">
+            <label>Hoeveel gasten?</label>
+            <input type="number" id="gasten" name="gasten" min="1" required>
+            <span class="error-message" id="error-gasten"></span>
+            <label>Waarover wilt u meer info?</label>
+            <textarea id="info" name="info" rows="3" required></textarea>
+            <span class="error-message" id="error-info"></span>
+            <div class="clearfix">
+                <button type="button" class="back-btn" onclick="prevStep()">Terug</button>
+                <button type="submit" class="submit-btn">Versturen</button>
+            </div>
+        </div>
+    </form>
   </div>
+</div>
 </section>
 
 
@@ -282,5 +329,6 @@
     <script src="assets/js/breakpoints.min.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/carousel.js"></script>
+    <script src="assets/js/contact.js"></script>
   </body>
 </html>
