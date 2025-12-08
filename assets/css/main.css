@@ -104,6 +104,7 @@ h6 {
   color: var(--primary-purple);
   line-height: 1em;
   margin: 0 0 1em 0;
+  font-weight: 600;
 }
 h1 a,
 h2 a,
@@ -1423,4 +1424,18 @@ textarea.error {
   .side {
     left: -30rem;
   }
+}
+.zoom {
+  max-width: 100%;
+}
+
+.contact-info .text-box {
+  margin-top: 2rem;
+  border: 0.3rem solid var(--primary-pink);
+  border-radius: 0.5rem;
+  padding: 2.5rem;
+  text-align: left;
+}
+.contact-info p {
+  padding-top: 2rem;
 }
