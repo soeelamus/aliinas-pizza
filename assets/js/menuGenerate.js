@@ -15,7 +15,7 @@ fetch("assets/json/data.json")
       return `
         <div class="pizza">
             <div class="img-box">
-              <img class="zoom" src="images/${pizza.id}.jpg" alt="Pizza ${pizza.name}" />
+              <img class="img-pizza" src="images/${pizza.id}.jpg" alt="Pizza ${pizza.name}" />
             </div>
           <div class="pizza-text">
             <h3 class="pizza-name">${pizza.name}</h3>

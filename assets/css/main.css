@@ -1425,9 +1425,6 @@ textarea.error {
     left: -30rem;
   }
 }
-.zoom {
-  max-width: 100%;
-}
 
 .contact-info {
   margin: 0 0 2rem;
@@ -1453,9 +1450,10 @@ textarea.error {
   gap: 2rem;
 }
 .pizza,
-.menu-box header {
-  max-width: 30rem;
-
+.menu-box header,
+.img-pizza {
+  max-width: 100%;
+  width: 30rem;
 }
 .pizza-text,
 .pizza-ingredients {
