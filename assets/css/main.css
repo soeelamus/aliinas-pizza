@@ -1429,6 +1429,10 @@ textarea.error {
   max-width: 100%;
 }
 
+.contact-info {
+  margin: 0 0 2rem;
+  padding-top: 5rem;
+}
 .contact-info .text-box {
   margin-top: 2rem;
   border: 0.3rem solid var(--primary-pink);
@@ -1439,55 +1443,38 @@ textarea.error {
 .contact-info p {
   padding-top: 2rem;
 }
-.menu-scroller {
+
+.pizza-box,
+.menu-box {
+  margin: 0 1rem 5rem;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 5rem 0;
-}
-.pizza-scroller,
-.pizza-scroller-right {
-  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  background: #fff;
-  padding: 20px 0;
+  gap: 2rem;
 }
+.pizza,
+.menu-box header {
+  max-width: 30rem;
 
-.track {
+}
+.pizza-text,
+.pizza-ingredients {
   display: flex;
-  gap: 20px;
-  transition: transform 0.1s linear;
-  margin-right: -40rem;
+  gap: 2rem;
+  justify-content: center;
+  text-align: center;
 }
-.track-2 {
-  margin-left: -70rem;
+.pizza-ingredients {
+  padding: 0 5rem;
 }
-
-.item {
-  padding: 10px 30px;
-  font-size: 1.4rem;
-  white-space: nowrap;
-  background: #f7f7f7;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.img-box {
+  height: 16rem;
 }
-.pizza {
-  max-width: 20rem;
+.menu-box header {
+  padding: 5rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-}
-.flex {
-  width: 100%;
-  padding: 1rem;
-  display: flex;
-  gap: 2rem;
-  justify-content: center;
-}
-.pizza p {
-  padding: 0 1rem;
+  gap: 1rem;
 }
