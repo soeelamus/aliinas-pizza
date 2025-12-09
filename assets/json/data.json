@@ -1,0 +1,162 @@
+{
+  "Pizzas": [
+    {
+      "id": 1,
+      "name": "Margheriita",
+      "price": 10,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Fungii",
+      "price": 11,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Champignons"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Vegii",
+      "price": 12,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Paprika"
+        },
+        {
+          "name": "Appel"
+        },
+        {
+          "name": "Rode ui"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Pepperoni",
+      "price": 11,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Pepperoni"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Jaeger",
+      "price": 12,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Champignons"
+        },
+        {
+          "name": "Gerookte ham"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Sweet Chiicken",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Gegrilde kip"
+        },
+        {
+          "name": "Appel"
+        },
+        {
+          "name": "Honing"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Diiavola",
+      "price": 12,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Paprika"
+        },
+        {
+          "name": "Jalapeno"
+        },
+        {
+          "name": "Pepperoni"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Nduja",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Jalapeno"
+        },
+        {
+          "name": "Nduja"
+        },
+        {
+          "name": "Chili honing"
+        }
+      ]
+    }
+  ]
+}

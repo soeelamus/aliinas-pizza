@@ -1439,3 +1439,55 @@ textarea.error {
 .contact-info p {
   padding-top: 2rem;
 }
+.menu-scroller {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5rem 0;
+}
+.pizza-scroller,
+.pizza-scroller-right {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #fff;
+  padding: 20px 0;
+}
+
+.track {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.1s linear;
+  margin-right: -40rem;
+}
+.track-2 {
+  margin-left: -70rem;
+}
+
+.item {
+  padding: 10px 30px;
+  font-size: 1.4rem;
+  white-space: nowrap;
+  background: #f7f7f7;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.pizza {
+  max-width: 20rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.flex {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+}
+.pizza p {
+  padding: 0 1rem;
+}
