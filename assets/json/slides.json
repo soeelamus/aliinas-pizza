@@ -1,0 +1,22 @@
+[
+  {
+    "src": "images/poster.jpg",
+    "caption": "Filler image",
+    "offColor": "var(--primary-white)"
+  },
+  {
+    "src": "images/truck1.jpg",
+    "caption": "Caption Two",
+    "offColor": "var(--primary-purple)"
+  },
+  {
+    "src": "images/truck2.jpg",
+    "caption": "Caption Three",
+    "offColor": "var(--primary-white)"
+  },
+  {
+    "src": "images/2.webp",
+    "caption": "Caption Four",
+    "offColor": "var(--primary-white)"
+  }
+]
