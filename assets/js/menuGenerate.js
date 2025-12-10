@@ -26,7 +26,7 @@ fetch("assets/json/data.json")
       `;
     });
 
-    document.getElementById("pizza-box").innerHTML = blocks.join("");
+    document.getElementById("pizza-box").innerHTML += blocks.join("");
 
   })
   .catch(error => console.error("Error loading JSON:", error));
