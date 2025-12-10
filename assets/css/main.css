@@ -1338,6 +1338,19 @@ textarea.error {
 .style2 {
   position: relative;
 }
+.text-h1 {
+  font-size: 7.5rem;
+}
+@media screen and (max-width: 980px) {
+  .text-h1 {
+    font-size: 5rem;
+  }
+}
+@media screen and (max-width: 580px) {
+  .text-h1 {
+    font-size: 3rem;
+  }
+}
 .text-h4 {
   background-color: var(--primary-purple);
   width: 30rem;
@@ -1459,7 +1472,7 @@ textarea.error {
   border: 1px solid var(--primary-white);
 }
 .dot-container {
-  z-index: 10;
+  z-index: 10;  
   text-align: center;
 }
 .dot:hover {
@@ -1480,9 +1493,11 @@ textarea.error {
 .text,
 .text-filler {
   font-size: 1rem;
-  padding: 1rem;
+  padding: 1rem 3rem;
   position: absolute;
   bottom: 2rem;
-  width: 100%;
   text-align: center;
+}
+.numbertext {
+  left: 1rem;
 }
