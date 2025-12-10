@@ -1387,7 +1387,7 @@ textarea.error {
 @media (min-width: 1000px) {
   .text-h4 {
     background-color: unset;
-    font-size: 5rem;
+    font-size: 4rem;
     top: 2rem;
   }
   .side {
