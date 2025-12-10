@@ -139,7 +139,7 @@
           <!-- STEP 2 -->
           <div class="step">
             <label>Locatie van je event</label>
-            <input type="text" id="locatie" name="locatie" required>
+            <input type="text" id="locatie" name="locatie" required placeholder="Het adres. In de tuin is er plaats">
             <span class="error-message" id="error-locatie"></span>
             <label>Datum van je event</label>
             <input type="date" id="datum" name="datum" required>
@@ -155,12 +155,12 @@
             <label>Hoeveel gasten?</label>
             <input type="number" id="gasten" name="gasten" min="1" required>
             <span class="error-message" id="error-gasten"></span>
-            <label>Waarover wilt u meer info?</label>
-            <textarea id="info" name="info" rows="3" required></textarea>
+            <label>Vertel ons jouw wens</label>
+            <textarea id="info" name="info" rows="3"  placeholder="Voor onze bruiloft willen we onze 70 gasten verrassen met lekkere pizza’s. We willen graag 3 verschillende pizza’s serveren in buffetstijl." required></textarea>
             <span class="error-message" id="error-info"></span>
             <div class="clearfix">
               <button type="button" class="back-btn" onclick="prevStep()">Terug</button>
-              <button type="submit" class="submit-btn">Versturen</button>
+              <button type="submit" class="submit-btn">Zend</button>
             </div>
           </div>
         </form>
