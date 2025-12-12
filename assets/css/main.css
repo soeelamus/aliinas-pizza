@@ -1512,3 +1512,6 @@ textarea.error {
 .numbertext {
   left: 1rem;
 }
+footer a:hover {
+  color: var(--primary-pink);
+}
