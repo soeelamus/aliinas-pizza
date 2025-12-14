@@ -1658,3 +1658,19 @@ footer a:hover {
     margin-top: 1rem;
   }
 }
+
+.add-event-btn {
+  display: none;
+  position: absolute;
+  bottom: 0.5rem;
+  width: 90%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.dates li.no-event:hover .add-event-btn {
+  display: flex;
+}
