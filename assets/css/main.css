@@ -1606,7 +1606,6 @@ footer a:hover {
 }
 
 .dates li.today {
-  background-color: var(--primary-pink);
   color: var(--primary-purple);
   font-weight: bold;
 }
@@ -1674,3 +1673,93 @@ footer a:hover {
 .dates li.no-event:hover .add-event-btn {
   display: flex;
 }
+
+.event {
+  font-weight: 400;
+}
+.event-card {
+  padding: 1.25rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.event-header {
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.event-title {
+  font-size: 1.2rem;
+  margin: 0;
+}
+
+.event-type {
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #eee;
+}
+
+.event-meta {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.event-meta li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.event-description {
+  color: #444;
+  line-height: 1.4;
+}
+
+.event-address {
+  font-style: normal;
+  color: #666;
+}
+
+.event-map-link {
+  margin-top: 0.5rem;
+  align-self: flex-start;
+  text-decoration: none;
+  font-weight: 600;
+  color: #2563eb;
+}
+.dates li.event {
+  background: none; /* reset eventuele oude achtergrond */
+  color: inherit;   /* houd de tekstkleur */
+}
+.type-markt {
+  background-color: #d4edbc !important; /* forceert de juiste kleur */
+  color: #11734b !important;
+}
+
+.type-evenement {
+  background-color: #e6cff2 !important;
+  color: #5a3286 !important;
+}
+
+.type-privaat {
+  background-color: #ffcfc9 !important;
+  color: #b10202 !important;
+}
+
+.type-standplaats {
+  background-color: #bfe1f6 !important;
+  color: #0a53a8 !important;
+}
+
