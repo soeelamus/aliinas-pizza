@@ -149,30 +149,38 @@ function attachEventListeners() {
 function renderEventSidebar(event) {
   sidebar.style.display = "block";
 
-  // Sidebar content
+  const showAddress = event.type.toLowerCase() !== "privaat"; // alleen tonen als niet 'privaat'
+
   document.getElementById("event-content").innerHTML = `
     <article class="event-card">
       <header class="event-header">
         <h4 class="event-title">${event.title}</h4>
-        <span class="event-type type-${event.type.toLowerCase()}">${event.type
-    }</span>
+        <span class="event-type type-${event.type.toLowerCase()}">${event.type}</span>
       </header>
 
       <ul class="event-meta">
         <li>📅  ${event.displayDate}</li>
         <li>⏰  ${event.startTime} – ${event.endTime}</li>
-        <li id="event-map-link">
-  📍      <span>Adres wordt geladen...</span>
-        </li>
+        ${
+          showAddress
+            ? `<li id="event-map-link">📍 <span>Adres wordt geladen...</span></li>`
+            : ""
+        }
       </ul>
+
       <p class="event-description">${event.description}</p>
 
-      ${event.address ? `<div id="event-map" class="event-map"></div>` : ""}
+      ${
+        showAddress && event.address
+          ? `<div id="event-map" class="event-map"></div>`
+          : ""
+      }
     </article>
   `;
 
-  if (event.address) initMap(event);
+  if (showAddress && event.address) initMap(event);
 }
+
 
 /* ---------------- INITIALIZE MAP ---------------- */
 function initMap(event) {
