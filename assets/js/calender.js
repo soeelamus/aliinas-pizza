@@ -1,4 +1,4 @@
-const header = document.querySelector("h3");
+const header = document.querySelector("button");
 const dates = document.querySelector(".dates");
 const navs = document.querySelectorAll("#prev, #next");
 const sidebar = document.getElementById("event-sidebar");
@@ -7,16 +7,16 @@ const url =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQz8wlSQU4x1ndGYJJgJsAIFrW2VVuXOBm8d9u8vAK7N5lypKUlYj46LP6xqF-Xqqv2PCIpB6EzP5ws/pub?output=csv";
 
 const months = [
-  "January",
-  "February",
-  "March",
+  "Januari ",
+  "Februari",
+  "Maart",
   "April",
-  "May",
-  "June",
-  "July",
-  "August",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Augustus",
   "September",
-  "October",
+  "Oktober",
   "November",
   "December",
 ];
