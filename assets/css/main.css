@@ -3,7 +3,7 @@
   --primary-pink: #ffa9c8;
   --primary-purple: #6237c8;
   --primary-blue: #3ec0d1;
-  --primary-white: #ffffff;
+  --primary-white: #F6F6F6;
 }
 a,
 body,
@@ -28,6 +28,9 @@ ul {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
+}
+body {
+  background-color: var(--primary-white);
 }
 footer,
 header,
@@ -772,9 +775,6 @@ input[type="submit"] {
 .main {
   padding: 5rem 1rem;
 }
-.main.style1 {
-  background-color: var(--primary-white);
-}
 .main.style2 {
   background-color: var(--primary-purple);
   background-image: url(/images/logo.png);
@@ -784,7 +784,7 @@ input[type="submit"] {
   background-attachment: fixed;
 }
 .main.style2 h4 {
-  color: #fff;
+  color: var(--primary-white);
 }
 body.is-preload #header:after {
   opacity: 1;
@@ -813,21 +813,21 @@ body.is-preload #header:after {
 #footer h4,
 #footer h5,
 #footer h6 {
-  color: #fff;
+  color: var(--primary-white);
 }
 #footer header p {
-  color: #fff;
+  color: var(--primary-white);
 }
 #footer header.major:after {
-  background: #fff;
+  background: var(--primary-white);
 }
 #footer .button,
 #footer button,
 #footer input[type="button"],
 #footer input[type="reset"],
 #footer input[type="submit"] {
-  box-shadow: inset 0 0 0 1px #fff;
-  color: #fff !important;
+  box-shadow: inset 0 0 0 1px var(--primary-white);
+  color: var(--primary-white) !important;
 }
 #footer .button:hover,
 #footer button:hover,
@@ -844,10 +844,10 @@ body.is-preload #header:after {
   background-color: rgba(255, 255, 255, 0.25);
 }
 #footer ul.major-icons li .icon {
-  border-color: #fff;
+  border-color: var(--primary-white);
 }
 #footer .icon.major {
-  color: #fff;
+  color: var(--primary-white);
 }
 #footer .icons {
   margin: 0;
@@ -1038,7 +1038,7 @@ body.is-preload #header:after {
   width: auto;
   margin-top: -22px;
   padding: 16px;
-  color: #fff;
+  color: var(--primary-white);
   font-weight: 700;
   font-size: 18px;
   transition: 0.6s ease;
@@ -1164,7 +1164,7 @@ body {
 }
 .text {
   font-size: 2.5rem;
-  color: #fff;
+  color: var(--primary-white);
   position: absolute;
   top: 8rem;
   width: 100%;
@@ -1216,10 +1216,6 @@ body {
 .nav-btn:hover {
   background-color: var(--primary-purple);
 }
-.cta {
-  color: var(--primary-white);
-  background-color: var(--primary-pink);
-}
 .custom-form-wrapper {
   display: flex;
   justify-content: center;
@@ -1227,7 +1223,7 @@ body {
 }
 .form-container {
   width: 30rem;
-  background: #fff;
+  background: var(--primary-white);
   padding: 2.5rem 2rem;
   border-radius: 1rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
@@ -1239,6 +1235,9 @@ body {
 }
 .step.active {
   display: block;
+}
+.step input {
+  background-color: var(--primary-white);
 }
 label {
   color: var(--primary-purple);
@@ -1273,28 +1272,19 @@ button {
   cursor: pointer;
   transition: all 0.2s;
 }
-.next-btn {
-  background: var(--primary-pink);
-  color: #fff;
-  float: right;
+.btn-submit {
+  background-color: #38c172 !important;
 }
-.next-btn:hover {
-  background: var(--primary-purple);
+.btn-submit:hover {
+  background: #2f9e5a !important;
 }
-.back-btn {
-  background: #e2e2e2;
-  float: left;
-}
-.back-btn:hover {
-  background: #d0d0d0;
-}
-.submit-btn {
-  background: #38c172;
-  color: #fff;
-  float: right;
-}
-.submit-btn:hover {
-  background: #2f9e5a;
+.clearfix {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+  gap: 1rem;
+  margin: 2rem -1rem 0;
+  
 }
 .clearfix::after {
   content: "";
@@ -1309,7 +1299,7 @@ button {
 .progress-step {
   width: 30%;
   height: 6px;
-  background: #eee;
+  background: #d8d8d8;
   border-radius: 3px;
   transition: all 0.3s;
 }
@@ -1415,11 +1405,20 @@ textarea.error {
   justify-content: center;
   text-align: center;
 }
+.pizza-text {
+  margin-top: 1rem;
+}
 .pizza-ingredients {
   padding: 0 5rem;
 }
-.img-box {
+.img-box,
+.img-pizza {
   height: 16rem;
+  box-shadow: rgba(0, 0, 0, 0.3) 4px 4px 4px;
+}
+.video-pizza {
+  height: 17rem;
+  transform: scale(101%);
 }
 .menu-box header {
   padding: 5rem 2rem;
@@ -1552,7 +1551,7 @@ footer a:hover {
   border-radius: 0.25rem;
   padding: 0.25rem 1rem;
   font-weight: 600;
-  border: 1px solid var(--primary-pink);
+  border: 2px solid var(--primary-pink);
   background-color: var(--primary-purple);
   color: var(--primary-white);
   z-index: 10;
@@ -1681,7 +1680,7 @@ footer a:hover {
 .event-card {
   padding: 1.25rem;
   border-radius: 12px;
-  background: #fff;
+  background: var(--primary-white);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
@@ -1780,7 +1779,7 @@ footer a:hover {
 .popup {
   border: 1px solid var(--primary-pink);
   background-color: #2b1e3d;
-  color: #fff;
+  color: var(--primary-white);
   padding: 1rem;
   border-radius: 0.5rem;
   width: min(90%, 400px);
