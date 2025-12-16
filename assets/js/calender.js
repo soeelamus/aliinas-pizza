@@ -236,25 +236,47 @@ marker.setPopupContent('<a href="https://www.google.com/maps?q='+lat+','+lon+'" 
 }
 
 /* ---------------- NAVIGATION ---------------- */
+const today = new Date(); // huidige datum
+
 navs.forEach((nav) => {
   nav.addEventListener("click", (e) => {
     const btnId = e.target.id;
-    if (btnId === "prev" && month === 0) {
-      year--;
-      month = 11;
-    } else if (btnId === "next" && month === 11) {
-      year++;
-      month = 0;
-    } else {
-      month = btnId === "next" ? month + 1 : month - 1;
+
+    // Bereken de gewenste nieuwe maand en jaar
+    let newMonth = month;
+    let newYear = year;
+
+    if (btnId === "prev") {
+      if (month === 0) {
+        newYear--;
+        newMonth = 11;
+      } else {
+        newMonth = month - 1;
+      }
+    } else if (btnId === "next") {
+      if (month === 11) {
+        newYear++;
+        newMonth = 0;
+      } else {
+        newMonth = month + 1;
+      }
     }
 
-    date = new Date(year, month, new Date().getDate());
+    // Check: mag je terug naar een vorige maand?
+    if (newYear < today.getFullYear() || 
+        (newYear === today.getFullYear() && newMonth < today.getMonth())) {
+      // Niet toegestaan: terug naar een maand die al voorbij is
+      return; 
+    }
+
+    // Update datum en render kalender
+    date = new Date(newYear, newMonth, new Date().getDate());
     month = date.getMonth();
     year = date.getFullYear();
     renderCalendar();
   });
 });
+
 
 /* ---------------- CLOSE SIDEBAR ---------------- */
 closeSidebarBtn.addEventListener("click", () => {
