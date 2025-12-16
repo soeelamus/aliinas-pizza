@@ -1,308 +1,327 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <title>Aliina's Pizza</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-  <!-- Favicons -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+  <head>
+    <title>Aliina's Pizza</title>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no" />
+    <!-- Favicons -->
+    <link rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
 
-  <link rel="icon" href="assets/favicons/favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicons/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicons/android-chrome-192x192.png">
-  <link rel="apple-touch-icon" href="assets/favicons/apple-touch-icon.png">
-  <link rel="manifest" href="assets/favicons/site.webmanifest">
-  <link rel="stylesheet" href="assets/css/main.css" />
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-</head>
+    <link rel="icon" href="assets/favicons/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32"
+      href="assets/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16"
+      href="assets/favicons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="192x192"
+      href="assets/favicons/android-chrome-192x192.png">
+    <link rel="apple-touch-icon" href="assets/favicons/apple-touch-icon.png">
+    <link rel="manifest" href="assets/favicons/site.webmanifest">
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Monoton&display=swap"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  </head>
 
-<body class="is-preload">
-  <!-- Navigation -->
-  <nav class="nav-box">
-    <div class="nav-btns">
-      <a href="#3" class="nav-btn scrolly">Menu</a>
-      <a href="#2" class="nav-btn scrolly cta">Contact</a>
-    </div>
-  </nav>
-
-  <!-- Header -->
-  <header class="header-container">
-    <div class="planet-box">
-      <div class="text">
-        <p class="text-h1 monoton-regular">Foodtruck</p>
+  <body class="is-preload">
+    <!-- Navigation -->
+    <nav class="nav-box">
+      <div class="nav-btns">
+        <a href="#3" class="nav-btn scrolly">Menu</a>
+        <a href="#2" class="nav-btn scrolly cta">Contact</a>
       </div>
-      <a href="#1" class="planet scrolly">
-        <img src="images/pinker.png" alt class="planet-image">
-      </a>
-    </div>
-  </header>
-  <p class="scroll-dwn left">scroll down</p>
-  <p class="scroll-dwn">scroll down</p>
-  <a href="#1" class="planet scrolly">
-    <img src="images/Image-3.png" alt class="people">
-  </a>
+    </nav>
 
-  <!-- Carousel -->
-  <section id="1" class="container-carousel">
-    <div class="container-carousel-header">
-      <header class="major">
-        <h2>Welkom bij Aliina's – Pizza in Oost-Vlaanderen!</h2>
-      </header>
-      <p>
-        Versgebakken pizza’s met karakter, rijke smaken en toppings die je
-        smaakpapillen laten dansen – onze foodtruck
-        is de plek waar echte pizzadromen tot leven komen.
-        <br><br>
-        We bereiden ons deeg elke dag opnieuw en werken uitsluitend met verse
-        groenten, kazen en kwaliteitsvol vlees.
-        Niets wordt ooit ingevroren, zodat elke hap de pure, volle versheid
-        uit onze keuken draagt.
-      </p>
-    </div>
-    <div class="slideshow-container" id="slideshow">
-      <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-      <a class="next" onclick="plusSlides(1)">&#10095;</a>
-      <div id="dot-container" class="dot-container"></div>
-  </section>
-
-  <!-- Calender -->
-  <section class="style2 main special">
-    <h4 class="text-h4 monoton-regular">kalender</h2>
-      <div class="calendar-wrapped">
-        <div class="calendar">
-          <header class="calendar-header">
-            <button class="calendar-title"></button>
-            <button id="prev"><</button>
-                <button id="next">></button>
-          </header>
-          <section>
-            <ul class="days">
-              <li class="calendar-weekDay">Ma</li>
-              <li class="calendar-weekDay">Di</li>
-              <li class="calendar-weekDay">Wo</li>
-              <li class="calendar-weekDay">Do</li>
-              <li class="calendar-weekDay">Vr</li>
-              <li class="calendar-weekDay">Za</li>
-              <li class="calendar-weekDay">Zo</li>
-            </ul>
-            <ul class="dates"></ul>
-          </section>
+    <!-- Header -->
+    <header class="header-container">
+      <div class="planet-box">
+        <div class="text">
+          <p class="text-h1 monoton-regular">Foodtruck</p>
         </div>
-          <aside id="event-sidebar">
-            <button id="close-sidebar" class="btn-close">X</button>
-            <div id="event-content"></div>
-          </aside>
-      </div>
-    </section>
-    
-    <!-- Popup / Modal -->
-    <div id="event-popup" class="popup-overlay">
-      <div class="popup">
-        <h3 class="monoton-regular white">+ Event</h3>
-        <p>Vul je gegevens in, dan we maken er een fantistische dag van.</p>
-        <div class="popup-actions">
-          <button class="btn-close modal" id="popup-confirm">Verder</button>
-          <button class="btn-close" id="popup-cancel">x</button>
-        </div>
-      </div>
-    </div>
-
-
-  <!-- Contact Info-->
-  <section class="main style1 special contact-info">
-    <header class="major">
-      <h2>Hoe gaat het in zijn werk?</h2>
-    </header>
-    <div class="container">
-      <div class="row gtr-150 contact-flex">
-        <div class="col-4 col-12-medium">
-          <div class="text-box">
-            <div class="flex">
-              <h3>Vertel ons jouw wens</h3>
-            </div>
-            <p>
-              Wil je dat onze foodtruck langskomt? Ben je benieuwd naar meer
-              informatie of heb je nog vragen? Laat je gegevens achter via
-              onderstaand contactformulier, dan helpen wij je graag verder.
-            </p>
-
-          </div>
-        </div>
-        <div class="col-4 col-12-medium">
-          <div class="text-box">
-
-            <div class="flex">
-              <h3>Kies jouw formule</h3>
-            </div>
-            <p>
-              Welke pizza’s wil je serveren? Wij bakken ze ter plaatse op
-              authentieke, ambachtelijke wijze. We blijven enkele uren
-              aanwezig, zodat iedereen ruim de tijd heeft om alle smaken te
-              ontdekken. Indien gewenst voorzien we een buffetformule
-              waarbij we continu verse pizza’s afbakken. We kunnen
-              evenementen verzorgen tot ongeveer 80 personen.
-            </p>
-          </div>
-        </div>
-        <div class="col-4 col-12-medium">
-          <div class="text-box">
-            <div class="flex">
-              <h3>Ontvang jouw voorstel</h3>
-            </div>
-            <p>
-              Na onze kennismaking stellen we graag een helder en eerlijk
-              prijsvoorstel op, afgestemd op jouw noden en wensen.
-            </p>
-            <a href="#3" class="nav-btn scrolly cta">Menu</a>
-          </div>
-        </div>
-      </div>
-  </section>
-
-  <!-- Contact Form-->
-  <br id="2">
-  <br>
-  <br>
-  <section class="main style2 special">
-    <h4 class="text-h4 monoton-regular">contact</h4>
-    <img src="images/regular.png" class="planet-image side">
-    <div class="custom-form-wrapper">
-      <div class="form-container">
-        <div class="progress-container">
-          <div class="progress-step active" id="prog1"></div>
-          <div class="progress-step" id="prog2"></div>
-          <div class="progress-step" id="prog3"></div>
-        </div>
-        <form id="multiForm" action="https://api.web3forms.com/submit" method="POST">
-          <input type="hidden" name="access_key" value="f5f89190-0e09-46e5-9b69-92b1e5419a42">
-
-          <!-- STEP 1 -->
-          <div class="step active">
-            <label>Locatie van je event</label>
-            <input type="text" id="locatie" name="locatie" required placeholder="Het adres in Oost-Vlaanderen">
-            <span class="error-message" id="error-locatie"></span>
-
-            <label>Datum van je event</label>
-            <input type="date" id="datum" name="datum" required>
-            <span class="error-message" id="error-datum"></span>
-
-            <div class="clearfix">
-              <button type="button" class="next-btn" onclick="nextStep()">Verder</button>
-            </div>
-          </div>
-
-          <!-- STEP 2 -->
-          <div class="step">
-            <label>Voornaam</label>
-            <input type="text" id="voornaam" name="voornaam" required>
-            <span class="error-message" id="error-voornaam"></span>
-
-            <label>Email</label>
-            <input type="email" id="email" name="email" required>
-            <span class="error-message" id="error-email"></span>
-
-            <div class="clearfix">
-              <button type="button" class="back-btn" onclick="prevStep()">Terug</button>
-              <button type="button" class="next-btn" onclick="nextStep()">Verder</button>
-            </div>
-          </div>
-
-          <!-- STEP 3 -->
-          <div class="step">
-            <label>Hoeveel gasten?</label>
-            <input type="number" id="gasten" name="gasten" min="1" required>
-            <span class="error-message" id="error-gasten"></span>
-
-            <label>Vertel ons jouw wens</label>
-            <textarea id="info" name="info" rows="3"
-              placeholder="Voor onze bruiloft willen we onze 70 gasten verrassen met lekkere pizza’s. We willen graag 3 verschillende pizza’s serveren in buffetstijl."
-              required></textarea>
-            <span class="error-message" id="error-info"></span>
-
-            <div class="clearfix">
-              <button type="button" class="back-btn" onclick="prevStep()">Terug</button>
-              <button type="submit" class="submit-btn">Zend</button>
-            </div>
-          </div>
-        </form>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- Menu -->
-  <div id="3" class="menu-box">
-    <header class="major">
-      <h2>Ons Menu</h2>
-      <p class="menu-description">Aliina’s Pizza komt in één maat: 30 cm.
-        Ons deeg maken we elke dag vers, met hoogwaardige Italiaanse
-        bloem.</p>
-    </header>
-    <div class="pizza-box" id="pizza-box">
-      <div class="pizza">
-        <div class="img-box">
-          <video class="img-pizza" autoplay loop muted playsinline>
-            <source src="assets/video.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </div>
-        <div class="pizza-text">
-          <h3 class="pizza-name">Lekker vers, voor een geweldige
-            prijs!</h3>
-        </div>
-        <p class="pizza-ingredients">Elke pizza wordt ambachtelijk ter
-          plaatse gebakken, in een steenoven, op 420°C.</p>
-      </div>
-    </div>
-  </div>
-  </div>
-
-  <!-- Footer -->
-  <footer id="footer">
-    <ul class="icons">
-      <li>
-        <a target="_blank" href="https://facebook.com/aliinas.pizza" class="icon brands alt fa-facebook-f"><span
-            class="label">Facebook</span></a>
-      </li>
-      <li>
-        <a target="_blank" href="https://instagram.com/aliinas.pizza" class="icon brands alt fa-instagram"><span
-            class="label">Instagram</span></a>
-      </li>
-    </ul>
-    <ul class="copyright">
-      <li>
-        &copy;
-        <a target="_blank" href="https://ariregister.rik.ee/eng/company/17342118/Soe-Elamus-O%C3%9C">Soe
-          Elamus OÜ</a>
-      </li>
-      <li>Design: Michiel Willems</li>
-      <li>VAT/KM: EE102909436</li>
-      <p>
-        <a href="https://apps.emta.ee/saqu/public/taxdebt?lang=en" target="_blank" rel="noopener">
-          Controleer onze fiscale betrouwbaarheid
+        <a href="#1" class="planet scrolly">
+          <img src="images/pinker.png" alt class="planet-image">
         </a>
-        met registratiecode:17342118
-      </p>
-    </ul>
-  </footer>
+      </div>
+    </header>
+    <p class="scroll-dwn left">scroll down</p>
+    <p class="scroll-dwn">scroll down</p>
+    <a href="#1" class="planet scrolly">
+      <img src="images/Image-3.png" alt class="people">
+    </a>
 
-  <!-- Scripts -->
-  <script src="assets/js/jquery.min.js"></script>
-  <script src="assets/js/jquery.scrolly.min.js"></script>
-  <script src="assets/js/browser.min.js"></script>
-  <script src="assets/js/breakpoints.min.js"></script>
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/carousel.js"></script>
-  <script src="assets/js/contact.js"></script>
-  <script src="assets/js/menuGenerate.js"></script>
-  <script src="assets/js/calender.js"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-</body>
+    <!-- Carousel -->
+    <section id="1" class="container-carousel">
+      <div class="container-carousel-header">
+        <header class="major">
+          <h2>Welkom bij Aliina's – Pizza in Oost-Vlaanderen!</h2>
+        </header>
+        <p>
+          Versgebakken pizza’s met karakter, rijke smaken en toppings die je
+          smaakpapillen laten dansen – onze foodtruck
+          is de plek waar echte pizzadromen tot leven komen.
+          <br><br>
+          We bereiden ons deeg elke dag opnieuw en werken uitsluitend met verse
+          groenten, kazen en kwaliteitsvol vlees.
+          Niets wordt ooit ingevroren, zodat elke hap de pure, volle versheid
+          uit onze keuken draagt.
+        </p>
+      </div>
+      <div class="slideshow-container" id="slideshow">
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+        <div id="dot-container" class="dot-container"></div>
+      </section>
 
-</html>
+      <!-- Calender -->
+      <section class="style2 main special">
+        <h4 class="text-h4 monoton-regular">kalender</h2>
+        <div class="calendar-wrapped">
+          <div class="calendar">
+            <header class="calendar-header">
+              <button class="btn-purple calendar-title"></button>
+              <button class="btn-purple" id="prev"><</button>
+                <button class="btn-purple" id="next">></button>
+              </header>
+              <section>
+                <ul class="days">
+                  <li class="calendar-weekDay">Ma</li>
+                  <li class="calendar-weekDay">Di</li>
+                  <li class="calendar-weekDay">Wo</li>
+                  <li class="calendar-weekDay">Do</li>
+                  <li class="calendar-weekDay">Vr</li>
+                  <li class="calendar-weekDay">Za</li>
+                  <li class="calendar-weekDay">Zo</li>
+                </ul>
+                <ul class="dates"></ul>
+              </section>
+            </div>
+            <aside id="event-sidebar">
+              <button id="close-sidebar" class="btn-close">X</button>
+              <div id="event-content"></div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- Popup / Modal -->
+        <div id="event-popup" class="popup-overlay">
+          <div class="popup">
+            <h3 class="monoton-regular white">+ Event</h3>
+            <p>Vul je gegevens in, dan we maken er een fantistische dag van.</p>
+            <div class="popup-actions">
+              <button class="btn-close modal" id="popup-confirm">Verder</button>
+              <button class="btn-close" id="popup-cancel">x</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Info-->
+        <section class="main style1 special contact-info">
+          <header class="major">
+            <h2>Hoe gaat het in zijn werk?</h2>
+          </header>
+          <div class="container">
+            <div class="row gtr-150 contact-flex">
+              <div class="col-4 col-12-medium">
+                <div class="text-box">
+                  <div class="flex">
+                    <h3>Vertel ons jouw wens</h3>
+                  </div>
+                  <p>
+                    Wil je dat onze foodtruck langskomt? Ben je benieuwd naar
+                    meer
+                    informatie of heb je nog vragen? Laat je gegevens achter via
+                    onderstaand contactformulier, dan helpen wij je graag
+                    verder.
+                  </p>
+
+                </div>
+              </div>
+              <div class="col-4 col-12-medium">
+                <div class="text-box">
+
+                  <div class="flex">
+                    <h3>Kies jouw menu</h3>
+                  </div>
+                  <p>
+                    Welke pizza’s wil je serveren? Wij bakken ze ter plaatse op
+                    ambachtelijke wijze. We blijven enkele uren
+                    aanwezig, zodat iedereen ruim de tijd heeft om alle smaken
+                    te
+                    ontdekken.
+                  </p>
+                  <a href="#3" class="btn-purple scrolly">Menu</a>
+                </div>
+              </div>
+              <div class="col-4 col-12-medium">
+                <div class="text-box">
+                  <div class="flex">
+                    <h3>Ontvang jouw voorstel</h3>
+                  </div>
+                  <p>
+                    Na onze kennismaking stellen we een helder prijsvoorstel op,
+                    afgestemd op jouw wensen.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Contact Form-->
+          <br id="2">
+          <br>
+          <br>
+          <section class="main style2 special">
+            <h4 class="text-h4 monoton-regular">contact</h4>
+            <img src="images/regular.png" class="planet-image side">
+            <div class="custom-form-wrapper">
+              <div class="form-container">
+                <div class="progress-container">
+                  <div class="progress-step active" id="prog1"></div>
+                  <div class="progress-step" id="prog2"></div>
+                  <div class="progress-step" id="prog3"></div>
+                </div>
+                <form id="multiForm" action="https://api.web3forms.com/submit"
+                  method="POST">
+                  <input type="hidden" name="access_key"
+                    value="f5f89190-0e09-46e5-9b69-92b1e5419a42">
+
+                  <!-- STEP 1 -->
+                  <div class="step active">
+                    <label>Locatie van je event</label>
+                    <input type="text" id="locatie" name="locatie" required
+                      placeholder="Het adres in Oost-Vlaanderen">
+                    <span class="error-message" id="error-locatie"></span>
+
+                    <label>Datum van je event</label>
+                    <input type="date" id="datum" name="datum" required>
+                    <span class="error-message" id="error-datum"></span>
+
+                    <div class="clearfix">
+                      <button type="button" class="next-btn"
+                        onclick="nextStep()">Verder</button>
+                    </div>
+                  </div>
+
+                  <!-- STEP 2 -->
+                  <div class="step">
+                    <label>Voornaam</label>
+                    <input type="text" id="voornaam" name="voornaam" required>
+                    <span class="error-message" id="error-voornaam"></span>
+
+                    <label>Email</label>
+                    <input type="email" id="email" name="email" required>
+                    <span class="error-message" id="error-email"></span>
+
+                    <div class="clearfix">
+                      <button type="button" class="back-btn"
+                        onclick="prevStep()">Terug</button>
+                      <button type="button" class="next-btn"
+                        onclick="nextStep()">Verder</button>
+                    </div>
+                  </div>
+
+                  <!-- STEP 3 -->
+                  <div class="step">
+                    <label>Hoeveel gasten?</label>
+                    <input type="number" id="gasten" name="gasten" min="1"
+                      required>
+                    <span class="error-message" id="error-gasten"></span>
+
+                    <label>Vertel ons jouw wens</label>
+                    <textarea id="info" name="info" rows="3"
+                      placeholder="Voor onze bruiloft willen we onze 70 gasten verrassen met lekkere pizza’s. We willen graag 3 verschillende pizza’s serveren in buffetstijl."
+                      required></textarea>
+                    <span class="error-message" id="error-info"></span>
+
+                    <div class="clearfix">
+                      <button type="button" class="back-btn"
+                        onclick="prevStep()">Terug</button>
+                      <button type="submit" class="submit-btn">Zend</button>
+                    </div>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+          </section>
+
+          <!-- Menu -->
+          <div id="3" class="menu-box">
+            <header class="major">
+              <h2>Ons Menu</h2>
+              <p class="menu-description">Ons deeg maken we voor elk evenement
+                vers, met hoogwaardige Italiaanse
+                bloem.</p>
+            </header>
+            <div class="pizza-box" id="pizza-box">
+              <div class="pizza">
+                <div class="img-box">
+                  <video class="img-pizza" autoplay loop muted playsinline>
+                    <source src="assets/video.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                <div class="pizza-text">
+                  <h3 class="pizza-name">Lekker vers, voor een geweldige
+                    prijs!</h3>
+                </div>
+                <p class="pizza-ingredients">Elke pizza wordt ambachtelijk ter
+                  plaatse gebakken, in een steenoven, op 420°C.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <footer id="footer">
+          <ul class="icons">
+            <li>
+              <a target="_blank" href="https://facebook.com/aliinas.pizza"
+                class="icon brands alt fa-facebook-f"><span
+                  class="label">Facebook</span></a>
+            </li>
+            <li>
+              <a target="_blank" href="https://instagram.com/aliinas.pizza"
+                class="icon brands alt fa-instagram"><span
+                  class="label">Instagram</span></a>
+            </li>
+          </ul>
+          <ul class="copyright">
+            <li>
+              &copy;
+              <a target="_blank"
+                href="https://ariregister.rik.ee/eng/company/17342118/Soe-Elamus-O%C3%9C">Soe
+                Elamus OÜ</a>
+            </li>
+            <li>Design: Michiel Willems</li>
+            <li>VAT/KM: EE102909436</li>
+            <p>
+              <a href="https://apps.emta.ee/saqu/public/taxdebt?lang=en"
+                target="_blank" rel="noopener">
+                Controleer onze fiscale betrouwbaarheid
+              </a>
+              met registratiecode:17342118
+            </p>
+          </ul>
+        </footer>
+
+        <!-- Scripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/jquery.scrolly.min.js"></script>
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/main.js"></script>
+        <script src="assets/js/carousel.js"></script>
+        <script src="assets/js/contact.js"></script>
+        <script src="assets/js/menuGenerate.js"></script>
+        <script src="assets/js/calender.js"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+      </body>
+
+    </html>

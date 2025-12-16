@@ -81,14 +81,9 @@ function formatDateForDisplay(sheetDate) {
 
 /* ---------------- RENDER CALENDAR ---------------- */
 function renderCalendar() {
-  const start =
-    (new Date(year, month, 1).getDay() + 6) % 7;
-
+  const start = (new Date(year, month, 1).getDay() + 6) % 7;
   const endDate = new Date(year, month + 1, 0).getDate();
-
-  const end =
-    (new Date(year, month, endDate).getDay() + 6) % 7;
-
+  const end = (new Date(year, month, endDate).getDay() + 6) % 7;
   const endDatePrev = new Date(year, month, 0).getDate();
 
   let datesHtml = "";
@@ -100,8 +95,10 @@ function renderCalendar() {
 
   // Huidige maand
   for (let i = 1; i <= endDate; i++) {
-    const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
-    const event = events.find(ev => ev.date === fullDate);
+    const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(
+      i
+    ).padStart(2, "0")}`;
+    const event = events.find((ev) => ev.date === fullDate);
 
     let className =
       i === date.getDate() &&
@@ -126,8 +123,6 @@ function renderCalendar() {
       </li>
     `;
   }
-
-
 
   // Next month
   for (let i = end; i < 6; i++) {
@@ -161,7 +156,9 @@ function renderEventSidebar(event) {
     <article class="event-card">
       <header class="event-header">
         <h4 class="event-title">${event.title}</h4>
-        <span class="event-type type-${event.type.toLowerCase()}">${event.type}</span>
+        <span class="event-type type-${event.type.toLowerCase()}">${
+    event.type
+  }</span>
       </header>
 
       <ul class="event-meta">
@@ -193,15 +190,19 @@ function initMap(event) {
   if (!mapDiv) return;
 
   mapDiv.innerHTML = ""; // reset
-  const map = L.map('event-map').setView([0,0], 13);
+  const map = L.map("event-map").setView([0, 0], 13);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap contributors",
   }).addTo(map);
 
-  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(event.address)}`)
-    .then(res => res.json())
-    .then(data => {
+  fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+      event.address
+    )}`
+  )
+    .then((res) => res.json())
+    .then((data) => {
       if (!data || data.length === 0) return;
 
       const lat = parseFloat(data[0].lat);
@@ -221,11 +222,18 @@ function initMap(event) {
         </a>
       `;
 
-      const marker = L.marker([lat, lon]).addTo(map)
+      const marker = L.marker([lat, lon])
+        .addTo(map)
         .bindPopup(popupContent)
         .openPopup();
 
-marker.setPopupContent('<a href="https://www.google.com/maps?q='+lat+','+lon+'" target="_blank">Navigeren</a>');
+      marker.setPopupContent(
+        '<a href="https://www.google.com/maps?q=' +
+          lat +
+          "," +
+          lon +
+          '" target="_blank">Navigeren</a>'
+      );
 
       // ✅ Update de sidebar-link
       const mapLink = document.getElementById("event-map-link");
@@ -269,10 +277,12 @@ navs.forEach((nav) => {
     }
 
     // Check: mag je terug naar een vorige maand?
-    if (newYear < today.getFullYear() || 
-        (newYear === today.getFullYear() && newMonth < today.getMonth())) {
+    if (
+      newYear < today.getFullYear() ||
+      (newYear === today.getFullYear() && newMonth < today.getMonth())
+    ) {
       // Niet toegestaan: terug naar een maand die al voorbij is
-      return; 
+      return;
     }
 
     // Update datum en render kalender
@@ -282,7 +292,6 @@ navs.forEach((nav) => {
     renderCalendar();
   });
 });
-
 
 /* ---------------- CLOSE SIDEBAR ---------------- */
 closeSidebarBtn.addEventListener("click", () => {
@@ -314,7 +323,6 @@ dates.addEventListener("click", (e) => {
   popup.style.display = "flex";
 });
 
-
 confirmBtn.addEventListener("click", () => {
   popup.style.display = "none";
 
@@ -334,7 +342,6 @@ popup.addEventListener("click", (e) => {
     popup.style.display = "none";
   }
 });
-
 
 /* ---------------- INIT ---------------- */
 (async function init() {
