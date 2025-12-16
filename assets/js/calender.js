@@ -81,29 +81,32 @@ function formatDateForDisplay(sheetDate) {
 
 /* ---------------- RENDER CALENDAR ---------------- */
 function renderCalendar() {
-  const start = new Date(year, month, 1).getDay();
+  const start =
+    (new Date(year, month, 1).getDay() + 6) % 7;
+
   const endDate = new Date(year, month + 1, 0).getDate();
-  const end = new Date(year, month, endDate).getDay();
+
+  const end =
+    (new Date(year, month, endDate).getDay() + 6) % 7;
+
   const endDatePrev = new Date(year, month, 0).getDate();
 
   let datesHtml = "";
 
-  // Previous month
+  // Vorige maand
   for (let i = start; i > 0; i--) {
     datesHtml += `<li class="inactive">${endDatePrev - i + 1}</li>`;
   }
 
-  // Current month
+  // Huidige maand
   for (let i = 1; i <= endDate; i++) {
-    const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(
-      i
-    ).padStart(2, "0")}`;
-    const event = events.find((ev) => ev.date === fullDate);
+    const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
+    const event = events.find(ev => ev.date === fullDate);
 
     let className =
       i === date.getDate() &&
-        month === new Date().getMonth() &&
-        year === new Date().getFullYear()
+      month === new Date().getMonth() &&
+      year === new Date().getFullYear()
         ? "today"
         : "";
 
@@ -115,13 +118,16 @@ function renderCalendar() {
     datesHtml += `
       <li class="${className || "no-event"}" data-date="${fullDate}">
         <span class="day-number">${i}</span>
-        ${event
-        ? `<small>${event.title}</small><small>${event.location}</small>`
-        : `<button class="add-event-btn">Toevoegen</button>`
-      }
+        ${
+          event
+            ? `<small>${event.title}</small><small>${event.location}</small>`
+            : `<button class="add-event-btn">Toevoegen</button>`
+        }
       </li>
     `;
   }
+
+
 
   // Next month
   for (let i = end; i < 6; i++) {
