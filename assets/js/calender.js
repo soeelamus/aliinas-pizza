@@ -117,7 +117,7 @@ function renderCalendar() {
         <span class="day-number">${i}</span>
         ${event
         ? `<small>${event.title}</small><small>${event.location}</small>`
-        : `<button class="add-event-btn">+</button>`
+        : `<button class="add-event-btn">Toevoegen</button>`
       }
       </li>
     `;
@@ -181,7 +181,6 @@ function renderEventSidebar(event) {
   if (showAddress && event.address) initMap(event);
 }
 
-
 /* ---------------- INITIALIZE MAP ---------------- */
 function initMap(event) {
   const mapDiv = document.getElementById("event-map");
@@ -236,8 +235,6 @@ marker.setPopupContent('<a href="https://www.google.com/maps?q='+lat+','+lon+'" 
     });
 }
 
-
-
 /* ---------------- NAVIGATION ---------------- */
 navs.forEach((nav) => {
   nav.addEventListener("click", (e) => {
@@ -272,7 +269,7 @@ const cancelBtn = document.getElementById("popup-cancel");
 let selectedDate = null;
 
 dates.addEventListener("click", (e) => {
-  const btn = e.target.closest(".add-event-btn");
+  const btn = e.target.closest(".no-event");
   if (!btn) return;
 
   e.stopPropagation();
@@ -309,7 +306,6 @@ popup.addEventListener("click", (e) => {
     popup.style.display = "none";
   }
 });
-
 
 
 /* ---------------- INIT ---------------- */
