@@ -3,8 +3,8 @@ const steps = document.querySelectorAll(".step");
 
 // Alle velden verplicht
 const requiredFields = [
-  ["voornaam", "email"], // STEP 1
-  ["locatie", "datum"], // STEP 2
+  ["locatie", "datum"], // STEP 1
+  ["voornaam", "email"], // STEP 2
   ["gasten", "info"], // STEP 3
 ];
 

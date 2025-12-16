@@ -770,7 +770,7 @@ input[type="submit"] {
   white-space: nowrap;
 }
 .main {
-  padding: 6em 0 4em 0;
+  padding: 5rem 1rem;
 }
 .main.style1 {
   background-color: var(--primary-white);
@@ -902,9 +902,6 @@ body.is-preload #header:after {
     line-height: 8em;
     width: 8em;
   }
-  .main {
-    padding: 4em 0 2em 0;
-  }
   .main.style2 {
     background-attachment: scroll;
   }
@@ -928,9 +925,6 @@ body.is-preload #header:after {
     height: 7em;
     line-height: 7em;
     width: 7em;
-  }
-  .main {
-    padding: 5em 3em 3em 3em;
   }
   #header {
     padding: 8em 3em 8em 3em;
@@ -982,9 +976,6 @@ body.is-preload #header:after {
     height: 3em;
     line-height: 3em;
   }
-  .main {
-    padding: 3em 1.5em 1em 1.5em;
-  }
   #header {
     padding: 4em 3em 4em 3em;
   }
@@ -998,9 +989,6 @@ body.is-preload #header:after {
   input[type="reset"],
   input[type="submit"] {
     padding: 0;
-  }
-  .main {
-    padding: 2em 1.5em 0.1em 1.5em;
   }
   #header {
     padding: 4em 2em 4em 2em;
@@ -1028,9 +1016,6 @@ body.is-preload #header:after {
   body,
   html {
     min-width: 320px;
-  }
-  .main {
-    padding: 2em 1em 0.1em 1em;
   }
   #header {
     padding: 3em 1em 3em 1em;
@@ -1541,16 +1526,14 @@ footer a:hover {
 }
 .calendar-header {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  margin: 1rem 0;
+  margin: 3.5rem 0.5rem 1rem;
   align-self: stretch;
 }
 .calendar-header button,
 .btn-close {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1594,13 +1577,12 @@ footer a:hover {
   display: flex;
   flex-wrap: wrap;
   list-style: none;
-  
+  padding-left: 0.25rem;
 }
 
 .days li, .dates li {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   background-color: var(--primary-white);
-  width: 12.6%;
+  width: 13%;
   text-align: center;
   padding: 0.5rem 0;
   margin: 0.125rem;
@@ -1671,6 +1653,9 @@ footer a:hover {
   }
 }
 
+.no-event {
+  position: relative;
+}
 .add-event-btn {
   display: none;
   position: absolute;
@@ -1773,4 +1758,75 @@ footer a:hover {
 .type-standplaats {
   background-color: #bfe1f6 !important;
   color: #0a53a8 !important;
+}
+
+/* ---------- POPUP ---------- */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup {
+  border: 1px solid var(--primary-pink);
+  background-color: #2b1e3d;
+  color: #fff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  width: min(90%, 400px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  animation: popupIn 0.25s ease;
+}
+.modal {
+  background-color: var(--primary-pink);
+  font-weight: 600;
+  border: 1px solid var(--primary-pink);
+}
+.modal:hover {
+  background-color: var(--primary-purple);
+}
+.popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+.popup p {
+  padding: 2rem 0;
+}
+
+@keyframes popupIn {
+  from {
+    transform: translateY(10px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+.add-event-btn::after {
+  z-index: 200;
+  content: "Event toevoegen";
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-purple);
+  border: 1px solid var(--primary-pink);
+  color: #fff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.white {
+  color: var(--primary-white) !important;
+  font-size: 2.5rem;
+}
+.add-event-btn:hover::after {
+  opacity: 1;
 }

@@ -117,7 +117,7 @@ function renderCalendar() {
         <span class="day-number">${i}</span>
         ${event
         ? `<small>${event.title}</small><small>${event.location}</small>`
-        : `<button class="add-event-btn">+ Event +</button>`
+        : `<button class="add-event-btn">+</button>`
       }
       </li>
     `;
@@ -263,6 +263,54 @@ navs.forEach((nav) => {
 closeSidebarBtn.addEventListener("click", () => {
   sidebar.style.display = "none";
 });
+
+/* ---------------- ADD EVENT ---------------- */
+const popup = document.getElementById("event-popup");
+const confirmBtn = document.getElementById("popup-confirm");
+const cancelBtn = document.getElementById("popup-cancel");
+
+let selectedDate = null;
+
+dates.addEventListener("click", (e) => {
+  const btn = e.target.closest(".add-event-btn");
+  if (!btn) return;
+
+  e.stopPropagation();
+
+  const li = btn.closest("li");
+  selectedDate = li?.dataset.date || null;
+
+  // ✅ vul het formulier automatisch
+  if (selectedDate) {
+    const datumInput = document.getElementById("datum");
+    datumInput.value = selectedDate;
+  }
+
+  popup.style.display = "flex";
+});
+
+
+confirmBtn.addEventListener("click", () => {
+  popup.style.display = "none";
+
+  const target = document.getElementById("2");
+  if (target) {
+    target.scrollIntoView({ behavior: "smooth" });
+  }
+});
+
+cancelBtn.addEventListener("click", () => {
+  popup.style.display = "none";
+});
+
+// klik buiten popup = sluiten
+popup.addEventListener("click", (e) => {
+  if (e.target === popup) {
+    popup.style.display = "none";
+  }
+});
+
+
 
 /* ---------------- INIT ---------------- */
 (async function init() {
