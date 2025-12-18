@@ -12,10 +12,11 @@ fetch("assets/json/data.json")
         .join(" • ");
         
 
+        console.log(pizza.img);
       return `
         <div class="pizza">
             <div class="img-box">
-              <img class="img-pizza" src="./images/${pizza.img.toLowerCase()}" alt="Pizza ${pizza.name}" />
+              <img class="img-pizza" src="./images/${pizza.img}" alt="Pizza ${pizza.name}" />
             </div>
           <div class="pizza-text">
             <h3 class="pizza-name">${pizza.name}</h3>
@@ -24,6 +25,7 @@ fetch("assets/json/data.json")
             <p class="pizza-ingredients">${ingredients}</p>
         </div>
       `;
+      
     });
 
     document.getElementById("pizza-box").innerHTML += blocks.join("");
