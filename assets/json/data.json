@@ -3,7 +3,7 @@
     {
       "id": 1,
       "name": "Margheriita",
-      "img": "images/Margheriita.jpg",
+      "img": "margheriita.jpg",
       "price": 10,
       "ingredients": [
         {
@@ -21,7 +21,7 @@
       "id": 2,
       "name": "Fungii",
       "price": 11,
-      "img": "images/Fungii.jpg",
+      "img": "fungii.jpg",
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -40,7 +40,7 @@
     {
       "id": 3,
       "name": "Vegii",
-      "img": "images/vegii.jpg",
+      "img": "vegii.jpg",
       "price": 12,
       "ingredients": [
         {
@@ -63,7 +63,7 @@
     {
       "id": 4,
       "name": "Pepperonii",
-      "img": "images/pepperonii.jpg",
+      "img": "pepperonii.jpg",
       "price": 11,
       "ingredients": [
         {
@@ -80,7 +80,7 @@
     {
       "id": 5,
       "name": "Jaeger",
-      "img": "images/jaeger.jpg",
+      "img": "jaeger.jpg",
       "price": 12,
       "ingredients": [
         {
@@ -100,7 +100,7 @@
     {
       "id": 6,
       "name": "Sweet Chiicken",
-      "img": "images/sweetChiicken.jpg",
+      "img": "sweetChiicken.jpg",
       "price": 13,
       "ingredients": [
         {
@@ -123,7 +123,7 @@
     {
       "id": 7,
       "name": "Diiavola",
-      "img": "images/diiavola.jpg",
+      "img": "diiavola.jpg",
       "price": 12,
       "ingredients": [
         {
@@ -146,7 +146,7 @@
     {
       "id": 8,
       "name": "Nduja",
-      "img": "images/nduja.jpg",
+      "img": "nduja.jpg",
       "price": 13,
       "ingredients": [
         {
