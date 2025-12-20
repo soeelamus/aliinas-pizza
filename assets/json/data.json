@@ -44,6 +44,26 @@
       ]
     },
     {
+      "id": 4,
+      "name": "Pepperonii",
+      "img": "pepperonii.jpg",
+      "price": 11,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Pecorino"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Pepperoni"
+        }
+      ]
+    },
+     {
       "id": 3,
       "name": "Vegii",
       "img": "vegii.jpg",
@@ -73,26 +93,6 @@
       ]
     },
     {
-      "id": 4,
-      "name": "Pepperonii",
-      "img": "pepperonii.jpg",
-      "price": 11,
-      "ingredients": [
-        {
-          "name": "Tomatensaus"
-        },
-        {
-          "name": "Pecorino"
-        },
-        {
-          "name": "Mozzarella"
-        },
-        {
-          "name": "Pepperoni"
-        }
-      ]
-    },
-    {
       "id": 5,
       "name": "Jaeger",
       "img": "jaeger.jpg",
@@ -117,33 +117,7 @@
           "name": "Olijfolie"
         }
       ]
-    },
-    {
-      "id": 6,
-      "name": "Sweet Chiicken",
-      "img": "sweetChiicken.jpg",
-      "price": 13,
-      "ingredients": [
-        {
-          "name": "Tomatensaus"
-        },
-        {
-          "name": "Pecorino"
-        },
-        {
-          "name": "Mozzarella"
-        },
-        {
-          "name": "Gegrilde kip"
-        },
-        {
-          "name": "Appel"
-        },
-        {
-          "name": "Honing"
-        }
-      ]
-    },
+    },  
     {
       "id": 7,
       "name": "Diiavola",
@@ -170,6 +144,32 @@
         },
         {
           "name": "Pepperoni"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Sweet Chiicken",
+      "img": "sweetChiicken.jpg",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Pecorino"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Gegrilde kip"
+        },
+        {
+          "name": "Appel"
+        },
+        {
+          "name": "Honing"
         }
       ]
     },
