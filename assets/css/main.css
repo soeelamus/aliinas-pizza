@@ -1810,3 +1810,20 @@ footer a:hover {
 .add-event-btn:hover::after {
   opacity: 1;
 }
+.pizza-filter {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.btn-wider {
+width: 11rem;
+}
+.pizza-spicy {
+  color: red;
+}
+.pizza-veg {
+  color: green;
+}
