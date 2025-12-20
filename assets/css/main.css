@@ -5,6 +5,9 @@
   --primary-blue: #3ec0d1;
   --primary-white: #F6F6F6;
 }
+html {
+  scroll-behavior: smooth;
+}
 a,
 body,
 div,
