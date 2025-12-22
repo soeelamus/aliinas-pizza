@@ -63,8 +63,9 @@ async function loadEventsFromSheet() {
       startTime: cols[3],
       endTime: cols[4],
       description: cols[5],
-      address: cols[6],
-      type: cols[7],
+      website: cols[6],
+      address: cols[7],
+      type: cols[8],
     };
   });
 }
@@ -166,9 +167,10 @@ function renderEventSidebar(event) {
         <li>⏰  ${event.startTime} – ${event.endTime}</li>
         ${
           showAddress
-            ? `<li id="event-map-link">📍 <span>Adres wordt geladen...</span></li>`
+            ? `<li id="event-map-link">📍<span>Adres wordt geladen...</span></li>`
             : ""
         }
+        ${event.website? `<li><a href="${event.website}" target="_blank">🔗 Website</a></li>` : ''}
       </ul>
 
       <p class="event-description">${event.description}</p>
