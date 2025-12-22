@@ -1533,9 +1533,10 @@ footer a:hover {
   justify-content: center;
   align-items: center;
   transition: background 0.2s;
-  width: 4rem;
+  width: 8rem;
 }
 .btn-close {
+  width: 4rem;
   border: 1px solid var(--primary-purple);
 }
 .btn-purple,
