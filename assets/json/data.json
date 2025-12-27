@@ -5,7 +5,7 @@
       "name": "Margheriita",
       "img": "margheriita.jpg",
       "type": "🥬",
-      "price": 10,
+      "price": 11,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -24,7 +24,7 @@
     {
       "id": 2,
       "name": "Fungii",
-      "price": 11,
+      "price": 12,
       "img": "fungii.jpg",
       "type": "🥬",
       "ingredients": [
@@ -50,7 +50,7 @@
       "name": "Vegii",
       "img": "vegii.jpg",
       "type": "🥬",
-      "price": 12,
+      "price": 13,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -80,7 +80,7 @@
       "name": "Pepperonii",
       "img": "pepperonii.jpg",
       "type": "",
-      "price": 11,
+      "price": 12,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -101,7 +101,7 @@
       "name": "Jaeger",
       "img": "jaeger.jpg",
       "type": "",
-      "price": 12,
+      "price": 13,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -155,7 +155,7 @@
       "name": "Diiavola",
       "img": "diiavola.jpg",
       "type": "🌶️",
-      "price": 12,
+      "price": 13,
       "ingredients": [
         {
           "name": "Tomatensaus"
