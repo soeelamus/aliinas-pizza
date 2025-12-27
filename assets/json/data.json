@@ -4,7 +4,7 @@
       "id": 1,
       "name": "Margheriita",
       "img": "margheriita.jpg",
-      "types": [{"name": "veggie"}, {"name": "classic"}],
+      "type": "🥬",
       "price": 10,
       "ingredients": [
         {
@@ -26,7 +26,7 @@
       "name": "Fungii",
       "price": 11,
       "img": "fungii.jpg",
-      "types": [{"name": "veggie"}],
+      "type": "🥬",
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -49,7 +49,7 @@
       "id": 3,
       "name": "Vegii",
       "img": "vegii.jpg",
-      "types": [{"name": "veggie"}],
+      "type": "🥬",
       "price": 12,
       "ingredients": [
         {
@@ -79,7 +79,7 @@
       "id": 4,
       "name": "Pepperonii",
       "img": "pepperonii.jpg",
-      "types": [ {"name": "classic"}],
+      "type": "",
       "price": 11,
       "ingredients": [
         {
@@ -100,7 +100,7 @@
       "id": 5,
       "name": "Jaeger",
       "img": "jaeger.jpg",
-      "types": [],
+      "type": "",
       "price": 12,
       "ingredients": [
         {
@@ -127,7 +127,7 @@
       "id": 6,
       "name": "Sweet Chiicken",
       "img": "sweetChiicken.jpg",
-      "types": [],
+      "type": "",
       "price": 13,
       "ingredients": [
         {
@@ -154,7 +154,7 @@
       "id": 7,
       "name": "Diiavola",
       "img": "diiavola.jpg",
-      "types": [{"name": "classic"},{"name": "pikant"}],
+      "type": "🌶️",
       "price": 12,
       "ingredients": [
         {
@@ -184,7 +184,7 @@
       "id": 8,
       "name": "Nduja",
       "img": "nduja.jpg",
-      "types": [{"name": "pikant"}],
+      "type": "🌶️",
       "price": 13,
       "ingredients": [
         {

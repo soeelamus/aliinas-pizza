@@ -1430,9 +1430,6 @@ textarea.error {
   text-align: center;
   gap: 1rem;
 }
-.menu-description {
-  text-align: left;
-}
 .container-carousel {
   display: flex;
   justify-content: center;
