@@ -283,12 +283,13 @@ navs.forEach((nav) => {
       newYear < today.getFullYear() ||
       (newYear === today.getFullYear() && newMonth < today.getMonth())
     ) {
-      // Niet toegestaan: terug naar een maand die al voorbij is
       return;
     }
 
     // Update datum en render kalender
-    date = new Date(newYear, newMonth, new Date().getDate());
+    date = new Date(newYear, newMonth, 1);
+    month = newMonth;
+    year = newYear;
     month = date.getMonth();
     year = date.getFullYear();
     renderCalendar();
