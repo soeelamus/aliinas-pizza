@@ -1513,7 +1513,6 @@ footer a:hover {
   max-width: 100%;
   width: 40rem;
   position: absolute;
-  display: none;
   z-index: 1000;
 }
 .calendar-header {
@@ -1827,4 +1826,10 @@ width: 11rem;
 }
 .pizza-veg {
   color: green;
+}
+.success-message {
+  border: 2px solid var(--primary-pink);
+  border-radius: 0.75rem;
+  font-weight: 500;
+  padding: 1rem;
 }
