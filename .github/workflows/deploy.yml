@@ -10,13 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # 1. Checkout de code
     - uses: actions/checkout@v3
 
+    # 2. Node.js setup
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20'
 
+    # 3. Cache npm dependencies
     - name: Cache npm
       uses: actions/cache@v3
       with:
@@ -25,18 +28,23 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
+    # 4. Install dependencies
     - name: Install dependencies
       run: npm install
 
+    # 5. Build React app
     - name: Build React app
       run: npm run build
 
+    # 6. React Router fix (404.html)
     - name: Fix React Router for GitHub Pages
       run: cp dist/index.html dist/404.html
 
+    # 7. Deploy naar GitHub Pages met custom domain
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
         force_orphan: true
+        cname: aliinas.com
