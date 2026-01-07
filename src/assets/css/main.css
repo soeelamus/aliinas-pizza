@@ -1418,10 +1418,6 @@ textarea.error {
   height: 16rem;
   box-shadow: rgba(0, 0, 0, 0.3) 4px 4px 4px;
 }
-.video-pizza {
-  height: 17rem;
-  transform: scale(101%);
-}
 .menu-box header {
   padding: 5rem 2rem;
   display: flex;
