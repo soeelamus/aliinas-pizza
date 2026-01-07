@@ -133,8 +133,8 @@ const Calendar = () => {
         <div className="calendar">
           <header className="calendar-header">
             <button className="btn-purple calendar-title">{months[month]} {year}</button>
-            <button className="btn-purple" onClick={()=>handleNav("prev")}>{"<"}</button>
-            <button className="btn-purple" onClick={()=>handleNav("next")}>{">"}</button>
+            <button className="btn-small btn-purple" onClick={()=>handleNav("prev")}>{"<"}</button>
+            <button className="btn-small btn-purple" onClick={()=>handleNav("next")}>{">"}</button>
           </header>
           <section>
             <ul className="days">{["Ma","Di","Wo","Do","Vr","Za","Zo"].map(d=><li key={d} className="calendar-weekDay">{d}</li>)}</ul>
