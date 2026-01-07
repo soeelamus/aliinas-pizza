@@ -142,8 +142,7 @@ const Calendar = () => {
               {calendarDates.map((d,idx)=>(
                 <li key={idx} className={d.className||""} onClick={()=>handleEventClick(d.event)}>
                   <span className="day-number">{d.day}</span>
-                  {d.event ? <><small>{d.event.title}</small><small>{d.event.location}</small></> :
-                    !d.inactive && <button onClick={e=>{ e.stopPropagation(); setSelectedDate(d.fullDate); setPopupOpen(true)}} className="add-event-btn">Toevoegen</button>}
+                  {d.event ? <><small>{d.event.title}</small><small>{d.event.location}</small></> : !d.inactive}
                 </li>
               ))}
             </ul>
