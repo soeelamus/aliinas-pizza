@@ -7,7 +7,8 @@ import Carousel from "./components/Carousel";
 import Calendar from "./components/Calendar";
 import HowWork from "./components/HowWork";
 import ContactForm from "./components/ContactForm";
-import Menu from "./components/Menu";
+import PizzaShop from './components/PizzaShop';
+import Cart from "./components/Cart";
 
 // Import CSS
 import Footer from "./components/Footer";
@@ -24,7 +25,8 @@ function App() {
       <Calendar />
       <HowWork />
       <ContactForm />
-      <Menu />
+      <PizzaShop />
+      <Cart />
       <Footer />
     </div>
   );
