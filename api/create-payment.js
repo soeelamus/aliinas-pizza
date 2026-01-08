@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000"); // alleen je lokale frontend
+  res.setHeader("Access-Control-Allow-Origin", "https://aliinas.com");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
