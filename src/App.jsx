@@ -11,7 +11,7 @@ import ContactForm from "./components/ContactForm";
 import PizzaShop from './components/PizzaShop';
 import Cart from "./components/Cart";
 import Footer from "./components/Footer";
-import SuccessPage from "./components/SuccessPage"; // nieuwe component
+import SuccessPage from "./components/SuccessPage";
 
 // CSS
 import "./assets/css/main.css";
