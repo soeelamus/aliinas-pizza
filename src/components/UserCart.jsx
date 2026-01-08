@@ -9,26 +9,25 @@ const UserCart = ({
 }) => {
   if (cart.length === 0) return null;
 
-  const handleCheckout = async () => {
-    try {
-      const res = await fetch("api/create-payment", {
+const handleCheckout = async () => {
+  try {
+    const res = await fetch(
+      "https://aliinas-pizza.vercel.app/api/create-payment", // backend blijft Vercel
+      {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          cart,
-          total: totalAmount(),
-        }),
-      });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ total: totalAmount() }),
+      }
+    );
 
-      const data = await res.json();
-      window.location.href = data.checkoutUrl;
-    } catch (error) {
-      console.error("Checkout error:", error);
-      alert("Betaling kon niet gestart worden.");
-    }
-  };
+    const data = await res.json();
+    window.location.href = data.checkoutUrl; // redirect naar Mollie
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert("Betaling kon niet gestart worden.");
+  }
+};
+
 
   return (
     <aside className="cart">
