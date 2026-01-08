@@ -30,11 +30,11 @@ const HowWork = () => (
               <br />
               <br />
               <ul>
-                <li>20x Margheriita (220)</li>
-                <li>20x Pepperonii (240)</li>
+                <li>15x Margheriita (165)</li>
+                <li>15x Pepperonii (180)</li>
                 <li>10x Sweet Chiicken (130)</li>
                 <li>Transport, Elektriciteit,.. (100)</li>
-                <li>Totaal - €690.</li>
+                <li>Totaal - €575.</li>
               </ul>
               <p>
                 We voorzien altijd zelf elektriciteit. Zo kunnen we volledig
