@@ -1,46 +1,67 @@
 import React from "react";
-import "../assets/css/UserCart.css"; // optioneel voor styling
+import "../assets/css/UserCart.css";
 
-const UserCart = ({ cart = [], removePizzaFromCart, changeQuantity, totalAmount }) => {
-  // Alleen tonen als er items in de cart zitten
+const UserCart = ({
+  cart = [],
+  removePizzaFromCart,
+  changeQuantity,
+  totalAmount,
+}) => {
   if (cart.length === 0) return null;
+
+  const handleCheckout = async () => {
+    try {
+      const res = await fetch("api/create-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cart,
+          total: totalAmount(),
+        }),
+      });
+
+      const data = await res.json();
+      window.location.href = data.checkoutUrl;
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Betaling kon niet gestart worden.");
+    }
+  };
 
   return (
     <aside className="cart">
-      <h2>My Cart</h2>
       <ul>
-        {cart.map((item) => (
-          <li key={item.product.id} className="cart-item">
+        {cart.map((pizza) => (
+          <li key={pizza.product.id} className="cart-item">
             <div className="item-info">
               <div className="item-details">
-                <h3>{item.product.name}</h3>
-                <p>€{item.product.price}</p>
+                <span className="quant">
+                  {pizza.quantity}x {pizza.product.name}
+                </span>
+                <p>€{pizza.product.price}</p>
               </div>
             </div>
 
             <div className="item-actions">
-              <div className="quantity">
-                <button onClick={() => changeQuantity(item.product, 1)}>+</button>
-                <p className="quant">{item.quantity}</p>
-                <button
-                  onClick={() => {
-                    // Als quantity 1 is en je op - klikt → verwijderen
-                    if (item.quantity <= 1) {
-                      removePizzaFromCart(item.product);
-                    } else {
-                      changeQuantity(item.product, -1);
-                    }
-                  }}
-                >
-                  -
-                </button>
-              </div>
-
               <button
-                className="remove-button"
-                onClick={() => removePizzaFromCart(item.product)}
+                className="btn-purple btn-small"
+                onClick={() => {
+                  if (pizza.quantity <= 1) {
+                    removePizzaFromCart(pizza.product);
+                  } else {
+                    changeQuantity(pizza.product, -1);
+                  }
+                }}
               >
-                Remove
+                -
+              </button>
+              <button
+                className="btn-purple btn-small"
+                onClick={() => changeQuantity(pizza.product, 1)}
+              >
+                +
               </button>
             </div>
           </li>
@@ -51,7 +72,13 @@ const UserCart = ({ cart = [], removePizzaFromCart, changeQuantity, totalAmount 
         <div className="checkout-total">
           <p className="total">Totaal: €{totalAmount()}</p>
         </div>
-        <button className="checkout-button">Proceed to Payment</button>
+
+        <button
+          className="checkout-button btn-purple"
+          onClick={handleCheckout}
+        >
+          Bestel Take-out
+        </button>
       </div>
     </aside>
   );
