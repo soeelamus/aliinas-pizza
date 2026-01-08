@@ -25,7 +25,7 @@ const Footer = () => (
       </li>
     </ul>
     <ul className="copyright">
-      <li>
+      <li>Design by 
         &copy;
         <a
           target="_blank"
@@ -35,18 +35,8 @@ const Footer = () => (
           Soe Elamus OÜ
         </a>
       </li>
-      <li>Design: Michiel Willems</li>
-      <li>VAT/KM: EE102909436</li>
-      <p>
-        <a
-          href="https://apps.emta.ee/saqu/public/taxdebt?lang=en"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Controleer onze fiscale betrouwbaarheid
-        </a>
-        met registratiecode:17342118
-      </p>
+      <li>Michiel Willems</li>
+      <li>BE1032.444.046</li>
     </ul>
   </footer>
 );
