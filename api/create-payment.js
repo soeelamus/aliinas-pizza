@@ -29,8 +29,9 @@ export default async function handler(req, res) {
           value: total.toFixed(2),
         },
         description: "Take-out bestelling (test)",
-        redirectUrl: "http://localhost:3000/success",
-        webhookUrl: "https://aliinas-pizza.vercel.app/api/mollie-webhook",
+        redirectUrl: "https://aliinas.com/success",
+        webhookUrl: "https://aliinas.com/api/mollie-webhook",
+
       }),
     });
 
