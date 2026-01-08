@@ -4,6 +4,11 @@ import "../assets/css/SuccessPage.css";
 
 const SuccessPage = () => {
   const navigate = useNavigate();
+  
+  useEffect(() => {
+  sessionStorage.removeItem("cart");
+}, []);
+
 
   return (
     <div className="success-page main style-2">

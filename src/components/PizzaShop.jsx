@@ -4,7 +4,15 @@ import Menu from "./Menu";
 
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+  const savedCart = localStorage.getItem("cart");
+  return savedCart ? JSON.parse(savedCart) : [];
+});
+console.log(localStorage);
+
+  useEffect(() => {
+  localStorage.setItem("cart", JSON.stringify(cart));
+}, [cart]);
 
   useEffect(() => {
     fetch("/json/data.json")
