@@ -806,6 +806,9 @@ body.is-preload #header:after {
   background-size: auto, cover, cover;
   text-align: center;
 }
+footer {
+  margin-top: 15rem !important;
+}
 #footer a {
   border-bottom-color: rgba(255, 255, 255, 0.5);
 }
@@ -1802,4 +1805,20 @@ footer a:hover {
   .menu-box {
     padding: 5rem 1rem;
   }
+}
+.imagesbox {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 15rem 0;
+}
+.imagesbox-img {
+  max-width: 25rem;
+  border-radius: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.3) 4px 4px 4px;
+}
+.imagesbox-img:hover {
+  transform: scale(125%);
+  cursor: pointer;
 }

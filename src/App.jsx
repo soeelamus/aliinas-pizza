@@ -7,6 +7,7 @@ import Carousel from "./components/Carousel";
 import Calendar from "./components/Calendar";
 import HowWork from "./components/HowWork";
 import ContactForm from "./components/ContactForm";
+import ImagesBox from "./components/ImagesBox";
 import PizzaShop from "./components/PizzaShop";
 import Cart from "./components/Cart";
 import SuccessPage from "./components/SuccessPage";
@@ -35,6 +36,7 @@ function App() {
                 <Calendar />
                 <HowWork />
                 <ContactForm />
+                <ImagesBox />
                 <PizzaShop />
                 <Cart />
               </>
