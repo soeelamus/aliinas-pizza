@@ -1,18 +1,5 @@
 export default async function handler(req, res) {
-  // CORS headers
-  res.setHeader("Access-Control-Allow-Origin", "https://aliinas.com");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  // Preflight request (OPTIONS) direct goedkeuren
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  // Alleen POST requests toegestaan
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
+  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
   const { total } = req.body;
 
@@ -24,18 +11,15 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        amount: {
-          currency: "EUR",
-          value: total.toFixed(2),
-        },
-        description: "Take-out bestelling (test)",
-        redirectUrl: "https://aliinas.com/success",
+        amount: { currency: "EUR", value: total.toFixed(2) },
+        description: "Take-out bestelling",
+        redirectUrl: "https://aliinas.com/success", // ❌ geen paymentId in URL
         webhookUrl: "https://aliinas.com/api/mollie-webhook",
-
       }),
     });
 
     const data = await response.json();
+    console.log("Created Mollie payment:", data);
 
     res.status(200).json({
       checkoutUrl: data._links.checkout.href,
