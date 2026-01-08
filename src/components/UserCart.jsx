@@ -11,11 +11,11 @@ const UserCart = ({
 
 const handleCheckout = async () => {
   try {
-    const res = await fetch("/api/create-payment", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ total: totalAmount() }),
-});
+  const res = await fetch("https://aliinas-pizza.vercel.app/api/create-payment", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ total: totalAmount() }),
+  });
 
     const data = await res.json();
     window.location.href = data.checkoutUrl; // redirect naar Mollie
