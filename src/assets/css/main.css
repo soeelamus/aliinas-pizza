@@ -1394,7 +1394,7 @@ textarea.error {
   justify-content: center;
   flex-wrap: wrap;
   gap: 7rem;
-  margin: 10rem 0;
+  margin: 10rem 0 2rem;
 }
 .container-carousel-header {
   max-width: 30rem;
