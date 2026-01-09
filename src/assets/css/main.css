@@ -1822,3 +1822,14 @@ footer a:hover {
   transform: scale(125%);
   cursor: pointer;
 }
+.menu-openStatus {
+  color: var(--primary-white);
+  padding: 2rem 1rem !important;
+  text-align: center;
+}
+.menu-openStatus-p {
+  margin-bottom: 1rem;
+}
+.menu-openStatus-p:last-child {
+  margin-bottom: 5rem;
+}

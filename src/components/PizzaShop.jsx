@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from "react";
 import Cart from "./Cart";
 import Menu from "./Menu";
+import { fetchEvents } from "../utils/fetchEvents";
 
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
   const [cart, setCart] = useState(() => {
-  const savedCart = localStorage.getItem("cart");
-  return savedCart ? JSON.parse(savedCart) : [];
-});
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
+  const [events, setEvents] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  
+
+  // Sla cart op in localStorage
   useEffect(() => {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}, [cart]);
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
 
+  // Fetch pizzas
   useEffect(() => {
     fetch("/json/data.json")
       .then((res) => res.json())
@@ -20,6 +27,24 @@ const PizzaShop = () => {
       .catch((err) => console.error(err));
   }, []);
 
+  // Fetch events en bepaal of we open zijn
+  useEffect(() => {
+    const loadEvents = async () => {
+      const data = await fetchEvents();
+      setEvents(data);
+      
+
+      // vandaag in format YYYY-MM-DD
+      const today = new Date().toISOString().slice(0, 10);
+      const openToday = data.some(
+        (e) => e.type.toLowerCase() === "standplaats" && e.date === today
+      );
+      setIsOpen(openToday);
+    };
+    loadEvents();
+  }, []);
+
+  // Cart handlers
   const addPizzaToCart = (pizza) => {
     const existing = cart.find((item) => item.product.id === pizza.id);
     if (existing) {
@@ -47,7 +72,7 @@ const PizzaShop = () => {
             ? { ...item, quantity: Math.max(item.quantity + delta, 0) }
             : item
         )
-        .filter((item) => item.quantity > 0) // verwijder items met 0
+        .filter((item) => item.quantity > 0)
     );
   };
 
@@ -61,8 +86,15 @@ const PizzaShop = () => {
         removePizzaFromCart={removePizzaFromCart}
         changeQuantity={changeQuantity}
         totalAmount={totalAmount}
+        isOpen={isOpen}
       />
-      <Menu pizzas={pizzas} addPizzaToCart={addPizzaToCart} />
+
+      <Menu
+        pizzas={pizzas}
+        addPizzaToCart={addPizzaToCart}
+        events={events}
+        isOpen={isOpen}
+      />
     </div>
   );
 };

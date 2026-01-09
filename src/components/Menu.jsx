@@ -1,40 +1,40 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import OrderDate from "./OrderDate";
 
-const Menu = ({ pizzas, addPizzaToCart }) => {
+const Menu = ({ pizzas, addPizzaToCart, events, isOpen }) => {
+  
   return (
-    <div className="menu">
-      <div id="3" className="menu-box">
+    <div id="3" className="menu">
+      <OrderDate events={events} />
+      <div className="menu-box">
         <h2 className="monoton-regular">Menu</h2>
         <div className="pizza-box">
           {pizzas.map((pizza) => {
-            const ingredients = pizza.ingredients
-              ?.map((i) => i.name)
-              .join(" • ");
-
+            const ingredients = pizza.ingredients?.map((i) => i.name).join(" • ");
             return (
               <div key={pizza.id} className="pizza">
                 <div className="pizza-text">
                   <h3 className="pizza-name">
-                    {pizza.name}{" "}
-                    <span className="pizza-symbol">{pizza.type}</span>
+                    {pizza.name} <span className="pizza-symbol">{pizza.type}</span>
                   </h3>
                   <div className="price-box">
-                    <h3 className="pizza-price">{pizza.price}</h3>
+                    <h3 className="pizza-price">€{pizza.price}</h3>
                     <button
                       className="btn-small btn-purple"
                       onClick={() => addPizzaToCart(pizza)}
+                      disabled={!isOpen} // knop disablen als gesloten
+                      title={!isOpen ? "We zijn vandaag gesloten" : "Toevoegen aan bestelling"}
                     >
                       +
                     </button>
                   </div>
                 </div>
-
                 <p className="pizza-ingredients">{ingredients}</p>
               </div>
             );
           })}
         </div>
-      </div>
+      </div> 
     </div>
   );
 };

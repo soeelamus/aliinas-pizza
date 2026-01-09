@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import UserCart from "./UserCart";
 import { FaShoppingCart } from "react-icons/fa";
 
-const Cart = ({ cart, removePizzaFromCart, changeQuantity, totalAmount }) => {
+const Cart = ({ cart, removePizzaFromCart, changeQuantity, totalAmount, isOpen }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   // Geen cart-items? Toon niets
@@ -26,6 +26,7 @@ const Cart = ({ cart, removePizzaFromCart, changeQuantity, totalAmount }) => {
             removePizzaFromCart={removePizzaFromCart}
             changeQuantity={changeQuantity}
             totalAmount={totalAmount}
+            isOpen={isOpen}
           />
         )}
         </div>
