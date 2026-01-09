@@ -1,0 +1,190 @@
+{
+  "Pizzas": [
+    {
+      "id": 1,
+      "name": "Margheriita",
+      "img": "margheriita.jpg",
+      "type": "🥬",
+      "price": 11,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Fungii",
+      "price": 12,
+      "img": "fungii.jpg",
+      "type": "🥬",
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Champignons"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Vegii",
+      "img": "vegii.jpg",
+      "type": "🥬",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Pesto"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Paprika"
+        },
+        {
+          "name": "Rode ui"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Pepperonii",
+      "img": "pepperonii.jpg",
+      "type": "",
+      "price": 12,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Pepperoni"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Jaeger",
+      "img": "jaeger.jpg",
+      "type": "",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Champignons"
+        },
+        {
+          "name": "Gerookte ham"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },  
+    {
+      "id": 6,
+      "name": "Sweet Chiicken",
+      "img": "sweetChiicken.jpg",
+      "type": "",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Gegrilde kip"
+        },
+        {
+          "name": "Appel"
+        },
+        {
+          "name": "Honing"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Diiavola",
+      "img": "diiavola.jpg",
+      "type": "🌶️",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Paprika"
+        },
+        {
+          "name": "Rode ui"
+        },
+        {
+          "name": "Jalapeno"
+        },
+        {
+          "name": "Pepperoni"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Nduja",
+      "img": "nduja.jpg",
+      "type": "🌶️",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Rode ui"
+        },
+        {
+          "name": "Jalapeno"
+        },
+        {
+          "name": "Nduja"
+        },
+        {
+          "name": "Chili honing"
+        }
+      ]
+    }
+  ]
+}
