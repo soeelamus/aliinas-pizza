@@ -7,20 +7,31 @@ const SuccessPage = () => {
   const navigate = useNavigate();
 
 useEffect(() => {
+  const paymentId = sessionStorage.getItem("paymentId");
+
+  if (!paymentId) {
+    navigate("/");
+    return;
+  }
+
   const check = async () => {
-    const res = await fetch("/api/payment-status");
+    const res = await fetch(`/api/payment-status?paymentId=${paymentId}`);
     const data = await res.json();
 
     if (data.status === "paid") {
       localStorage.removeItem("cart");
+      sessionStorage.removeItem("paymentId");
       setStatus("paid");
+    } else if (data.status === "open") {
+      setStatus("loading");
     } else {
-      navigate("/");
+      navigate("/"); // canceled / failed
     }
   };
 
   check();
 }, []);
+
 
 
 

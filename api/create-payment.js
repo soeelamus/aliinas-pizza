@@ -23,7 +23,9 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       checkoutUrl: data._links.checkout.href,
+      paymentId: data.id,
     });
+
   } catch (error) {
     console.error("Mollie API error:", error);
     res.status(500).json({ error: "Failed to create payment" });

@@ -20,13 +20,19 @@ const handleCheckout = async () => {
     const data = await res.json();
     console.log("Checkout URL:", data.checkoutUrl);
 
-    // Redirect naar Mollie checkout
+    // 🔑 Bewaar paymentId vóór redirect
+    sessionStorage.setItem("paymentId", data.paymentId);
+    console.log('Payment ID:' + data.paymentId);
+    
+
+    // 🔁 Naar Mollie
     window.location.href = data.checkoutUrl;
   } catch (error) {
     console.error("Checkout error:", error);
     alert("Betaling kon niet gestart worden.");
   }
 };
+
 
 
   return (
