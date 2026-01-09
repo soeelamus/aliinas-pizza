@@ -8,7 +8,6 @@ const PizzaShop = () => {
   const savedCart = localStorage.getItem("cart");
   return savedCart ? JSON.parse(savedCart) : [];
 });
-console.log(localStorage);
 
   useEffect(() => {
   localStorage.setItem("cart", JSON.stringify(cart));

@@ -1,5 +1,17 @@
-import { getLastPaymentStatus } from "./mollie-webhook";
+export default async function handler(req, res) {
+  const { paymentId } = req.query;
 
-export default function handler(req, res) {
-  res.json({ status: getLastPaymentStatus() });
+  if (!paymentId) return res.status(400).json({ error: "No paymentId provided" });
+
+  try {
+    const response = await fetch(`https://api.mollie.com/v2/payments/${paymentId}`, {
+      headers: { Authorization: `Bearer ${process.env.MOLLIE_API_KEY}` },
+    });
+
+    const payment = await response.json();
+    res.status(200).json({ status: payment.status });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "error" });
+  }
 }

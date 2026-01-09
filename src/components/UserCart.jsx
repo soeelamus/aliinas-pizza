@@ -18,11 +18,9 @@ const handleCheckout = async () => {
     });
 
     const data = await res.json();
-    console.log("Checkout URL:", data.checkoutUrl);
 
     // 🔑 Bewaar paymentId vóór redirect
     sessionStorage.setItem("paymentId", data.paymentId);
-    console.log('Payment ID:' + data.paymentId);
     
 
     // 🔁 Naar Mollie

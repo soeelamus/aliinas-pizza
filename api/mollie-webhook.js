@@ -11,7 +11,6 @@ export default async function handler(req, res) {
     });
 
     const payment = await mollieRes.json();
-    console.log("Webhook payment:", payment.status);
 
     lastPaymentStatus = payment.status;
 

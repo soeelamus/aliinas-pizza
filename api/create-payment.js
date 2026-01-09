@@ -19,7 +19,6 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    console.log("Created Mollie payment:", data);
 
     res.status(200).json({
       checkoutUrl: data._links.checkout.href,
