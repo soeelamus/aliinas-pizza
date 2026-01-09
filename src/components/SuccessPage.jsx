@@ -6,21 +6,22 @@ const SuccessPage = () => {
   const [status, setStatus] = useState("loading");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const checkPayment = async () => {
-      try {
-        // Hier kun je checken via Mollie webhook database of via server endpoint
-        // Voor testmodus: we gaan ervan uit dat betaling geslaagd is
-        setStatus("paid");
-        localStorage.removeItem("cart");
-      } catch (err) {
-        console.error(err);
-        navigate("/"); // Niet betaald → terug naar root
-      }
-    };
+useEffect(() => {
+  const check = async () => {
+    const res = await fetch("/api/payment-status");
+    const data = await res.json();
 
-    checkPayment();
-  }, [navigate]);
+    if (data.status === "paid") {
+      localStorage.removeItem("cart");
+      setStatus("paid");
+    } else {
+      navigate("/");
+    }
+  };
+
+  check();
+}, []);
+
 
 
   return (

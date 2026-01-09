@@ -18,9 +18,8 @@ const Menu = ({ pizzas, addPizzaToCart }) => {
                     {pizza.name}{" "}
                     <span className="pizza-symbol">{pizza.type}</span>
                   </h3>
-
                   <div className="price-box">
-                    <h3 className="pizza-price">€{pizza.price}</h3>
+                    <h3 className="pizza-price">{pizza.price}</h3>
                     <button
                       className="btn-small btn-purple"
                       onClick={() => addPizzaToCart(pizza)}
