@@ -7,22 +7,26 @@ const UserCart = ({ cart = [], removePizzaFromCart, changeQuantity, totalAmount,
 
   
   
-  const handleCheckout = async () => {
-    if (!isOpen) return; // Safety: geen betaling als gesloten
-    try {
-      const res = await fetch("/api/create-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ total: totalAmount() }),
-      });
-      const data = await res.json();
-      window.location.href = data.checkoutUrl;
-    } catch (error) {
-      console.error("Checkout error:", error);
-      alert("Betaling kon niet gestart worden.");
-    }
-  };
-  
+const handleCheckout = async () => {
+  if (!isOpen) return; // Safety: geen betaling als gesloten
+  try {
+    const res = await fetch("/api/create-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ total: totalAmount() }),
+    });
+
+    const data = await res.json();
+
+    localStorage.setItem("paymentId", data.paymentId);
+
+    window.location.href = data.checkoutUrl;
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert("Betaling kon niet gestart worden.");
+  }
+};
+
   return (
     <aside className="cart">
       <ul>

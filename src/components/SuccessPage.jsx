@@ -7,8 +7,9 @@ const SuccessPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const paymentId = sessionStorage.getItem("paymentId");
-    if (!paymentId) return navigate("/");
+    const paymentId = localStorage.getItem("paymentId");
+    if (!paymentId) return;
+
 
     const checkPayment = async () => {
       try {
@@ -19,8 +20,9 @@ const SuccessPage = () => {
 
         if (data.status === "paid") {
           localStorage.removeItem("cart");
-          sessionStorage.removeItem("paymentId");
+          localStorage.removeItem("paymentId");
         }
+
 
       } catch (err) {
         console.error(err);
