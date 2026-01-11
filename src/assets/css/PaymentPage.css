@@ -1,0 +1,48 @@
+.payment-page-body {
+    background-color: var(--primary-purple) !important;
+    background-color: var(--primary-purple);
+    background-image: url(/images/logo.png);
+    background-size: 15rem;
+    background-repeat: repeat-y;
+    background-position: 82%;
+    background-attachment: fixed;
+    padding: 2rem 0;
+}
+
+.payment-page {
+  max-width: 35rem;
+  margin: 5rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* CART SUMMARY LIST */
+.payment-cart {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.payment-cart li {
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0;
+}
+
+.payment-total {
+  font-size: 1.2rem;
+  text-align: right;
+}
+
+.btn-purple:disabled {
+  background-color: #a99ecb;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .payment-page {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+}

@@ -139,6 +139,7 @@ const SuccessPage = () => {
   };
 
   return (
+    <div className="success-page-body">
     <div className="success-page main style-2">
       <div className="success-card">
         {renderContent()}
@@ -146,6 +147,7 @@ const SuccessPage = () => {
           Home
         </button>
       </div>
+    </div>
     </div>
   );
 };

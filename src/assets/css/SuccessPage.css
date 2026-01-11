@@ -1,15 +1,16 @@
-.success-page {
+.success-page-body {
+    background-color: var(--primary-purple) !important;
     background-color: var(--primary-purple);
     background-image: url(/images/logo.png);
     background-size: 15rem;
     background-repeat: repeat-y;
     background-position: 82%;
     background-attachment: fixed;
+    padding: 2rem 0;
+}
+.success-page {
     display: flex;
-    align-items: center;
     justify-content: center;
-    padding: 5rem 2rem;
-    margin-top: 5rem;
 }
 
 .success-card {
@@ -19,8 +20,8 @@
     align-items: center;
     padding: 3rem 2.5rem;
     border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
     text-align: center;
-    width: 30rem;
+    width: 35rem;
     max-width: 100%;
 }

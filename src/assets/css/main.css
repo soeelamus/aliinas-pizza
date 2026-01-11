@@ -1261,10 +1261,14 @@ textarea {
   border: 1px solid var(--primary-purple);
   font-size: 16px;
   transition: all 0.3s;
+  cursor: pointer;
 }
 input:focus,
 textarea:focus {
-  border-color: #3490dc;
+  border-color: var(--primary-pink);
+}
+input:focus,
+textarea:focus {
   box-shadow: 0 0 8px rgba(52, 144, 220, 0.2);
   outline: 0;
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Pages / components
+import Navbar from "./components/Navbar";
 import Header from "./components/Header";
 import Carousel from "./components/Carousel";
 import Calendar from "./components/Calendar";
@@ -11,6 +12,7 @@ import ImagesBox from "./components/ImagesBox";
 import PizzaShop from "./components/PizzaShop";
 import PaymentPage from "./components/PaymentPage";
 import SuccessPage from "./components/SuccessPage";
+import Footer from "./components/Footer";
 
 // Layouts
 import MainLayout from "./layouts//MainLayout";
@@ -31,6 +33,7 @@ function App() {
             path="/"
             element={
               <>
+                <Navbar />
                 <Header />
                 <Carousel />
                 <Calendar />
@@ -38,17 +41,18 @@ function App() {
                 <ContactForm />
                 <ImagesBox />
                 <PizzaShop />
+                <Footer />
               </>
-            }
-          />
-          <Route 
-            path="/payment"
-            element={<PaymentPage/>
             }
           />
         </Route>
 
         <Route element={<RedirectLayout />}>
+          <Route 
+            path="/payment"
+            element={<PaymentPage/>
+            }
+          />
           <Route 
             path="/success" 
             element={<SuccessPage />} />
