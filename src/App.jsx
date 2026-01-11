@@ -9,6 +9,7 @@ import HowWork from "./components/HowWork";
 import ContactForm from "./components/ContactForm";
 import ImagesBox from "./components/ImagesBox";
 import PizzaShop from "./components/PizzaShop";
+import PaymentPage from "./components/PaymentPage";
 import SuccessPage from "./components/SuccessPage";
 
 // Layouts
@@ -38,6 +39,11 @@ function App() {
                 <ImagesBox />
                 <PizzaShop />
               </>
+            }
+          />
+          <Route 
+            path="/payment"
+            element={<PaymentPage/>
             }
           />
         </Route>

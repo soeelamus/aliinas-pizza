@@ -1,35 +1,28 @@
+// Cart.jsx
 import React, { useState } from "react";
 import UserCart from "./UserCart";
 import { FaShoppingCart } from "react-icons/fa";
+import { useCart } from "../components/CartContext";
 
-const Cart = ({ cart, removePizzaFromCart, changeQuantity, totalAmount, isOpen }) => {
+const Cart = ({ isOpen }) => {
+  const { cart } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Geen cart-items? Toon niets
   if (!cart || cart.length === 0) return null;
 
-  const toggleCart = () => setIsCartOpen((prev) => !prev);
+  const toggleCart = () => setIsCartOpen(prev => !prev);
+
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-       <div className="btn-cta"> 
-        {cart?.length > 0 && (
-          <button className="btn-purple btn-cart" onClick={toggleCart}>
-            <FaShoppingCart />
-            <span className="cart-count">{cart.length}</span>
-          </button>
-        )}
+    <div className="btn-cta">
+      <button className="btn-purple btn-cart" onClick={toggleCart}>
+        <FaShoppingCart />
+        <span className="cart-count">{totalItems}</span>
+      </button>
 
-        {/* UserCart tonen als isCartOpen true */}
-        {isCartOpen && cart.length > 0 && (
-          <UserCart
-            cart={cart}
-            removePizzaFromCart={removePizzaFromCart}
-            changeQuantity={changeQuantity}
-            totalAmount={totalAmount}
-            isOpen={isOpen}
-          />
-        )}
-        </div>
+      {isCartOpen && <UserCart isOpen={isOpen} />}
+    </div>
   );
 };
 

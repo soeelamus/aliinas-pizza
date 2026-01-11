@@ -1,31 +1,14 @@
 // UserCart.jsx
 import React from "react";
 import "../assets/css/UserCart.css";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../components/CartContext";
 
-const UserCart = ({ cart = [], removePizzaFromCart, changeQuantity, totalAmount, isOpen }) => {
+const UserCart = ({ isOpen }) => {
+  const navigate = useNavigate();
+  const { cart, removePizza, changeQuantity, totalAmount } = useCart();
+
   if (cart.length === 0) return null;
-
-  
-  
-const handleCheckout = async () => {
-  if (!isOpen) return; // Safety: geen betaling als gesloten
-  try {
-    const res = await fetch("/api/create-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ total: totalAmount() }),
-    });
-
-    const data = await res.json();
-
-    localStorage.setItem("paymentId", data.paymentId);
-
-    window.location.href = data.checkoutUrl;
-  } catch (error) {
-    console.error("Checkout error:", error);
-    alert("Betaling kon niet gestart worden.");
-  }
-};
 
   return (
     <aside className="cart">
@@ -34,19 +17,31 @@ const handleCheckout = async () => {
           <li key={pizza.product.id} className="cart-item">
             <div className="item-info">
               <div className="item-details">
-                <span className="quant">{pizza.quantity}x {pizza.product.name}</span>
+                <span className="quant">
+                  {pizza.quantity}x {pizza.product.name}
+                </span>
                 <p>€{pizza.product.price}</p>
               </div>
             </div>
+
             <div className="item-actions">
               <button
                 className="btn-purple btn-small"
-                onClick={() => pizza.quantity <= 1 ? removePizzaFromCart(pizza.product) : changeQuantity(pizza.product, -1)}
-              >-</button>
+                onClick={() =>
+                  pizza.quantity <= 1
+                    ? removePizza(pizza.product)
+                    : changeQuantity(pizza.product, -1)
+                }
+              >
+                -
+              </button>
+
               <button
                 className="btn-purple btn-small"
                 onClick={() => changeQuantity(pizza.product, 1)}
-              >+</button>
+              >
+                +
+              </button>
             </div>
           </li>
         ))}
@@ -56,12 +51,13 @@ const handleCheckout = async () => {
         <div className="checkout-total">
           <p className="total">Totaal: €{totalAmount()}</p>
         </div>
+
         <button
           className="checkout-button btn-purple"
-          onClick={handleCheckout}
-          disabled={!isOpen} // knop uitgeschakeld als gesloten
+          onClick={() => navigate("/payment")}
+          disabled={!isOpen}
         >
-          {isOpen ? "Bestel Take-out" : "Vandaag gesloten"} {/* dynamische tekst */}
+          {isOpen ? "Verder naar betalen" : "Vandaag gesloten"}
         </button>
       </div>
     </aside>
