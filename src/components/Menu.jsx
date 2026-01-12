@@ -1,7 +1,7 @@
 // Menu.jsx
 import React from "react";
 import OrderDate from "./OrderDate";
-import { useCart } from "../components/CartContext";
+import { useCart } from "../contexts/CartContext";
 
 const Menu = ({ pizzas, events, isOpen }) => {
   const { addPizza } = useCart();

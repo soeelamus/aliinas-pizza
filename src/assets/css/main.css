@@ -1253,18 +1253,19 @@ label {
   font-weight: 600;
 }
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   padding: 14px 15px;
   margin-bottom: 20px;
   border-radius: 12px;
   border: 1px solid var(--primary-purple);
-  font-size: 16px;
   transition: all 0.3s;
   cursor: pointer;
 }
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   border-color: var(--primary-pink);
 }
 input:focus,

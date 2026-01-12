@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import UserCart from "./UserCart";
 import { FaShoppingCart } from "react-icons/fa";
-import { useCart } from "../components/CartContext";
+import { useCart } from "../contexts/CartContext";
 
 const Cart = ({ isOpen }) => {
   const { cart } = useCart();

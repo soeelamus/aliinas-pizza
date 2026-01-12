@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Cart from "./Cart";
 import Menu from "./Menu";
-import { fetchEvents } from "../utils/fetchEvents";
+import { useEvents } from "../contexts/EventsContext";
 
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
-  const [events, setEvents] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const { events, isOpen, loading } = useEvents(); // get global events & isOpen
 
   // Fetch pizzas
   useEffect(() => {
@@ -16,29 +15,12 @@ const PizzaShop = () => {
       .catch((err) => console.error(err));
   }, []);
 
-  // Fetch events en bepaal of we open zijn
-  useEffect(() => {
-    const loadEvents = async () => {
-      const data = await fetchEvents();
-      setEvents(data);
-
-      const today = new Date().toISOString().slice(0, 10);
-      const openToday = data.some(
-        (e) => e.type.toLowerCase() === "standplaats" && e.date === today
-      );
-
-      setIsOpen(openToday);
-    };
-
-    loadEvents();
-  }, []);
+  // Optionally show loading state until events are loaded
+  if (loading) return <p>Even geduld, de menu wordt geladen…</p>;
 
   return (
     <div className="pizza-shop">
-      {/* Cart haalt zelf data uit CartContext */}
       <Cart isOpen={isOpen} />
-
-      {/* Menu voegt items toe via CartContext */}
       <Menu pizzas={pizzas} events={events} isOpen={isOpen} />
     </div>
   );

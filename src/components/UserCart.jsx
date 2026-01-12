@@ -2,7 +2,7 @@
 import React from "react";
 import "../assets/css/UserCart.css";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../components/CartContext";
+import { useCart } from "../contexts/CartContext";
 
 const UserCart = ({ isOpen }) => {
   const navigate = useNavigate();

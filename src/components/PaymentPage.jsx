@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { useCart } from "../components/CartContext";
+import { useCart } from "../contexts/CartContext";
 import { useNavigate } from "react-router-dom";
+import { useEvents } from "../contexts/EventsContext";
 
 import "../assets/css/PaymentPage.css";
 import "../assets/css/SuccessPage.css";
@@ -11,6 +12,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
     name: "",
     pickupTime: "",
     notes: "",
+    agreeTerms: false,
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -33,106 +35,120 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
   const timeSlots = generateTimeSlots();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validate = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Vul je naam in";
-    if (!formData.pickupTime.trim()) newErrors.pickupTime = "Kies een afhaaltijd";
+    if (!formData.pickupTime.trim())
+      newErrors.pickupTime = "Kies een afhaaltijd";
+    if (!formData.agreeTerms) newErrors.agreeTerms = "Bevestig de afhaalplaats";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  
-
   const handleCheckout = async (e) => {
-  e.preventDefault();
-  if (!validate()) {
-    alert("Vul je naam en afhaaltijd in.");
-    return;
-  }
+    e.preventDefault();
+    if (!validate()) {
+      return;
+    }
 
-  // ✅ Save to localStorage
-  localStorage.setItem(
-    "paymentData",
-    JSON.stringify({
-      formData
-    })
+    // ✅ Save to localStorage
+    localStorage.setItem(
+      "paymentData",
+      JSON.stringify({
+        formData,
+      })
+    );
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/create-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          total: totalAmount(),
+          customer: formData,
+          cart,
+        }),
+      });
+
+      const data = await res.json();
+      localStorage.setItem("paymentId", data.paymentId);
+      window.location.href = data.checkoutUrl;
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Betaling kon niet gestart worden.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const { events } = useEvents(); // get global events
+
+  const today = new Date().toISOString().slice(0, 10);
+
+  const todaysEvent = events.find(
+    (e) => e.type.toLowerCase() === "standplaats" && e.date === today
   );
-
-  console.log(localStorage);
-  setLoading(true);
-
-  try {
-    const res = await fetch("/api/create-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        total: totalAmount(),
-        customer: formData,
-        cart,
-      }),
-    });
-
-    const data = await res.json();
-    localStorage.setItem("paymentId", data.paymentId);
-    window.location.href = data.checkoutUrl;
-  } catch (error) {
-    console.error("Checkout error:", error);
-    alert("Betaling kon niet gestart worden.");
-  } finally {
-    setLoading(false);
-  }
-};
-
-  
 
   return (
     <div className="payment-page-body">
       <form onSubmit={handleCheckout} className="payment-page">
-        {successMessage && (
-          <p className="success-message">{successMessage}</p>
-        )}
+        {successMessage && <p className="success-message">{successMessage}</p>}
         <h2>Afrekenen</h2>
 
         <div className="payment-form">
-          <label htmlFor="name">Naam</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            disabled={loading}
-          />
-          {errors.name && (
-            <span className="error-message">{errors.name}</span>
-          )}
+          <div className="options">
+            <div className="option1">
+              <label htmlFor="name">Naam</label>
+              <input
+                className="form-textarea"
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                disabled={loading}
+                maxLength="25"
+              />
+              {errors.name && (
+                <span className="error-message">{errors.name}</span>
+              )}
+            </div>
 
-          <label htmlFor="pickupTime">Afhaaltijd</label>
-          <select
-            id="pickupTime"
-            name="pickupTime"
-            value={formData.pickupTime}
-            onChange={handleChange}
-            disabled={loading}
-          >
-            <option value="">Kies een tijd</option>
-            {timeSlots.map((slot) => (
-              <option key={slot} value={slot}>
-                {slot}
-              </option>
-            ))}
-          </select>
-          {errors.pickupTime && (
-            <span className="error-message">{errors.pickupTime}</span>
-          )}
+            <div className="option2">
+              <label htmlFor="pickupTime">Afhaaltijd</label>
+              <select
+                className="form-textarea form-select"
+                id="pickupTime"
+                name="pickupTime"
+                value={formData.pickupTime}
+                onChange={handleChange}
+                disabled={loading}
+              >
+                <option value="">Tijdslot</option>
+                {timeSlots.map((slot) => (
+                  <option key={slot} value={slot}>
+                    {slot}
+                  </option>
+                ))}
+              </select>
+              {errors.pickupTime && (
+                <span className="error-message">{errors.pickupTime}</span>
+              )}
+            </div>
+          </div>
 
           <label htmlFor="notes">Opmerking</label>
           <textarea
+            className="form-textarea"
             id="notes"
             name="notes"
             placeholder="Opmerking (bv. geen ui, later ophalen, …)"
@@ -140,10 +156,37 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
             onChange={handleChange}
             rows={1}
             disabled={loading}
+            maxLength="75"
           />
+
+{todaysEvent ? (
+  <div className="checkbox-wrapper-39 form-checkbox">
+    <label>
+      <input
+        type="checkbox"
+        name="agreeTerms"
+        checked={formData.agreeTerms}
+        onChange={handleChange}
+        disabled={loading}
+      />
+      <span className="checkbox"></span>
+    </label>
+    <p>
+      Ik kom straks ophalen in {todaysEvent.address}, om {formData.pickupTime}
+    </p>
+  </div>
+) : (
+  <p>loading...</p>
+)}
+
+    <div>
+            {errors.agreeTerms && (
+              <span className="error-message">{errors.agreeTerms}</span>
+            )}
+          </div>
         </div>
 
-        <h3>Bestelling</h3>
+        <h3>Bestelling </h3>
         <ul className="payment-cart">
           {cart.map((pizza) => (
             <li key={pizza.product.id}>
@@ -152,22 +195,29 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
             </li>
           ))}
         </ul>
-
         <p className="payment-total">
           <strong>Totaal: €{totalAmount().toFixed(2)}</strong>
         </p>
 
         <div className="nav-btns">
-          <button className="btn-purple btn-small" onClick={() => navigate("/")}>
+          <button
+            className="btn-purple btn-small"
+            onClick={() => navigate("/")}
+          >
             &#60;
           </button>
+
           <button
             className="btn-purple"
             onClick={handleCheckout}
-            disabled={ !formData?.name?.trim() || !formData?.pickupTime?.trim() || loading }
-            >
+            disabled={
+              !formData?.name?.trim() ||
+              !formData?.pickupTime?.trim() ||
+              loading
+            }
+          >
             {loading ? "Even geduld..." : "Betalen"}
-            </button>
+          </button>
         </div>
       </form>
     </div>

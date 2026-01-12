@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { fetchEvents } from "../utils/fetchEvents";
+import { useEvents } from "../contexts/EventsContext";
 
 const months = [
   "Januari","Februari","Maart","April","Mei","Juni","Juli",
@@ -11,32 +11,27 @@ const months = [
 const Calendar = () => {
   const today = new Date();
   const [date, setDate] = useState(today);
-  const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
+  const { events, loading } = useEvents(); // Use global context
   const month = date.getMonth();
   const year = date.getFullYear();
 
-  // Load events once
-  useEffect(() => {
-    const load = async () => {
-      const data = await fetchEvents();
-      setEvents(data);
-    };
-    load();
-  }, []);
-
   // Generate calendar dates
   const generateCalendarDates = () => {
+    if (!events) return [];
+    
     const start = (new Date(year, month, 1).getDay() + 6) % 7;
     const endDate = new Date(year, month + 1, 0).getDate();
     const end = (new Date(year, month, endDate).getDay() + 6) % 7;
     const endDatePrev = new Date(year, month, 0).getDate();
 
-    let datesArr = [];
+    const datesArr = [];
 
+    // Previous month trailing days
     for (let i = start; i > 0; i--) datesArr.push({ day: endDatePrev - i + 1, inactive: true });
 
+    // Current month days
     for (let i = 1; i <= endDate; i++) {
       const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
       const event = events.find(ev => ev.date === fullDate);
@@ -51,24 +46,21 @@ const Calendar = () => {
       datesArr.push({ day: i, fullDate, event, className: className || "no-event" });
     }
 
+    // Next month leading days
     for (let i = end; i < 6; i++) datesArr.push({ day: i - end + 1, inactive: true });
+
     return datesArr;
   };
 
   const handleNav = (dir) => {
-    let newMonth = month,
-      newYear = year;
+    let newMonth = month, newYear = year;
     if (dir === "prev") {
-      if (month === 0) {
-        newYear--;
-        newMonth = 11;
-      } else newMonth--;
+      if (month === 0) { newYear--; newMonth = 11; } 
+      else newMonth--;
     }
     if (dir === "next") {
-      if (month === 11) {
-        newYear++;
-        newMonth = 0;
-      } else newMonth++;
+      if (month === 11) { newYear++; newMonth = 0; } 
+      else newMonth++;
     }
     if (newYear < today.getFullYear() || (newYear === today.getFullYear() && newMonth < today.getMonth())) return;
     setDate(new Date(newYear, newMonth, 1));
@@ -93,8 +85,7 @@ const Calendar = () => {
       .then((res) => res.json())
       .then((data) => {
         if (!data || data.length === 0) return;
-        const lat = parseFloat(data[0].lat),
-          lon = parseFloat(data[0].lon);
+        const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
         map.setView([lat, lon], 15);
         L.marker([lat, lon])
           .addTo(map)
@@ -107,8 +98,10 @@ const Calendar = () => {
 
   const calendarDates = generateCalendarDates();
 
+  if (loading) return <p>Even geduld, de kalender wordt geladen…</p>;
+
   return (
-    <section className="style2 main special">
+  <section className="style2 main special">
       <h4 className="text-h4 monoton-regular">Kalender</h4>
       <div className="calendar-wrapped">
         <div className="calendar">
