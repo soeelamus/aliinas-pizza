@@ -40,63 +40,59 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Vul je name in";
+    if (!formData.name.trim()) newErrors.name = "Vul je naam in";
     if (!formData.pickupTime.trim()) newErrors.pickupTime = "Kies een afhaaltijd";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
+  
 
-    try {
-      await onSubmit(formData); // ✅ trigger optional parent submit logic
-      setSuccessMessage(
-        `Bedankt ${formData.name}, je afhaaltijd is gekozen om ${formData.pickupTime}`
-      );
-      setFormData({ name: "", pickupTime: "", notes: "" });
-    } catch (err) {
-      console.error(err);
-      alert("Er ging iets mis, probeer opnieuw");
-    }
-  };
-
-  // 🔹 Add this: handleCheckout for the "Betalen" button
   const handleCheckout = async (e) => {
-    e.preventDefault();
-    if (!validate()) {
-      alert("Vul je naam en afhaaltijd in.");
-      return;
-    }
+  e.preventDefault();
+  if (!validate()) {
+    alert("Vul je naam en afhaaltijd in.");
+    return;
+  }
 
-    setLoading(true);
+  // ✅ Save to localStorage
+  localStorage.setItem(
+    "paymentData",
+    JSON.stringify({
+      formData
+    })
+  );
 
-    try {
-      const res = await fetch("/api/create-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          total: totalAmount(),
-          customer: formData,
-          cart,
-        }),
-      });
+  console.log(localStorage);
+  setLoading(true);
 
-      const data = await res.json();
-      localStorage.setItem("paymentId", data.paymentId);
-      window.location.href = data.checkoutUrl;
-    } catch (error) {
-      console.error("Checkout error:", error);
-      alert("Betaling kon niet gestart worden.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const res = await fetch("/api/create-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        total: totalAmount(),
+        customer: formData,
+        cart,
+      }),
+    });
+
+    const data = await res.json();
+    localStorage.setItem("paymentId", data.paymentId);
+    window.location.href = data.checkoutUrl;
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert("Betaling kon niet gestart worden.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+  
 
   return (
     <div className="payment-page-body">
-      <form onSubmit={handleSubmit} className="payment-page">
+      <form onSubmit={handleCheckout} className="payment-page">
         {successMessage && (
           <p className="success-message">{successMessage}</p>
         )}
@@ -168,10 +164,10 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
           <button
             className="btn-purple"
             onClick={handleCheckout}
-            disabled={loading || !isOpen}
-          >
+            disabled={ !formData?.name?.trim() || !formData?.pickupTime?.trim() || loading }
+            >
             {loading ? "Even geduld..." : "Betalen"}
-          </button>
+            </button>
         </div>
       </form>
     </div>

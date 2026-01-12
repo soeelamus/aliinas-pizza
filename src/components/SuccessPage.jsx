@@ -11,7 +11,11 @@ const SuccessPage = () => {
 
   useEffect(() => {
     const paymentId = localStorage.getItem("paymentId");
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const cart = JSON.parse(localStorage.getItem("cart"));
+    const paymentData = JSON.parse(localStorage.getItem("paymentData"));
+
+    console.log(paymentData);
+    console.log(paymentData.formData);
 
     if (!paymentId) {
       return;
@@ -23,26 +27,27 @@ const SuccessPage = () => {
         const data = await res.json();
         setStatus(data.status);
 
-        let selectedPickupTime = 1700;
-        let customerName = "Loes";
-
         if (data.status === "paid") {
           // Build order object
           const orderObj = {
             id: Date.now().toString(),
             paymentId: paymentId,
-            items: cart.map(i => `${i.quantity}x ${i.product.name}`),
-            total: cart.reduce((sum, i) => sum + i.product.price * i.quantity, 0),
-            pickupTime: selectedPickupTime,
+            items: cart.map((i) => `${i.quantity}x ${i.product.name}`),
+            total: cart.reduce(
+              (sum, i) => sum + i.product.price * i.quantity,
+              0
+            ),
+            pickupTime: paymentData.formData.pickupTime,
             orderedTime: new Date().toISOString(),
-            customerName: customerName,
+            customerName: paymentData.formData.name,
+            customerNotes: paymentData.formData.notes,
           };
 
           setOrder(orderObj);
 
-          // Clear localStorage
           localStorage.removeItem("cart");
           localStorage.removeItem("paymentId");
+          localStorage.removeItem("paymentData");
         }
       } catch (err) {
         console.error(err);
@@ -56,14 +61,15 @@ const SuccessPage = () => {
   // Push order to Google Sheets via Vercel API
   useEffect(() => {
     if (!order || pushed) return;
-    console.log('order: ', order);
-    console.log('id: ', order.id);
-    console.log('paymentId: ', order.paymentId);
-    console.log('items: ', order.items);
-    console.log('total: ', order.total);
-    console.log('pickupTime: ', order.pickupTime);
-    console.log('customerName: ', order.customerName);
-    
+    console.log("order: ", order);
+    console.log("id: ", order.id);
+    console.log("paymentId: ", order.paymentId);
+    console.log("items: ", order.items);
+    console.log("total: ", order.total);
+    console.log("pickupTime: ", order.pickupTime);
+    console.log("customerName: ", order.customerName);
+    console.log("customerNotes: ", order.customerNotes);
+
     const pushOrder = async () => {
       try {
         const res = await fetch("/api/push-order", {
@@ -77,6 +83,7 @@ const SuccessPage = () => {
             pickupTime: order.pickupTime,
             orderedTime: order.orderedTime,
             customerName: order.customerName,
+            customerNotes: order.customerNotes,
           }),
         });
 
@@ -106,7 +113,7 @@ const SuccessPage = () => {
               <br />
             </p>
             {!pushed && <p>⏳ Je bestelling wordt geaccepteerd…</p>}
-            {pushed && <p>De pizza's worden klaargemaakt!</p> }
+            {pushed && <p>De pizza's worden klaargemaakt!</p>}
           </>
         );
       case "canceled":
@@ -140,14 +147,20 @@ const SuccessPage = () => {
 
   return (
     <div className="success-page-body">
-    <div className="success-page main style-2">
-      <div className="success-card">
-        {renderContent()}
-        <button className="btn-purple" onClick={() => navigate("/")}>
-          Home
-        </button>
+      <div className="success-page main style-2">
+        <div className="success-card">
+          {renderContent()}
+          <button
+            className="btn-purple"
+            onClick={() => {
+              navigate("/");
+              window.location.reload();
+            }}
+          >
+            Home
+          </button>
+        </div>
       </div>
-    </div>
     </div>
   );
 };
