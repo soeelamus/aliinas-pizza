@@ -41,6 +41,7 @@ const SuccessPage = () => {
             orderedTime: new Date().toISOString(),
             customerName: paymentData.formData.name,
             customerNotes: paymentData.formData.notes,
+            status: "new",
           };
 
           setOrder(orderObj);
@@ -72,7 +73,7 @@ const SuccessPage = () => {
 
     const pushOrder = async () => {
       try {
-        const res = await fetch("/api/push-order", {
+        const res = await fetch("/api/orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -84,6 +85,7 @@ const SuccessPage = () => {
             orderedTime: order.orderedTime,
             customerName: order.customerName,
             customerNotes: order.customerNotes,
+            status: order.status,
           }),
         });
 

@@ -14,9 +14,14 @@ import PaymentPage from "./components/PaymentPage";
 import SuccessPage from "./components/SuccessPage";
 import Footer from "./components/Footer";
 
+// Kitchen components
+import KitchenLogin from "./components/kitchen/KitchenLogin";
+import KitchenDashboard from "./components/kitchen/KitchenDashboard";
+
 // Layouts
 import MainLayout from "./layouts//MainLayout";
 import RedirectLayout from "./layouts//RedirectLayout";
+import KitchenLayout from "./layouts/KitchenLayout";
 
 // CSS
 import "./assets/css/main.css";
@@ -26,7 +31,6 @@ function App() {
   return (
     <Router>
       <Routes>
-
         {/* 🟣 MAIN WEBSITE */}
         <Route element={<MainLayout />}>
           <Route
@@ -48,16 +52,14 @@ function App() {
         </Route>
 
         <Route element={<RedirectLayout />}>
-          <Route 
-            path="/payment"
-            element={<PaymentPage/>
-            }
-          />
-          <Route 
-            path="/success" 
-            element={<SuccessPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/success" element={<SuccessPage />} />
         </Route>
 
+        <Route element={<KitchenLayout />}>
+          <Route path="/kitchen" element={<KitchenLogin />} />
+          <Route path="/kitchen/dashboard" element={<KitchenDashboard />} />
+        </Route>
       </Routes>
     </Router>
   );

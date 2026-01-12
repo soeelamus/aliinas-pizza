@@ -1,0 +1,38 @@
+
+.kitchen-section {
+  margin: 1rem;
+}
+.kitchen-section ul {
+    list-style: none;
+    padding: 0;
+}
+.kitchen-section h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+.kitchen-orders {
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+    max-width: 40rem;
+    margin: 0 auto;
+}
+.kitchen-order {
+  border: 2px solid var(--primary-pink);
+  border-radius: 10px;
+  padding: 1rem;
+  background-color: #fff8e1;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Order headings */
+.kitchen-order h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+}
+
+/* Order details */
+.kitchen-order p {
+  margin: 0.25rem 0;
+}
