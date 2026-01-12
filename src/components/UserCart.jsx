@@ -57,7 +57,7 @@ const UserCart = ({ isOpen }) => {
           onClick={() => navigate("/payment")}
           disabled={!isOpen}
         >
-          {isOpen ? "Verder naar betalen" : "Vandaag gesloten"}
+          {isOpen ? "Bestellen" : "Vandaag gesloten"}
         </button>
       </div>
     </aside>

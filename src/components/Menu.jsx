@@ -7,10 +7,10 @@ const Menu = ({ pizzas, events, isOpen }) => {
   const { addPizza } = useCart();
 
   return (
-    <div id="3" className="menu">
+    <div className="menu">
       <OrderDate events={events} />
 
-      <div className="menu-box">
+      <div id="3" className="menu-box">
         <h2 className="monoton-regular">Menu</h2>
 
         <div className="pizza-box">
