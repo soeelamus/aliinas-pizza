@@ -32,7 +32,7 @@ const SuccessPage = () => {
           const orderObj = {
             id: Date.now().toString(),
             paymentId: paymentId,
-            items: cart.map((i) => `${i.quantity}x ${i.product.name}`),
+            items: cart.map((i) => `${i.quantity}x ${i.product.name}`).join(", "),
             total: cart.reduce(
               (sum, i) => sum + i.product.price * i.quantity,
               0
