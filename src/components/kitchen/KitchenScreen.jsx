@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Order from "./Order";
 import "./../../assets/css/kitchen.css";
 
@@ -6,6 +6,12 @@ export default function KitchenScreen() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+  const [audioAllowed, setAudioAllowed] = useState(false);
+
+  const alertAudio = useRef(new Audio("/sound/sound-effect.mp3"));
+  const prevOrders = useRef([]);
+  const firstFetch = useRef(true);
+
 
   // --- Helper: get pickup date today from HH:MM string ---
   const getPickupDate = (order) => {
@@ -19,7 +25,6 @@ export default function KitchenScreen() {
 
     const now = new Date();
 
-    // Today with pickup time
     return new Date(
       now.getFullYear(),
       now.getMonth(),
@@ -29,58 +34,63 @@ export default function KitchenScreen() {
       0
     );
   };
-// --- Helper: seconds until pickup, clamp at 0 ---
-const getRemainingSeconds = (order) => {
-  const pickup = getPickupDate(order);
-  if (!pickup) return Infinity;
 
-  const diffSec = (pickup - new Date()) / 1000;
-
-  // Stop countdown at 0
-  return Math.max(diffSec, 0);
-};
+  // --- Helper: seconds until pickup, stop at 0 ---
+  const getRemainingSeconds = (order) => {
+    const pickup = getPickupDate(order);
+    if (!pickup) return Infinity;
+    const diffSec = (pickup - new Date()) / 1000;
+    return Math.max(diffSec, 0); // stop at 0
+  };
 
   // --- Fetch orders every 5 seconds ---
-  useEffect(() => {
-    async function fetchOrders() {
-      try {
-        const res = await fetch("/api/orders");
-        const data = await res.json();
+useEffect(() => {
+  async function fetchOrders() {
+    try {
+      const res = await fetch("/api/orders");
+      const data = await res.json();
+      const now = new Date();
 
-        const now = new Date();
+      const filtered = data.filter((o) => {
+        const pickup = getPickupDate(o);
+        const ordered = new Date(o.orderedtime);
+        if (!pickup || isNaN(ordered)) return false;
 
-        const filtered = data.filter((o) => {
-  const pickup = getPickupDate(o);
-  const ordered = new Date(o.orderedtime);
+        const diffHours = (pickup - now) / 1000 / 3600;
+        if (diffHours > 10) return false;
 
-  if (!pickup || isNaN(ordered)) return false;
+        const isToday =
+          ordered.getFullYear() === now.getFullYear() &&
+          ordered.getMonth() === now.getMonth() &&
+          ordered.getDate() === now.getDate();
 
-  // Only filter orders that are too far in the future
-  const diffHours = (pickup - now) / 1000 / 3600;
-  if (diffHours > 10) return false; // future too far
+        return isToday;
+      });
 
-  // Ordered today
-  const isToday =
-    ordered.getFullYear() === now.getFullYear() &&
-    ordered.getMonth() === now.getMonth() &&
-    ordered.getDate() === now.getDate();
-
-  return isToday;
-});
-
-
-        setOrders(filtered);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+      // Only play sound for new orders
+      if (audioAllowed && !firstFetch.current) {
+        const prevIds = new Set(prevOrders.current.map((o) => o.id));
+        const newOrders = filtered.filter((o) => !prevIds.has(o.id));
+        if (newOrders.length > 0) {
+          alertAudio.current.play().catch(() => {});
+        }
       }
-    }
 
-    fetchOrders();
-    const interval = setInterval(fetchOrders, 5000);
-    return () => clearInterval(interval);
-  }, []);
+      prevOrders.current = filtered; // update prevOrders
+      firstFetch.current = false;
+      setOrders(filtered);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchOrders();
+  const interval = setInterval(fetchOrders, 5000);
+  return () => clearInterval(interval);
+}, [audioAllowed]);
+
 
   // --- Handle status change ---
   const handleStatusChange = async (id, newStatus = "done") => {
@@ -119,12 +129,23 @@ const getRemainingSeconds = (order) => {
     }
   };
 
+  // --- Separate active and picked-up orders ---
   const activeOrders = orders
     .filter((o) => o.status !== "pickedup")
-    .sort((a, b) => {
-      return getRemainingSeconds(a) - getRemainingSeconds(b);
-    });
+    .sort((a, b) => getRemainingSeconds(a) - getRemainingSeconds(b));
   const pickedUpOrders = orders.filter((o) => o.status === "pickedup");
+
+  if (!audioAllowed) {
+    return (
+      <button
+        className="btn-purple"
+        onClick={() => setAudioAllowed(true)}
+        style={{ fontSize: "1.2rem", padding: "1rem 2rem", marginTop: "2rem" }}
+      >
+        Start Kitchen
+      </button>
+    );
+  }
 
   if (loading) return <p>Loading orders...</p>;
 
