@@ -17,6 +17,7 @@ import Footer from "./components/Footer";
 // Kitchen components
 import KitchenLogin from "./components/kitchen/KitchenLogin";
 import KitchenDashboard from "./components/kitchen/KitchenDashboard";
+import ProtectedRoute from "./components/kitchen/ProtectedRoute";
 
 // Layouts
 import MainLayout from "./layouts//MainLayout";
@@ -56,9 +57,19 @@ function App() {
           <Route path="/success" element={<SuccessPage />} />
         </Route>
 
-        <Route element={<KitchenLayout />}>
-          <Route path="/kitchen" element={<KitchenLogin />} />
-          <Route path="/kitchen/dashboard" element={<KitchenDashboard />} />
+        <Route path="/kitchen/login" element={<KitchenLogin />} />
+
+        {/* Protected layout for all /kitchen routes */}
+        <Route
+          path="/kitchen"
+          element={
+            <ProtectedRoute>
+              <KitchenLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<KitchenDashboard />} />
+          {/* future protected routes */}
         </Route>
       </Routes>
     </Router>

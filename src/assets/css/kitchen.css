@@ -30,7 +30,6 @@
 .kitchen-order {
   border: 2px solid var(--primary-purple);
   border-radius: 10px;
-  background-color: #fff8e1;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 .kitchen-order .pizzas,
