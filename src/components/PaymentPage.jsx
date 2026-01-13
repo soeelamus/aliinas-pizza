@@ -146,21 +146,21 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
 
             <div className="option2">
               <label htmlFor="pickupTime">Afhaaltijd</label>
-              <select
-                className="form-textarea form-select"
-                id="pickupTime"
-                name="pickupTime"
-                value={formData.pickupTime}
-                onChange={handleChange}
-                disabled={loading}
-              >
-                <option value="">Tijdslot</option>
-                {timeSlots.map((slot) => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </select>
+                <select
+                  className="form-textarea form-select"
+                  id="pickupTime"
+                  name="pickupTime"
+                  value={formData.pickupTime}
+                  onChange={handleChange}
+                  disabled={loading}
+                >
+                  <option value="">Tijdslot</option>
+                  {timeSlots.map((slot) => (
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
+                  ))}
+                </select>
               {errors.pickupTime && (
                 <span className="error-message">{errors.pickupTime}</span>
               )}
@@ -181,24 +181,28 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
           />
 
           {todaysEvent ? (
-            <div className="checkbox-wrapper-39 form-checkbox">
-              <label>
-                <input
-                  type="checkbox"
-                  name="agreeTerms"
-                  checked={formData.agreeTerms}
-                  onChange={handleChange}
-                  disabled={loading}
-                />
-                <span className="checkbox"></span>
-              </label>
-              <p>
-                Ik kom straks ophalen in {todaysEvent.address}, om{" "}
-                {formData.pickupTime}
-              </p>
-            </div>
+            timeSlots.length > 0 ? (
+              <div className="checkbox-wrapper-39 form-checkbox">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="agreeTerms"
+                    checked={formData.agreeTerms}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
+                  <span className="checkbox"></span>
+                </label>
+                <p>
+                  Ik kom straks ophalen in {todaysEvent.address}, om{" "}
+                  {formData.pickupTime}
+                </p>
+              </div>
+            ) : (
+              <h3>Het is niet meer mogelijk om een bestelling te plaatsen</h3>
+            )
           ) : (
-            <p>loading...</p>
+            <p>laden...</p>
           )}
 
           <div>

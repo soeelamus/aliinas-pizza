@@ -2,21 +2,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/SuccessPage.css";
+import Success from "./Success";
 
 const SuccessPage = () => {
   const [status, setStatus] = useState("loading");
   const [order, setOrder] = useState(null);
   const [pushed, setPushed] = useState(false);
   const navigate = useNavigate();
+  const paymentId = localStorage.getItem("paymentId");
+  const cart = JSON.parse(localStorage.getItem("cart"));
+  const paymentData = JSON.parse(localStorage.getItem("paymentData"));
 
   useEffect(() => {
-    const paymentId = localStorage.getItem("paymentId");
-    const cart = JSON.parse(localStorage.getItem("cart"));
-    const paymentData = JSON.parse(localStorage.getItem("paymentData"));
-
-    console.log(paymentData);
-    console.log(paymentData.formData);
-
     if (!paymentId) {
       return;
     }
@@ -32,7 +29,9 @@ const SuccessPage = () => {
           const orderObj = {
             id: Date.now().toString(),
             paymentId: paymentId,
-            items: cart.map((i) => `${i.quantity}x ${i.product.name}`).join(", "),
+            items: cart
+              .map((i) => `${i.quantity}x ${i.product.name}`)
+              .join(", "),
             total: cart.reduce(
               (sum, i) => sum + i.product.price * i.quantity,
               0
@@ -46,9 +45,9 @@ const SuccessPage = () => {
 
           setOrder(orderObj);
 
-          localStorage.removeItem("cart");
-          localStorage.removeItem("paymentId");
-          localStorage.removeItem("paymentData");
+          // localStorage.removeItem("cart");
+          // localStorage.removeItem("paymentId");
+          // localStorage.removeItem("paymentData");
         }
       } catch (err) {
         console.error(err);
@@ -59,18 +58,8 @@ const SuccessPage = () => {
     checkPayment();
   }, [navigate]);
 
-  // Push order to Google Sheets via Vercel API
   useEffect(() => {
     if (!order || pushed) return;
-    console.log("order: ", order);
-    console.log("id: ", order.id);
-    console.log("paymentId: ", order.paymentId);
-    console.log("items: ", order.items);
-    console.log("total: ", order.total);
-    console.log("pickupTime: ", order.pickupTime);
-    console.log("customerName: ", order.customerName);
-    console.log("customerNotes: ", order.customerNotes);
-
     const pushOrder = async () => {
       try {
         const res = await fetch("/api/orders", {
@@ -107,17 +96,7 @@ const SuccessPage = () => {
   const renderContent = () => {
     switch (status) {
       case "paid":
-        return (
-          <>
-            <h2>🍕 Bedankt voor je bestelling!</h2>
-            <p>
-              Je betaling is succesvol ontvangen.
-              <br />
-            </p>
-            {!pushed && <p>⏳ Je bestelling wordt geaccepteerd…</p>}
-            {pushed && <p>De pizza's worden klaargemaakt!</p>}
-          </>
-        );
+        return <Success order={order} />;
       case "canceled":
         return (
           <>
