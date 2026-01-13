@@ -84,3 +84,35 @@
   padding: 0;
   margin-bottom: 1rem;
 }
+
+/* RED: 0–10 min */
+.kitchen-order.urgent-red {
+  border: 2px solid red;
+}
+.kitchen-order.urgent-red .heading {
+  background-color: red;
+}
+
+/* ORANGE: 10–30 min */
+.kitchen-order.urgent-orange {
+  border: 2px solid orange;
+}
+.kitchen-order.urgent-orange .heading {
+  background-color: orange;
+}
+
+/* GREEN: order done */
+.kitchen-order.done {
+  border: 2px solid green;
+}
+.kitchen-order.done .heading {
+  background-color: green;
+}
+
+/* BLACK: order picked up */
+.kitchen-order.pickedup {
+  border: 2px solid black;
+}
+.kitchen-order.pickedup .heading {
+  background-color: black;
+}

@@ -1,35 +1,52 @@
+import { useState, useEffect } from "react";
 import { getPickupCountdown } from "./getPickupCountdown";
 
 export default function Order({ order, onStatusChange, updatingId }) {
-  function parseItems(itemsString) {
-    return itemsString
-      .split(",")
-      .map((item) => item.trim())
-      .map((item) => {
-        const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
+  const [doneDisabled, setDoneDisabled] = useState(false);
+  const [countdown, setCountdown] = useState(() =>
+    getPickupCountdown(order.pickuptime)
+  );
 
-        if (!match) return null;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown(getPickupCountdown(order.pickuptime));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [order.pickuptime]);
 
-        return {
-          quantity: Number(match[1]),
-          name: match[2].trim(),
-        };
-      })
-      .filter(Boolean);
-  }
-  const pizzas = parseItems(order.items);
-  const countdown = getPickupCountdown(order.pickuptime);
+  const pizzas = order.items
+    .split(",")
+    .map((item) => item.trim())
+    .map((item) => {
+      const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
+      return match
+        ? { quantity: Number(match[1]), name: match[2].trim() }
+        : null;
+    })
+    .filter(Boolean);
 
   return (
-    <li className={`kitchen-order ${order.status === "done" ? "done" : ""}`}>
+    <li
+      className={`kitchen-order
+    ${order.status === "done" ? "done" : ""}
+    ${order.status === "pickedup" ? "pickedup" : ""}
+    ${countdown?.isRed && order.status === "new" ? "urgent-red" : ""}
+    ${countdown?.isOrange && order.status === "new" ? "urgent-orange" : ""}
+  `}
+    >
       <ul className="heading">
         <div className="heading-box">
-          <li>Naam: {order.customername || "Onbekend"}</li>
+          <li>Naam: {order.customername?.toUpperCase() || "Onbekend"}</li>
           <li>Pickup: {countdown?.pickupTimeFormatted || "Onbekend"}</li>
         </div>
-        <li>
-          {countdown?.hours}h {countdown?.minutes}m {countdown?.seconds}s
-        </li>
+
+        {order.status !== "pickedup" && (
+          <li>
+            {countdown?.hours.toString().padStart(2, "0")}:
+            {countdown?.minutes.toString().padStart(2, "0")}:
+            {countdown?.seconds.toString().padStart(2, "0")}
+          </li>
+        )}
       </ul>
 
       {pizzas.map((pizza, i) => (
@@ -37,7 +54,6 @@ export default function Order({ order, onStatusChange, updatingId }) {
           <div className="pizzas list">
             <div className="pizza-item">
               <input type="checkbox" id={`pizza-${i}`} />
-
               <span className="pizza-name">{pizza.name}</span>
             </div>
           </div>
@@ -49,13 +65,31 @@ export default function Order({ order, onStatusChange, updatingId }) {
         <span className="pizzas list">Notes: {order.customernotes}</span>
       )}
 
-      {order.status !== "done" && (
+      {order.status === "new" && (
         <button
           className="btn-purple"
-          onClick={() => onStatusChange(order.id)}
-          disabled={updatingId === order.id}
+          onClick={() => {
+            onStatusChange(order.id, "done");
+            setDoneDisabled(true);
+            setTimeout(() => setDoneDisabled(false), 8000);
+          }}
+          disabled={updatingId === order.id || doneDisabled}
         >
           {updatingId === order.id ? "Updating..." : "Done"}
+        </button>
+      )}
+
+      {order.status === "done" && (
+        <button
+          className="btn-purple"
+          onClick={() => {
+            onStatusChange(order.id, "pickedup");
+            setDoneDisabled(true);
+            setTimeout(() => setDoneDisabled(false), 8000);
+          }}
+          disabled={updatingId === order.id || doneDisabled}
+        >
+          {updatingId === order.id ? "Updating..." : "Pick-up"}
         </button>
       )}
     </li>
