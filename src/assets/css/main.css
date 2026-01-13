@@ -1487,8 +1487,7 @@ footer a:hover {
   margin: 3.5rem 0.5rem 1rem;
   align-self: stretch;
 }
-.btn-purple,
-.btn-close {
+.btn-purple {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1496,8 +1495,9 @@ footer a:hover {
   width: 8rem;
 }
 .btn-close {
-  width: 4rem;
-  border: 1px solid var(--primary-purple);
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
 .btn-purple,
 .calendar-title {
@@ -1510,20 +1510,12 @@ footer a:hover {
   color: var(--primary-white);
   z-index: 10;
 }
-.btn-close {
-  background-color: unset;
-  color: unset;
-}
 .calendar-title {
   width: 15rem;
 }
 .calendar-title:hover {
   background-color: var(--primary-purple) !important;
   cursor: unset;
-}
-.btn-close:hover {
-  color: var(--primary-white);
-  background-color: var(--primary-pink);
 }
 .btn-purple:hover {
   background-color: var(--primary-pink);

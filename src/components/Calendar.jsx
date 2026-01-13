@@ -144,7 +144,7 @@ const Calendar = () => {
 
         {selectedEvent && (
           <aside id="event-sidebar" style={{ display: selectedEvent ? "block" : "none" }}>
-            <button className="btn-close" onClick={() => setSelectedEvent(null)}>
+            <button className="btn-purple btn-small btn-close" onClick={() => setSelectedEvent(null)}>
               X
             </button>
             <div id="event-content">
