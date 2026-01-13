@@ -19,21 +19,6 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
   const [successMessage, setSuccessMessage] = useState("");
   const navigate = useNavigate();
 
-  const generateTimeSlots = () => {
-    const slots = [];
-    for (let hour = 17; hour <= 22; hour++) {
-      for (let min of [0, 15, 30, 45]) {
-        if (hour === 22 && min > 0) break;
-        const hh = hour.toString().padStart(2, "0");
-        const mm = min.toString().padStart(2, "0");
-        slots.push(`${hh}:${mm}`);
-      }
-    }
-    return slots;
-  };
-
-  const timeSlots = generateTimeSlots();
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
@@ -98,6 +83,42 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
     (e) => e.type.toLowerCase() === "standplaats" && e.date === today
   );
 
+  const roundUpToQuarter = (date) => {
+    const ms = 1000 * 60 * 15; // 15 minutes
+    return new Date(Math.ceil(date.getTime() / ms) * ms);
+  };
+
+  const generateTimeSlots = () => {
+    if (!todaysEvent) return [];
+
+    const today = new Date().toISOString().slice(0, 10);
+
+    // Event start & end
+    const eventStart = new Date(`${today}T${todaysEvent.startTime}`);
+    const eventEnd = new Date(`${today}T${todaysEvent.endTime}`);
+
+    // Now + 30 minutes, rounded up to next 15 min
+    const nowPlus30 = roundUpToQuarter(new Date(Date.now() + 20 * 60000));
+
+    // We can never start before the event starts
+    const startTime = new Date(Math.max(eventStart, nowPlus30));
+
+    const slots = [];
+    let current = startTime;
+
+    while (current <= eventEnd) {
+      const hh = current.getHours().toString().padStart(2, "0");
+      const mm = current.getMinutes().toString().padStart(2, "0");
+      slots.push(`${hh}:${mm}`);
+
+      current = new Date(current.getTime() + 15 * 60000);
+    }
+
+    return slots;
+  };
+
+  const timeSlots = generateTimeSlots();
+
   return (
     <div className="payment-page-body">
       <form onSubmit={handleCheckout} className="payment-page">
@@ -159,27 +180,28 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
             maxLength="75"
           />
 
-{todaysEvent ? (
-  <div className="checkbox-wrapper-39 form-checkbox">
-    <label>
-      <input
-        type="checkbox"
-        name="agreeTerms"
-        checked={formData.agreeTerms}
-        onChange={handleChange}
-        disabled={loading}
-      />
-      <span className="checkbox"></span>
-    </label>
-    <p>
-      Ik kom straks ophalen in {todaysEvent.address}, om {formData.pickupTime}
-    </p>
-  </div>
-) : (
-  <p>loading...</p>
-)}
+          {todaysEvent ? (
+            <div className="checkbox-wrapper-39 form-checkbox">
+              <label>
+                <input
+                  type="checkbox"
+                  name="agreeTerms"
+                  checked={formData.agreeTerms}
+                  onChange={handleChange}
+                  disabled={loading}
+                />
+                <span className="checkbox"></span>
+              </label>
+              <p>
+                Ik kom straks ophalen in {todaysEvent.address}, om{" "}
+                {formData.pickupTime}
+              </p>
+            </div>
+          ) : (
+            <p>loading...</p>
+          )}
 
-    <div>
+          <div>
             {errors.agreeTerms && (
               <span className="error-message">{errors.agreeTerms}</span>
             )}
