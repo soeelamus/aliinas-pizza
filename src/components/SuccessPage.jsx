@@ -45,9 +45,9 @@ const SuccessPage = () => {
 
           setOrder(orderObj);
 
-          // localStorage.removeItem("cart");
-          // localStorage.removeItem("paymentId");
-          // localStorage.removeItem("paymentData");
+          localStorage.removeItem("cart");
+          localStorage.removeItem("paymentId");
+          localStorage.removeItem("paymentData");
         }
       } catch (err) {
         console.error(err);
@@ -123,6 +123,7 @@ const SuccessPage = () => {
         return <p>⏳ Betaling wordt verwerkt…</p>;
       default:
         return <p>⏳ Laden…</p>;
+        // return <Success order={order}/>
     }
   };
 
