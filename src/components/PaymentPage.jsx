@@ -98,7 +98,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
     const eventEnd = new Date(`${today}T${todaysEvent.endTime}`);
 
     // Now + 30 minutes, rounded up to next 15 min
-    const nowPlus30 = roundUpToQuarter(new Date(Date.now() + 20 * 60000));
+    const nowPlus30 = roundUpToQuarter(new Date(Date.now() + 25 * 60000));
 
     // We can never start before the event starts
     const startTime = new Date(Math.max(eventStart, nowPlus30));

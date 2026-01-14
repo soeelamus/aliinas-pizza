@@ -133,6 +133,20 @@ export default function KitchenScreen() {
     .sort((a, b) => getRemainingSeconds(a) - getRemainingSeconds(b));
   const pickedUpOrders = orders.filter((o) => o.status === "pickedup");
 
+  // Bereken totaal aantal pizza's van alle actieve orders
+const totalNewPizzaQty = orders
+  .filter(order => order.status === "new") // alleen nieuwe orders
+  .reduce((total, order) => {
+    const pizzas = order.items
+      .split(",")
+      .map(item => item.trim())
+      .map(item => {
+        const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
+        return match ? Number(match[1]) : 0; // aantal pizza's
+      });
+    return total + pizzas.reduce((sum, qty) => sum + qty, 0);
+  }, 0);
+
   if (!audioAllowed) {
     return (
       <div className="center">
@@ -156,7 +170,10 @@ export default function KitchenScreen() {
   return (
     <section className="kitchen-section">
       <h1>Orders</h1>
-
+      <div className="popup-total">
+        <div className="popup-text">Pizzas on active orders</div>
+        <div className="popup-number">{totalNewPizzaQty || 0}</div>
+      </div>
       {activeOrders.length > 0 ? (
         <ul className="kitchen-orders">
           {activeOrders.map((order) => (

@@ -132,3 +132,37 @@
 .margin {
   margin: 10rem 0 !important;
 }
+.popup-total {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  border: 2px solid var(--primary-purple);
+  background-color: var(--primary-pink);
+  border-radius: 50%;
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.popup-number {
+  font-size: 3rem;
+}
+.popup-text {
+  position: absolute;
+  left: 10rem;
+  transform: translateX(-50%);
+  background-color: var(--primary-pink);
+  border: 2px solid var(--primary-purple);
+  font-size: 1rem;
+  padding: 5px 10px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.popup-total:hover .popup-text {
+  opacity: 1;
+}
