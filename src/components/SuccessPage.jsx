@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/SuccessPage.css";
-import Success from "./Success";
+import Success from "./SuccessCard";
 
 const SuccessPage = () => {
   const [status, setStatus] = useState("loading");
@@ -122,8 +122,7 @@ const SuccessPage = () => {
       case "open":
         return <p>⏳ Betaling wordt verwerkt…</p>;
       default:
-        // return <p>⏳ Laden…</p>;
-        return <Success order={order}/>
+        return <p>⏳ Laden…</p>;
     }
   };
 

@@ -1,18 +1,9 @@
 import React, { useState } from "react";
 import "../assets/css/kitchen.css";
-import Map from "../components/Map";
+import Map from "./Map";
 
-// export default function Success({ order }) {
-//   if (!order) return <p>⏳ Loading order details…</p>;
-
-export default function Success() {
-  const order = {
-    customerName: "Jan Jansen",
-    pickupTime: "18:30",
-    items: "2x Margherita, 1x Pepperoni, 3x Quattro Formaggi",
-    total: "20",
-    customerNotes: "2x Margherita, 1x Pepperoni, 3x Quattro Formaggi",
-  };
+export default function Success({ order }) {
+  if (!order) return <p>⏳ Loading order details…</p>;
 
   function parseItems(itemsString) {
     if (!itemsString) return [];
@@ -34,7 +25,6 @@ export default function Success() {
 
   // Get location
   const location = JSON.parse(sessionStorage.getItem("location"));
-  
 
   return (
     <div className="success-details">
@@ -43,7 +33,7 @@ export default function Success() {
         Je kan je bestelling vandaag ophalen om
         <strong> {order.pickupTime}</strong>
         <br />
-        {location.address}
+        Ophalen: <strong>{location.address}</strong>
       </p>
       {location.address && (
         <div id="event-map" className="event-map">
@@ -51,7 +41,7 @@ export default function Success() {
         </div>
       )}
       <br />
-        <h4 className="success-total">Samenvatting</h4>
+      <h4 className="success-total">Bestelling</h4>
       {parseItems(order.items).map((item, index) => (
         <li key={index} className="success-row">
           <span className="success-name">{item.name}</span>
