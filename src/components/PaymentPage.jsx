@@ -121,6 +121,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
 
   return (
     <div className="payment-page-body">
+      <div className="payment-page-margin">
       <form onSubmit={handleCheckout} className="payment-page">
         {successMessage && <p className="success-message">{successMessage}</p>}
         <h2>Afrekenen</h2>
@@ -246,6 +247,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
           </button>
         </div>
       </form>
+      </div>
     </div>
   );
 };
