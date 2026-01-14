@@ -12,7 +12,6 @@ export default function KitchenScreen() {
   const prevOrders = useRef([]);
   const firstFetch = useRef(true);
 
-
   // --- Helper: get pickup date today from HH:MM string ---
   const getPickupDate = (order) => {
     if (!order.pickuptime) return null;
@@ -44,53 +43,52 @@ export default function KitchenScreen() {
   };
 
   // --- Fetch orders every 5 seconds ---
-useEffect(() => {
-  async function fetchOrders() {
-    try {
-      const res = await fetch("/api/orders");
-      const data = await res.json();
-      const now = new Date();
+  useEffect(() => {
+    async function fetchOrders() {
+      try {
+        const res = await fetch("/api/orders");
+        const data = await res.json();
+        const now = new Date();
 
-      const filtered = data.filter((o) => {
-        const pickup = getPickupDate(o);
-        const ordered = new Date(o.orderedtime);
-        if (!pickup || isNaN(ordered)) return false;
+        const filtered = data.filter((o) => {
+          const pickup = getPickupDate(o);
+          const ordered = new Date(o.orderedtime);
+          if (!pickup || isNaN(ordered)) return false;
 
-        const diffHours = (pickup - now) / 1000 / 3600;
-        if (diffHours > 10) return false;
+          const diffHours = (pickup - now) / 1000 / 3600;
+          if (diffHours > 10) return false;
 
-        const isToday =
-          ordered.getFullYear() === now.getFullYear() &&
-          ordered.getMonth() === now.getMonth() &&
-          ordered.getDate() === now.getDate();
+          const isToday =
+            ordered.getFullYear() === now.getFullYear() &&
+            ordered.getMonth() === now.getMonth() &&
+            ordered.getDate() === now.getDate();
 
-        return isToday;
-      });
+          return isToday;
+        });
 
-      // Only play sound for new orders
-      if (audioAllowed && !firstFetch.current) {
-        const prevIds = new Set(prevOrders.current.map((o) => o.id));
-        const newOrders = filtered.filter((o) => !prevIds.has(o.id));
-        if (newOrders.length > 0) {
-          alertAudio.current.play().catch(() => {});
+        // Only play sound for new orders
+        if (audioAllowed && !firstFetch.current) {
+          const prevIds = new Set(prevOrders.current.map((o) => o.id));
+          const newOrders = filtered.filter((o) => !prevIds.has(o.id));
+          if (newOrders.length > 0) {
+            alertAudio.current.play().catch(() => {});
+          }
         }
+
+        prevOrders.current = filtered; // update prevOrders
+        firstFetch.current = false;
+        setOrders(filtered);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
-
-      prevOrders.current = filtered; // update prevOrders
-      firstFetch.current = false;
-      setOrders(filtered);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
     }
-  }
 
-  fetchOrders();
-  const interval = setInterval(fetchOrders, 5000);
-  return () => clearInterval(interval);
-}, [audioAllowed]);
-
+    fetchOrders();
+    const interval = setInterval(fetchOrders, 5000);
+    return () => clearInterval(interval);
+  }, [audioAllowed]);
 
   // --- Handle status change ---
   const handleStatusChange = async (id, newStatus = "done") => {
@@ -137,13 +135,19 @@ useEffect(() => {
 
   if (!audioAllowed) {
     return (
-      <button
-        className="btn-purple"
-        onClick={() => setAudioAllowed(true)}
-        style={{ fontSize: "1.2rem", padding: "1rem 2rem", marginTop: "2rem" }}
-      >
-        Start Kitchen
-      </button>
+      <div className="center">
+        <button
+          className="btn-purple"
+          onClick={() => setAudioAllowed(true)}
+          style={{
+            fontSize: "1.2rem",
+            padding: "1rem 2rem",
+            marginTop: "2rem",
+          }}
+        >
+          Start Kitchen
+        </button>
+      </div>
     );
   }
 
@@ -151,22 +155,31 @@ useEffect(() => {
 
   return (
     <section className="kitchen-section">
-      <h1>🍳 Orders</h1>
+      <h1>Orders</h1>
 
-      <ul className="kitchen-orders">
-        {activeOrders.map((order) => (
-          <Order
-            key={order.id}
-            order={order}
-            updatingId={updatingId}
-            onStatusChange={handleStatusChange}
-          />
-        ))}
-      </ul>
+      {activeOrders.length > 0 ? (
+        <ul className="kitchen-orders">
+          {activeOrders.map((order) => (
+            <Order
+              key={order.id}
+              order={order}
+              updatingId={updatingId}
+              onStatusChange={handleStatusChange}
+            />
+          ))}
+        </ul>
+      ) : (
+        <div className="center margin">
+          <p className="loader"></p>
+          <p>Waiting for new orders</p>
+        </div>
+      )}
 
       {pickedUpOrders.length > 0 && (
         <>
-          <h2>✅ Picked-up Orders</h2>
+          <div className="center">
+            <h2>✅ Picked-up Orders</h2>
+          </div>
           <ul className="pickedup">
             {pickedUpOrders.map((order) => (
               <Order
