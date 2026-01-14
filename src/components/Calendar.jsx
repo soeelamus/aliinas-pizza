@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import L from "leaflet";
+import React, { useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { useEvents } from "../contexts/EventsContext";
+import Map from "../components/Map";
 
 const months = [
   "Januari","Februari","Maart","April","Mei","Juni","Juli",
@@ -70,31 +70,6 @@ const Calendar = () => {
     if (!event) return;
     setSelectedEvent(event);
   };
-
-  // Map for selected event
-  useEffect(() => {
-    if (!selectedEvent || !selectedEvent.address) return;
-    const mapDiv = document.getElementById("event-map");
-    if (!mapDiv) return;
-    mapDiv.innerHTML = "";
-    const map = L.map("event-map").setView([0, 0], 13);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "&copy; OpenStreetMap contributors",
-    }).addTo(map);
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(selectedEvent.address)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data || data.length === 0) return;
-        const lat = parseFloat(data[0].lat), lon = parseFloat(data[0].lon);
-        map.setView([lat, lon], 15);
-        L.marker([lat, lon])
-          .addTo(map)
-          .bindPopup(
-            `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">Navigeren</a>`
-          )
-          .openPopup();
-      });
-  }, [selectedEvent]);
 
   const calendarDates = generateCalendarDates();
 
@@ -171,7 +146,7 @@ const Calendar = () => {
                 </ul>
                 <p className="event-description">{selectedEvent.description}</p>
                 {selectedEvent.type.toLowerCase() !== "privaat" && selectedEvent.address && (
-                  <div id="event-map" className="event-map"></div>
+                  <Map address={selectedEvent.address} />
                 )}
               </article>
             </div>
