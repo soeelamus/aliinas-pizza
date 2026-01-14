@@ -122,14 +122,14 @@ const SuccessPage = () => {
       case "open":
         return <p>⏳ Betaling wordt verwerkt…</p>;
       default:
-        return <p>⏳ Laden…</p>;
-        // return <Success order={order}/>
+        // return <p>⏳ Laden…</p>;
+        return <Success order={order}/>
     }
   };
 
   return (
     <div className="success-page-body">
-      <div className="success-page main style-2">
+      <div className="success-page style-2">
         <div className="success-card">
           {renderContent()}
           <button

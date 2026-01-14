@@ -26,6 +26,7 @@ import KitchenLayout from "./layouts/KitchenLayout";
 
 // CSS
 import "./assets/css/main.css";
+import "./assets/css/loading.css";
 import "leaflet/dist/leaflet.css";
 
 function App() {

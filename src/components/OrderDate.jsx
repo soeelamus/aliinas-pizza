@@ -6,9 +6,9 @@ const OrderDate = ({ events }) => {
   const todayEvent = events?.find(
     (e) => e.type.toLowerCase() === "standplaats" && e.date === today
   );
+sessionStorage.setItem("location", JSON.stringify(todayEvent));
 
   const isOpen = !!todayEvent;
-
   return (
     <div className="menu-openStatus" style={{ fontWeight: "bold" }}>
       {isOpen ? (

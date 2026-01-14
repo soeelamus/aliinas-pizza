@@ -1,18 +1,19 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 export default function Map({ address }) {
   const mapRef = useRef(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!address || !mapRef.current) return;
 
-    let isMounted = true; // voorkomt updates na unmount
+    let isMounted = true;
     const mapContainer = mapRef.current;
 
-    // reset map container
-    mapContainer.innerHTML = "";
+    mapContainer.innerHTML = ""; // reset map container
+    setLoading(true);
 
     const map = L.map(mapContainer).setView([0, 0], 13);
 
@@ -25,8 +26,8 @@ export default function Map({ address }) {
         address
       )}`
     )
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (!isMounted || !data || !data.length) return;
 
         const lat = parseFloat(data[0].lat);
@@ -37,17 +38,44 @@ export default function Map({ address }) {
         L.marker([lat, lon])
           .addTo(map)
           .bindPopup(
-            `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">Navigeren</a>`
+            `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">Navigate</a>`
           )
           .openPopup();
+
+        setLoading(false); // finished loading
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
 
     return () => {
       isMounted = false;
-      map.remove(); // cleanup bij unmount
+      map.remove();
     };
   }, [address]);
 
-  return <div className="event-map" ref={mapRef} style={{ height: "300px", width: "100%" }} />;
+  return (
+    <div style={{ position: "relative", height: "300px", width: "100%" }}>
+      {loading && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            background: "rgba(255,255,255,0.7)",
+            zIndex: 1000,
+          }}
+        >
+          <div className="loader"></div>
+        </div>
+      )}
+      <div ref={mapRef} style={{ height: "100%", width: "100%" }} />
+    </div>
+  );
 }
