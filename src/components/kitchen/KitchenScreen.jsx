@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import Order from "./Order";
 import "./../../assets/css/kitchen.css";
+import StockForm from "./StockForm";
 
 export default function KitchenScreen() {
   const [orders, setOrders] = useState([]);
@@ -30,7 +31,7 @@ export default function KitchenScreen() {
       now.getDate(),
       hours,
       minutes,
-      0
+      0,
     );
   };
 
@@ -99,8 +100,8 @@ export default function KitchenScreen() {
         prevOrders.map((order) =>
           String(order.id) === String(id)
             ? { ...order, status: newStatus }
-            : order
-        )
+            : order,
+        ),
       );
 
       const res = await fetch("/api/orders", {
@@ -116,8 +117,8 @@ export default function KitchenScreen() {
           prevOrders.map((order) =>
             String(order.id) === String(id)
               ? { ...order, status: order.status }
-              : order
-          )
+              : order,
+          ),
         );
       }
     } catch (err) {
@@ -134,31 +135,24 @@ export default function KitchenScreen() {
   const pickedUpOrders = orders.filter((o) => o.status === "pickedup");
 
   // Bereken totaal aantal pizza's van alle actieve orders
-const totalNewPizzaQty = orders
-  .filter(order => order.status === "new") // alleen nieuwe orders
-  .reduce((total, order) => {
-    const pizzas = order.items
-      .split(",")
-      .map(item => item.trim())
-      .map(item => {
-        const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
-        return match ? Number(match[1]) : 0; // aantal pizza's
-      });
-    return total + pizzas.reduce((sum, qty) => sum + qty, 0);
-  }, 0);
+  const totalNewPizzaQty = orders
+    .filter((order) => order.status === "new") // alleen nieuwe orders
+    .reduce((total, order) => {
+      const pizzas = order.items
+        .split(",")
+        .map((item) => item.trim())
+        .map((item) => {
+          const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
+          return match ? Number(match[1]) : 0; // aantal pizza's
+        });
+      return total + pizzas.reduce((sum, qty) => sum + qty, 0);
+    }, 0);
 
   if (!audioAllowed) {
     return (
-      <div className="center">
-        <button
-          className="btn-purple"
-          onClick={() => setAudioAllowed(true)}
-          style={{
-            fontSize: "1.2rem",
-            padding: "1rem 2rem",
-            marginTop: "2rem",
-          }}
-        >
+      <div className="center form">
+        <StockForm />
+        <button className="btn-purple" onClick={() => setAudioAllowed(true)}>
           Start Kitchen
         </button>
       </div>

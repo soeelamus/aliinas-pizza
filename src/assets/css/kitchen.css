@@ -127,7 +127,15 @@
   justify-content: center !important;
 }
 .center button {
-  width: 15rem;
+  width: 12rem;
+}
+.center label {
+  margin-bottom: 0;
+}
+.form {
+  align-items: unset;
+  margin: 2rem auto;
+  max-width: 20rem;
 }
 .margin {
   margin: 10rem 0 !important;
