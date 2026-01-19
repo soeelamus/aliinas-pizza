@@ -5,7 +5,7 @@ import { useEvents } from "../contexts/EventsContext";
 
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
-  const [drinks, setDrinks] = useState([]);
+  const [stockSheet, setStockSheet] = useState([]);
   const { events, isOpen, loading } = useEvents(); // get global events & isOpen
 
   // Fetch pizzas
@@ -16,11 +16,11 @@ const PizzaShop = () => {
       .catch((err) => console.error(err));
   }, []);
 
-  // Fetch drinks
+  // Fetch stockSheet
   useEffect(() => {
-    fetch("/api/stock?type=drink")
+    fetch("/api/stock")
       .then((res) => res.json())
-      .then(setDrinks)
+      .then(setStockSheet)
       .catch(console.error);
   }, []);
 
@@ -30,7 +30,7 @@ const PizzaShop = () => {
   return (
     <div className="pizza-shop">
       <Cart isOpen={isOpen} />
-      <Menu pizzas={pizzas} drinks={drinks} events={events} isOpen={isOpen} />
+      <Menu pizzas={pizzas} stockSheet={stockSheet} events={events} isOpen={isOpen} />
     </div>
   );
 };

@@ -6,21 +6,21 @@ import { useCart } from "../contexts/CartContext";
 
 const UserCart = ({ isOpen }) => {
   const navigate = useNavigate();
-  const { cart, removePizza, changeQuantity, totalAmount } = useCart();
+  const { cart, removeItem, changeQuantity, totalAmount } = useCart();
 
   if (cart.length === 0) return null;
 
   return (
     <aside className="cart">
       <ul>
-        {cart.map((pizza) => (
-          <li key={pizza.product.id} className="cart-item">
+        {cart.map((cartItem) => (
+          <li key={String(cartItem.product.id)} className="cart-item">
             <div className="item-info">
               <div className="item-details">
                 <span className="quant">
-                  {pizza.quantity}x {pizza.product.name}
+                  {cartItem.quantity}x {cartItem.product.name}
                 </span>
-                <p>€{pizza.product.price}</p>
+                <p>€{cartItem.product.price}</p>
               </div>
             </div>
 
@@ -28,9 +28,9 @@ const UserCart = ({ isOpen }) => {
               <button
                 className="btn-purple btn-small"
                 onClick={() =>
-                  pizza.quantity <= 1
-                    ? removePizza(pizza.product)
-                    : changeQuantity(pizza.product, -1)
+                  cartItem.quantity <= 1
+                    ? removeItem(cartItem.product)
+                    : changeQuantity(cartItem.product, -1)
                 }
               >
                 -
@@ -38,7 +38,7 @@ const UserCart = ({ isOpen }) => {
 
               <button
                 className="btn-purple btn-small"
-                onClick={() => changeQuantity(pizza.product, 1)}
+                onClick={() => changeQuantity(cartItem.product, 1)}
               >
                 +
               </button>
