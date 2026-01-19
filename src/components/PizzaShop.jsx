@@ -9,7 +9,7 @@ const PizzaShop = () => {
 
   // Fetch pizzas
   useEffect(() => {
-    fetch("/json/data.json")
+    fetch("/json/pizzas.json")
       .then((res) => res.json())
       .then((data) => setPizzas(data.Pizzas || []))
       .catch((err) => console.error(err));
