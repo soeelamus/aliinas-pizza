@@ -8,6 +8,8 @@ export default function KitchenScreen() {
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
   const [audioAllowed, setAudioAllowed] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [pendingUpdates, setPendingUpdates] = useState({}); // track optimistic updates
 
   const alertAudio = useRef(new Audio("/sound/sound-effect.mp3"));
   const prevOrders = useRef([]);
@@ -24,24 +26,22 @@ export default function KitchenScreen() {
     const minutes = parseInt(match[2], 10);
 
     const now = new Date();
-
-    return new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      hours,
-      minutes,
-      0,
-    );
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
   };
 
   // --- Helper: seconds until pickup, stop at 0 ---
   const getRemainingSeconds = (order) => {
     const pickup = getPickupDate(order);
     if (!pickup) return Infinity;
-    const diffSec = (pickup - new Date()) / 1000;
-    return Math.max(diffSec, 0); // stop at 0
+    const diffSec = (pickup - currentTime) / 1000;
+    return Math.max(diffSec, 0);
   };
+
+  // --- Update currentTime every second for countdowns ---
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // --- Fetch orders every 5 seconds ---
   useEffect(() => {
@@ -67,18 +67,25 @@ export default function KitchenScreen() {
           return isToday;
         });
 
+        // Merge pending updates so orders don't flap
+        const merged = filtered.map((order) =>
+          pendingUpdates[order.id]
+            ? { ...order, status: pendingUpdates[order.id] }
+            : order
+        );
+
         // Only play sound for new orders
         if (audioAllowed && !firstFetch.current) {
           const prevIds = new Set(prevOrders.current.map((o) => o.id));
-          const newOrders = filtered.filter((o) => !prevIds.has(o.id));
+          const newOrders = merged.filter((o) => !prevIds.has(o.id));
           if (newOrders.length > 0) {
             alertAudio.current.play().catch(() => {});
           }
         }
 
-        prevOrders.current = filtered; // update prevOrders
+        prevOrders.current = merged;
         firstFetch.current = false;
-        setOrders(filtered);
+        setOrders(merged);
       } catch (err) {
         console.error(err);
       } finally {
@@ -89,19 +96,20 @@ export default function KitchenScreen() {
     fetchOrders();
     const interval = setInterval(fetchOrders, 5000);
     return () => clearInterval(interval);
-  }, [audioAllowed]);
+  }, [audioAllowed, pendingUpdates]);
 
-  // --- Handle status change ---
+  // --- Handle status change with optimistic update ---
   const handleStatusChange = async (id, newStatus = "done") => {
     try {
       setUpdatingId(id);
+      // mark as pending
+      setPendingUpdates((prev) => ({ ...prev, [id]: newStatus }));
 
+      // optimistic update in UI
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
-          String(order.id) === String(id)
-            ? { ...order, status: newStatus }
-            : order,
-        ),
+          String(order.id) === String(id) ? { ...order, status: newStatus } : order
+        )
       );
 
       const res = await fetch("/api/orders", {
@@ -111,18 +119,29 @@ export default function KitchenScreen() {
       });
 
       const data = await res.json();
-      if (data.status !== "ok") {
-        console.error("Status update failed:", data);
-        setOrders((prevOrders) =>
-          prevOrders.map((order) =>
-            String(order.id) === String(id)
-              ? { ...order, status: order.status }
-              : order,
-          ),
-        );
+      if (data.status === "ok") {
+        // remove from pending
+        setPendingUpdates((prev) => {
+          const copy = { ...prev };
+          delete copy[id];
+          return copy;
+        });
+      } else {
+        throw new Error("Status update failed");
       }
     } catch (err) {
-      console.error("Failed to update status:", err);
+      console.error(err);
+      // revert change if failed
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          String(order.id) === String(id) ? { ...order, status: order.status } : order
+        )
+      );
+      setPendingUpdates((prev) => {
+        const copy = { ...prev };
+        delete copy[id];
+        return copy;
+      });
     } finally {
       setUpdatingId(null);
     }
@@ -134,16 +153,16 @@ export default function KitchenScreen() {
     .sort((a, b) => getRemainingSeconds(a) - getRemainingSeconds(b));
   const pickedUpOrders = orders.filter((o) => o.status === "pickedup");
 
-  // Bereken totaal aantal pizza's van alle actieve orders
+  // --- Total pizzas in new orders ---
   const totalNewPizzaQty = orders
-    .filter((order) => order.status === "new") // alleen nieuwe orders
+    .filter((order) => order.status === "new")
     .reduce((total, order) => {
       const pizzas = order.items
         .split(",")
         .map((item) => item.trim())
         .map((item) => {
           const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
-          return match ? Number(match[1]) : 0; // aantal pizza's
+          return match ? Number(match[1]) : 0;
         });
       return total + pizzas.reduce((sum, qty) => sum + qty, 0);
     }, 0);
@@ -168,12 +187,14 @@ export default function KitchenScreen() {
         <div className="popup-text">Pizzas on active orders</div>
         <div className="popup-number">{totalNewPizzaQty || 0}</div>
       </div>
+
       {activeOrders.length > 0 ? (
         <ul className="kitchen-orders">
           {activeOrders.map((order) => (
             <Order
               key={order.id}
               order={order}
+              currentTime={currentTime}
               updatingId={updatingId}
               onStatusChange={handleStatusChange}
             />

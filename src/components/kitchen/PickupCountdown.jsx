@@ -1,4 +1,4 @@
-export function getPickupCountdown(pickupTimeStr) {
+export function PickupCountdown(pickupTimeStr) {
   if (!pickupTimeStr) return null;
 
   // Extract HH:MM from the string
