@@ -20,7 +20,7 @@ const SuccessPage = () => {
 
     const checkPayment = async () => {
       try {
-        const res = await fetch(`/api/payment-status?paymentId=${paymentId}`);
+        const res = await fetch(`/api/payment?paymentId=${paymentId}`);
         const data = await res.json();
         setStatus(data.status);
 
@@ -34,7 +34,7 @@ const SuccessPage = () => {
               .join(", "),
             total: cart.reduce(
               (sum, i) => sum + i.product.price * i.quantity,
-              0
+              0,
             ),
             pickupTime: paymentData.formData.pickupTime,
             orderedTime: new Date().toISOString(),
