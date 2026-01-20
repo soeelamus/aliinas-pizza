@@ -1,10 +1,23 @@
 import { Navigate } from "react-router-dom";
 import KitchenScreen from "./KitchenScreen";
+import KitchenCashier from "./KitchenCashier";
+import "./../../assets/css/kitchen.css";
 
 export default function KitchenDashboard() {
-  if (localStorage.getItem("kitchenAuth") !== "true") {
+  const isAuthed = localStorage.getItem("kitchenAuth") === "true";
+
+  if (!isAuthed) {
     return <Navigate to="/kitchen" />;
   }
 
-  return <KitchenScreen />;
+  return (
+    <div className="kitchen-dashboard">
+      <div className="kitchen-cashier">
+        <KitchenCashier />
+      </div>
+      <div className="kitchen-screen">
+        <KitchenScreen />
+      </div>
+    </div>
+  );
 }

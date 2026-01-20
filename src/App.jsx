@@ -1,7 +1,12 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
-// Pages / components
+// Pages / components (Main site)
 import Navbar from "./components/Navbar";
 import Header from "./components/Header";
 import Carousel from "./components/Carousel";
@@ -20,8 +25,8 @@ import KitchenDashboard from "./components/kitchen/KitchenDashboard";
 import ProtectedRoute from "./components/kitchen/ProtectedRoute";
 
 // Layouts
-import MainLayout from "./layouts//MainLayout";
-import RedirectLayout from "./layouts//RedirectLayout";
+import MainLayout from "./layouts/MainLayout";
+import RedirectLayout from "./layouts/RedirectLayout";
 import KitchenLayout from "./layouts/KitchenLayout";
 
 // CSS
@@ -53,14 +58,16 @@ function App() {
           />
         </Route>
 
+        {/* 🟠 REDIRECT / SIMPLE LAYOUT */}
         <Route element={<RedirectLayout />}>
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/success" element={<SuccessPage />} />
         </Route>
 
+        {/* 🟢 KITCHEN LOGIN (PUBLIC) */}
         <Route path="/kitchen/login" element={<KitchenLogin />} />
 
-        {/* Protected layout for all /kitchen routes */}
+        {/* 🔵 PROTECTED KITCHEN AREA */}
         <Route
           path="/kitchen"
           element={
@@ -69,9 +76,24 @@ function App() {
             </ProtectedRoute>
           }
         >
+          {/* Default: /kitchen → /kitchen/dashboard */}
+          <Route index element={<Navigate to="dashboard" replace />} />
+
+          {/* Dashboard */}
           <Route path="dashboard" element={<KitchenDashboard />} />
-          {/* future protected routes */}
+
+          {/* Catch-all for invalid kitchen routes */}
+          <Route
+            path="*"
+            element={<Navigate to="/kitchen/login" replace />}
+          />
         </Route>
+
+        {/* 🔴 GLOBAL FALLBACK (optioneel) */}
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
       </Routes>
     </Router>
   );

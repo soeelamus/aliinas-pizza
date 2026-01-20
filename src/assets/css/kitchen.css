@@ -174,3 +174,18 @@
 .popup-total:hover .popup-text {
   opacity: 1;
 }
+.kitchen-dashboard {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+
+.kitchen-cashier {
+  width: 70%;
+  height: 100%;
+}
+
+.kitchen-screen {
+  width: 30%;
+  height: 100%;
+}
