@@ -4,7 +4,7 @@ import OrderDate from "./OrderDate";
 import { useCart } from "../contexts/CartContext";
 
 const Menu = ({ pizzas, stockSheet, events, isOpen }) => {
-  const { addItem } = useCart();
+  const { addItem, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState("Pizza"); // default tab
 
   // --- Unieke categorieën ophalen uit stockSheet + Pizza tab
@@ -63,11 +63,18 @@ const Menu = ({ pizzas, stockSheet, events, isOpen }) => {
                     <button
                       className="btn-small btn-purple"
                       onClick={() => addItem(item)}
-                      disabled={!isOpen}
+                      disabled={
+                        !isOpen || // winkel gesloten
+                        getStock(item, cart) <= 0 // stock check
+                      }
                       title={
                         !isOpen
                           ? "We zijn vandaag gesloten"
-                          : "Toevoegen aan bestelling"
+                          : stockSheet.length === 0
+                            ? "Stock laden..."
+                            : getStock(item, cart) <= 0
+                              ? "Uitverkocht"
+                              : "Toevoegen aan bestelling"
                       }
                     >
                       +
