@@ -1,9 +1,8 @@
 // Menu.jsx
 import React, { useState } from "react";
-import OrderDate from "./OrderDate";
 import { useCart } from "../contexts/CartContext";
 
-const Menu = ({ pizzas, stockSheet, events, isOpen }) => {
+const Menu = ({ pizzas, stockSheet, isOpen }) => {
   const { addItem, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState("Pizza"); // default tab
 
@@ -23,8 +22,6 @@ const Menu = ({ pizzas, stockSheet, events, isOpen }) => {
 
   return (
     <div className="menu">
-      <OrderDate events={events} />
-
       <div id="3" className="menu-box">
         <h2 className="monoton-regular">Menu</h2>
 

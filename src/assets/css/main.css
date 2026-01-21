@@ -1737,7 +1737,7 @@ footer a:hover {
 }
 .menu {
   background-color: var(--primary-purple);
-  padding: 5rem 0;
+  padding: 0 1rem 5rem;
 }
 .menu .monoton-regular {
   color: var(--primary-pink);
@@ -1823,14 +1823,8 @@ footer a:hover {
 }
 .menu-openStatus {
   color: var(--primary-white);
-  padding: 2rem 1rem !important;
+  padding-top: 4rem;
   text-align: center;
-}
-.menu-openStatus-p {
-  margin-bottom: 1rem;
-}
-.menu-openStatus-p:last-child {
-  margin-bottom: 5rem;
 }
 .menu-tabs {
   display: flex;

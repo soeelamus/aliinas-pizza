@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Cart from "./Cart";
 import Menu from "./Menu";
+import OrderDate from "./OrderDate";
 import { useEvents } from "../contexts/EventsContext";
 import { CartProvider } from "../contexts/CartContext";
 
@@ -13,15 +14,15 @@ const PizzaShop = () => {
   // Fetch pizzas
   useEffect(() => {
     fetch("/json/pizzas.json")
-      .then(res => res.json())
-      .then(data => setPizzas(data.Pizzas || []))
+      .then((res) => res.json())
+      .then((data) => setPizzas(data.Pizzas || []))
       .catch(console.error);
   }, []);
 
   // Fetch stockSheet
   useEffect(() => {
     fetch("/api/stock")
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(setStockSheet)
       .catch(console.error);
   }, []);
@@ -31,22 +32,23 @@ const PizzaShop = () => {
     return <p>Laden…</p>;
   }
   console.log(stockSheet);
-  
 
   return (
     <CartProvider stockSheet={stockSheet}>
       <div className="pizza-shop">
         <Cart isOpen={isOpen} />
-        <Menu 
-          pizzas={pizzas} 
-          stockSheet={stockSheet} 
-          events={events} 
-          isOpen={isOpen} 
+        <div className="menu">
+          <OrderDate events={events} />
+        </div>
+        <Menu
+          pizzas={pizzas}
+          stockSheet={stockSheet}
+          events={events}
+          isOpen={isOpen}
         />
       </div>
     </CartProvider>
   );
 };
-
 
 export default PizzaShop;
