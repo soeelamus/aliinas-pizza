@@ -94,7 +94,7 @@ export default function KitchenScreen() {
     }
 
     fetchOrders();
-    const interval = setInterval(fetchOrders, 5000);
+    const interval = setInterval(fetchOrders, 2500);
     return () => clearInterval(interval);
   }, [audioAllowed, pendingUpdates]);
 
@@ -157,7 +157,7 @@ export default function KitchenScreen() {
     return (
       <div className="center form">
         <StockForm />
-        <button className="btn-purple" onClick={() => setAudioAllowed(true)}>
+        <button className="btn-purple btn-margin" onClick={() => setAudioAllowed(true)}>
           Start Kitchen
         </button>
       </div>
@@ -168,7 +168,7 @@ export default function KitchenScreen() {
 
   return (
     <section className="kitchen-section">
-      <h1>Orders</h1>
+      <h1 className="monoton-regular white">Orders</h1>
       {activeOrders.length > 0 ? (
         <ul className="kitchen-orders">
           {activeOrders.map((order) => (
@@ -191,7 +191,7 @@ export default function KitchenScreen() {
       {pickedUpOrders.length > 0 && (
         <>
           <div className="center">
-            <h2>✅ Picked-up Orders</h2>
+            <h2 className="monoton-regular white">✅ Picked-up</h2>
           </div>
           <ul className="pickedup">
             {pickedUpOrders.map((order) => (

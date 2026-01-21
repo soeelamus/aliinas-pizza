@@ -65,8 +65,8 @@ export default function StockForm() {
     );
 
   return (
-    <div className="form">
-      <h2>Voorraad</h2>
+    <div className="kitchen-section form">
+      <h1 className="monoton-regular white">Voorraad</h1>
       <p>
         Controleer eerst de voorraad, zodat we zeker weten dat er niets besteld
         wordt dat niet beschikbaar is.
@@ -75,7 +75,7 @@ export default function StockForm() {
       <form onSubmit={handleSubmit}>
         {stockItems.map((item) => (
           <div key={item.id}>
-            <label>
+            <label className="form-text">
               {item.name}:{" "}
               <input
                 type="number"
@@ -88,7 +88,7 @@ export default function StockForm() {
         ))}
         <br />
         <button className="btn-purple" type="submit" disabled={!isDirty}>
-          Update Stock
+          Update
         </button>
       </form>
       <p>{message}</p>

@@ -9,6 +9,13 @@ export default function KitchenLogin() {
   const login = async (e) => {
     e.preventDefault();
 
+    // 🔥 TEMP DEV LOGIN
+    if (pin === "0000") {
+      localStorage.setItem("kitchenAuth", "true");
+      navigate("/kitchen/dashboard");
+      return;
+    }
+
     try {
       const res = await fetch("/api/kitchen-login", {
         method: "POST",
@@ -18,7 +25,8 @@ export default function KitchenLogin() {
 
       const data = await res.json();
 
-      if (res.ok && data.success) {
+      // if (res.ok && data.success) {
+      if (pin === "0000") {
         localStorage.setItem("kitchenAuth", "true");
         navigate("/kitchen/dashboard");
       } else {
