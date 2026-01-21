@@ -1,13 +1,20 @@
 import React from "react";
 import "../assets/css/UserCart.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
 
 const UserCart = ({ isOpen }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { cart, removeItem, changeQuantity, totalAmount, getStock } = useCart();
+  const isKitchen = location.pathname.startsWith("/kitchen");
 
   if (cart.length === 0) return null;
+
+  const handleCheckout = () => {
+    navigate(isKitchen ? "/paymentKitchen" : "/payment");
+    window.location.reload();
+  };
 
   return (
     <aside className="cart">
@@ -66,10 +73,7 @@ const UserCart = ({ isOpen }) => {
 
         <button
           className="checkout-button btn-purple"
-          onClick={() => {
-            navigate("/payment");
-            window.location.reload();
-          }}
+          onClick={handleCheckout}
           disabled={!isOpen}
         >
           {isOpen ? "Bestellen" : "Vandaag gesloten"}
