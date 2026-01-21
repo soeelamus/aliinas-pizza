@@ -51,12 +51,8 @@ const UserCart = ({ isOpen }) => {
                 <button
                   className="btn-purple btn-small"
                   onClick={() => changeQuantity(cartItem.product, 1)}
-                  disabled={cartItem.quantity >= stock}
-                  title={
-                    cartItem.quantity >= stock
-                      ? "Uitverkocht"
-                      : "Aantal verhogen"
-                  }
+                  disabled={stock <= 0}
+                  title={stock <= 0 ? "Uitverkocht" : "Aantal verhogen"}
                 >
                   +
                 </button>

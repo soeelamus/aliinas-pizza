@@ -12,11 +12,11 @@ export default function KitchenDashboard() {
 
   return (
     <div className="kitchen-dashboard">
-      <div className="kitchen-cashier">
-        <KitchenCashier />
-      </div>
       <div className="kitchen-screen">
         <KitchenScreen />
+      </div>
+      <div className="kitchen-cashier">
+        <KitchenCashier />
       </div>
     </div>
   );

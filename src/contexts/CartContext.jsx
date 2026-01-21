@@ -75,21 +75,24 @@ export const CartProvider = ({ children, stockSheet = [] }) => {
       prev.filter((p) => String(p.product.id) !== String(product.id)),
     );
 
-  const changeQuantity = (product, amount) => {
-    setCart((prev) =>
-      prev.map((p) =>
-        String(p.product.id) === String(product.id)
-          ? {
-              ...p,
-              quantity: Math.min(
-                getStock(p.product, prev), // <-- pass current cart
-                Math.max(1, p.quantity + amount),
-              ),
-            }
-          : p,
-      ),
-    );
-  };
+const changeQuantity = (product, amount) => {
+  setCart((prev) => {
+    return prev
+      .map((p) => {
+        if (String(p.product.id) !== String(product.id)) return p;
+
+        const newQty = p.quantity + amount;
+        const maxAllowed = p.quantity + getStock(p.product, prev);
+
+        if (newQty <= 0) return null; // ❗ verwijderen
+        if (newQty > maxAllowed) return { ...p, quantity: maxAllowed };
+
+        return { ...p, quantity: newQty };
+      })
+      .filter(Boolean); // ❗ verwijder nulls
+  });
+};
+
 
   const clearCart = () => {
     setCart([]);

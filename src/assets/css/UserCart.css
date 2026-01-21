@@ -2,8 +2,8 @@
   position: fixed;
   background-color: var(--primary-white);
   bottom: 6rem;
-  right: calc(50% - 12.5rem);
-  width: 25rem;
+  right: 1rem;
+  width: 17rem;
   max-height: 80vh;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.2);
@@ -61,13 +61,13 @@
 .btn-cta {
   position:fixed;
   bottom: 1rem;
-  width: 100%;
+  right: 0;
   display: flex;
   justify-content: center;
   z-index: 1000;
 }
 .btn-cart {
-  width: 25rem;
+  width: 17rem;
   margin: 1rem;
   position: relative;
   border: 2px solid yellow;
