@@ -656,13 +656,6 @@ section.special {
   border-radius: 1rem;
   overflow: hidden;
 }
-ul {
-  list-style: disc;
-  margin: 0 0 2em 0;
-}
-ul li {
-  padding-left: 0.5em;
-}
 ul.alt {
   list-style: none;
   padding-left: 0;
@@ -1774,6 +1767,7 @@ footer a:hover {
 .pizza-text {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 .pizza-text h3 {
   text-transform: uppercase;
@@ -1796,8 +1790,8 @@ footer a:hover {
 .btn-small {
   width: 3rem;
 }
-.btn-small:hover {
-  background-color: var(--primary-pink);
+.btn-small-5 {
+  width: 5rem;
 }
 @media screen and (max-width: 580px) {
   .menu-box {
@@ -1831,4 +1825,7 @@ footer a:hover {
   gap: 1rem;
   width: 100%;
   margin-bottom: 3rem;
+}
+.margin-2 {
+  margin: 2rem;
 }

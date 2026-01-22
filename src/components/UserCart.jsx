@@ -68,7 +68,7 @@ const UserCart = ({ isOpen }) => {
         </div>
 
         {isKitchen ? (
-          <KitchenCart total={totalAmount()}/>
+          <KitchenCart total={totalAmount()} cart={cart}/>
         ) : (
           <button
             className="checkout-button btn-purple"

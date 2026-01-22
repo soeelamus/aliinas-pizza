@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import CashCheckout from "./CashCheckout";
 
-export default function KitchenCart({ total }) {
+export default function KitchenCart({ total, cart }) {
   const [showCashPopup, setShowCashPopup] = useState(false);
 
   const handleCashCheckout = () => {

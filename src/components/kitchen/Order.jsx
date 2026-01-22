@@ -1,44 +1,60 @@
 import { PickupCountdown } from "./PickupCountdown";
 
 export default function Order({ order, onStatusChange, updatingId, currentTime }) {
-  const countdown = PickupCountdown(order.pickuptime, currentTime);
+  // ✅ PickupCountdown met fallback
+  const countdown = PickupCountdown(order.pickuptime) || {
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+    pickupTimeFormatted: order.pickuptime || "Onbekend",
+    isRed: order.pickuptime === "ASAP",
+    isOrange: false,
+  };
 
+  // ✅ Parse pizza items
   const pizzas = order.items
-    .split(",")
+    ?.split(",")
     .map((item) => item.trim())
     .map((item) => {
       const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
       return match ? { quantity: Number(match[1]), name: match[2].trim() } : null;
     })
-    .filter(Boolean);
+    .filter(Boolean) || [];
 
-  const handleClick = (newStatus) => {
-    onStatusChange(order.id, newStatus);
-  };
-  
+  const handleClick = (newStatus) => onStatusChange(order.id, newStatus);
+
   return (
     <li
       className={`kitchen-order
         ${order.status === "done" ? "done" : ""}
         ${order.status === "pickedup" ? "pickedup" : ""}
-        ${countdown?.isRed && order.status === "new" ? "urgent-red" : ""}
-        ${countdown?.isOrange && order.status === "new" ? "urgent-orange" : ""}
+        ${countdown.isRed && order.status === "new" ? "urgent-red" : ""}
+        ${countdown.isOrange && order.status === "new" ? "urgent-orange" : ""}
       `}
     >
-      <ul className="heading">
-        <div className="heading-box">
+      {/* Heading */}
+      <div className="heading-box">
+        <ul className="heading">
           <li>Naam: {order.customername?.toUpperCase() || "Onbekend"}</li>
-          <li>Pickup: {countdown?.pickupTimeFormatted || "Onbekend"}</li>
-        </div>
-        {order.status !== "pickedup" && (
           <li>
-            {countdown?.hours.toString().padStart(2, "0")}:
-            {countdown?.minutes.toString().padStart(2, "0")}:
-            {countdown?.seconds.toString().padStart(2, "0")}
+            Pickup:{" "}
+            <strong className={order.pickuptime === "ASAP" ? "urgent-red" : ""}>
+              {countdown.pickupTimeFormatted}
+            </strong>
           </li>
-        )}
-      </ul>
+          {order.status !== "pickedup" && (
+            <li>
+              {order.pickuptime === "ASAP"
+                ? ""
+                : `${countdown.hours.toString().padStart(2, "0")}:${countdown.minutes
+                    .toString()
+                    .padStart(2, "0")}:${countdown.seconds.toString().padStart(2, "0")}`}
+            </li>
+          )}
+        </ul>
+      </div>
 
+      {/* Pizza items */}
       {pizzas.map((pizza, i) => (
         <div className="pizzas" key={i}>
           <div className="pizzas list">
@@ -51,8 +67,12 @@ export default function Order({ order, onStatusChange, updatingId, currentTime }
         </div>
       ))}
 
-      {order.customernotes && <span className="pizzas list">Notes: {order.customernotes}</span>}
+      {/* Customer notes */}
+      {order.customernotes && (
+        <span className="pizzas list">Notes: {order.customernotes}</span>
+      )}
 
+      {/* Action buttons */}
       {order.status === "new" && (
         <button
           className="btn-purple"

@@ -14,15 +14,40 @@
   background: var(--primary-white);
   padding: 2rem;
   border-radius: 1rem;
-  max-width: 25rem;
+  max-width: 50rem;
   width: 100%;
   text-align: center;
   margin: 1rem;
 }
-.quick-buttons button {
-  margin: 0.5rem;
+.quick-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  width: 25rem;
+  margin: 0 auto 1rem;
 }
-.calculator input {
-  width: 80px;
-  margin-left: 0.5rem;
+.quick-buttons button {
+  height: 5rem;
+}
+.unset {
+  width: unset;
+  margin: unset;
+}
+.amounts,
+.history-list {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.amount-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.amount {
+  font-size: 2.5rem;
+}
+.red {
+  color: red;
 }
