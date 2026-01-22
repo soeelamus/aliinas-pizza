@@ -2,6 +2,7 @@ import React from "react";
 import "../assets/css/UserCart.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
+import KitchenCart from "./kitchen/KitchenCart";
 
 const UserCart = ({ isOpen }) => {
   const navigate = useNavigate();
@@ -12,8 +13,7 @@ const UserCart = ({ isOpen }) => {
   if (cart.length === 0) return null;
 
   const handleCheckout = () => {
-    navigate(isKitchen ? "/paymentKitchen" : "/payment");
-    window.location.reload();
+    navigate(isKitchen ? console.log("Payment in kitchen!") : "/payment");
   };
 
   return (
@@ -67,13 +67,17 @@ const UserCart = ({ isOpen }) => {
           <p className="total">Totaal: €{totalAmount()}</p>
         </div>
 
-        <button
-          className="checkout-button btn-purple"
-          onClick={handleCheckout}
-          disabled={!isOpen}
-        >
-          {isOpen ? "Bestellen" : "Vandaag gesloten"}
-        </button>
+        {isKitchen ? (
+          <KitchenCart total={totalAmount()}/>
+        ) : (
+          <button
+            className="checkout-button btn-purple"
+            onClick={handleCheckout}
+            disabled={!isOpen}
+          >
+            {isOpen ? "Bestellen" : "Vandaag gesloten"}
+          </button>
+        )}
       </div>
     </aside>
   );

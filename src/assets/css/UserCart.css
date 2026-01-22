@@ -6,7 +6,7 @@
   width: 17rem;
   max-height: 80vh;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
   padding: 16px;
   overflow-y: auto;
   z-index: 1000;
@@ -52,6 +52,10 @@
   color: yellow;
   width: 100%;
 }
+.checkout-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
 
 .total {
   font-weight: bold;
@@ -59,7 +63,7 @@
 }
 
 .btn-cta {
-  position:fixed;
+  position: fixed;
   bottom: 1rem;
   right: 0;
   display: flex;

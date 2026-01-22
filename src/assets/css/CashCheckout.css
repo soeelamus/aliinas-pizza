@@ -1,0 +1,28 @@
+.cash-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.cash-popup {
+  background: var(--primary-white);
+  padding: 2rem;
+  border-radius: 1rem;
+  max-width: 25rem;
+  width: 100%;
+  text-align: center;
+  margin: 1rem;
+}
+.quick-buttons button {
+  margin: 0.5rem;
+}
+.calculator input {
+  width: 80px;
+  margin-left: 0.5rem;
+}
