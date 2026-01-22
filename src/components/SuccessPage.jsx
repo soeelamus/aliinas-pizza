@@ -26,33 +26,41 @@ const SuccessPage = () => {
   };
 
   // 🔹 push stock update (batch)
-const pushStock = async (orderItems, currentStock) => {
-  
-  const updateData = orderItems.map((item) => {
-    let stockItem = currentStock.find((s) => s.name === item.name);
+  const pushStock = async (orderItems, currentStock) => {
+    if (!orderItems || orderItems.length === 0) return;
 
-    if (!stockItem) {
-      stockItem = currentStock[0]; 
-      console.warn(
-        `Item "${item.name}" niet gevonden in stock, aftrekken van "${stockItem.name}"`
-      );
-    }
+    // Map alle items naar stock update
+    const updateData = orderItems.map((item) => {
+      let stockItem = currentStock.find((s) => s.name === item.name);
 
-    return {
-      id: stockItem.id,
-      stock: Math.max(0, stockItem.stock - item.quantity),
-    };
-  });
+      // fallback: eerste rij (Deegballen)
+      if (!stockItem) {
+        stockItem = currentStock[0];
+        console.warn(
+          `Item "${item.name}" niet gevonden in stock, aftrekken van "${stockItem.name}"`,
+        );
+      }
 
-  if (updateData.length === 0) return;
-
-    await fetch("/api/stock", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updateData),
+      return {
+        id: stockItem.id,
+        stock: Math.max(0, stockItem.stock - item.quantity),
+      };
     });
 
-    console.log("✅ Stock updated for all items");
+    console.log("Stock update payload:", updateData);
+
+    try {
+      const res = await fetch("/api/stock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updateData),
+      });
+
+      const text = await res.text(); // Apps Script geeft plain text
+      console.log("Stock API response:", text);
+    } catch (err) {
+      console.error("❌ Failed to push stock:", err);
+    }
   };
 
   // 🔹 check payment status
@@ -70,8 +78,13 @@ const pushStock = async (orderItems, currentStock) => {
           const orderObj = {
             id: Date.now().toString(),
             paymentId,
-            items: cart.map((i) => `${i.quantity}x ${i.product.name}`).join(", "),
-            total: cart.reduce((sum, i) => sum + i.product.price * i.quantity, 0),
+            items: cart
+              .map((i) => `${i.quantity}x ${i.product.name}`)
+              .join(", "),
+            total: cart.reduce(
+              (sum, i) => sum + i.product.price * i.quantity,
+              0,
+            ),
             pickupTime: paymentData.formData?.pickupTime || "",
             orderedTime: new Date().toISOString(),
             customerName: paymentData.formData?.name || "",
@@ -107,12 +120,15 @@ const pushStock = async (orderItems, currentStock) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(order),
         });
+
         const result = await res.json();
 
-        if (!result.success) {
+        if (result.status !== "ok") {
           console.error("❌ Failed to push order:", result);
           return;
         }
+
+        console.log("✅ Order pushed:", result);
 
         // 2️⃣ fetch current stock
         const stockRes = await fetch("/api/stock");
