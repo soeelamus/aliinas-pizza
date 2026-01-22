@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from "react";
 import Cart from "../Cart";
 import Menu from "../Menu";
-import { CartProvider } from "../../contexts/CartContext";
 
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
@@ -35,12 +34,10 @@ const PizzaShop = () => {
   }
 
   return (
-    <CartProvider stockSheet={stockSheet}>
-      <div className="pizza-shop">
-        <Cart isOpen={true} />
-        <Menu pizzas={pizzas} stockSheet={stockSheet} isOpen={true} />
-      </div>
-    </CartProvider>
+    <div className="pizza-shop">
+      <Cart isOpen={true} />
+      <Menu pizzas={pizzas} stockSheet={stockSheet} isOpen={true} />
+    </div>
   );
 };
 

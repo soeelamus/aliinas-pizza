@@ -4,7 +4,6 @@ import Cart from "./Cart";
 import Menu from "./Menu";
 import OrderDate from "./OrderDate";
 import { useEvents } from "../contexts/EventsContext";
-import { CartProvider } from "../contexts/CartContext";
 
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
@@ -34,20 +33,18 @@ const PizzaShop = () => {
   console.log(stockSheet);
 
   return (
-    <CartProvider stockSheet={stockSheet}>
-      <div className="pizza-shop">
-        <Cart isOpen={isOpen} />
-        <div className="menu">
-          <OrderDate events={events} />
-        </div>
-        <Menu
-          pizzas={pizzas}
-          stockSheet={stockSheet}
-          events={events}
-          isOpen={isOpen}
-        />
+    <div className="pizza-shop">
+      <Cart isOpen={isOpen} />
+      <div className="menu">
+        <OrderDate events={events} />
       </div>
-    </CartProvider>
+      <Menu
+        pizzas={pizzas}
+        stockSheet={stockSheet}
+        events={events}
+        isOpen={isOpen}
+      />
+    </div>
   );
 };
 

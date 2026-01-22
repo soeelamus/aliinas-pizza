@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 const CartContext = createContext();
 
 export const CartProvider = ({ children, stockSheet = [] }) => {
+  const [stockSheetState, setStockSheetState] = useState(stockSheet);
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem("cart");
     if (!saved) return [];
@@ -16,6 +17,11 @@ export const CartProvider = ({ children, stockSheet = [] }) => {
       return [];
     }
   });
+  console.log(cart);
+
+  useEffect(() => {
+    setStockSheetState(stockSheet);
+  }, [stockSheet]);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -23,11 +29,11 @@ export const CartProvider = ({ children, stockSheet = [] }) => {
 
   // Helper om stock te checken
   const getStock = (product, currentCart = []) => {
-    if (!stockSheet.length) return Infinity;
+    if (!stockSheetState.length) return Infinity; // <-- gebruik stockSheetState
 
     // Pizzas follow 'deegballen'
     if (!product.category || product.category === "") {
-      const dough = stockSheet.find(
+      const dough = stockSheetState.find(
         (item) => item.name.toLowerCase() === "deegballen",
       );
       const totalStock = dough ? Number(dough.stock) : 0;
@@ -40,14 +46,14 @@ export const CartProvider = ({ children, stockSheet = [] }) => {
     }
 
     // Drinks / other items
-    const itemStock = stockSheet.find((s) => s.id === product.id)?.stock ?? 0;
+    const itemStock =
+      stockSheetState.find((s) => s.id === product.id)?.stock ?? 0;
     const quantityInCart = currentCart
       .filter((p) => p.product.id === product.id)
       .reduce((sum, p) => sum + p.quantity, 0);
 
     return Math.max(0, itemStock - quantityInCart);
   };
-
   // Voeg item toe rekening houdend met stock
   const addItem = (product) => {
     setCart((prev) => {
@@ -75,24 +81,23 @@ export const CartProvider = ({ children, stockSheet = [] }) => {
       prev.filter((p) => String(p.product.id) !== String(product.id)),
     );
 
-const changeQuantity = (product, amount) => {
-  setCart((prev) => {
-    return prev
-      .map((p) => {
-        if (String(p.product.id) !== String(product.id)) return p;
+  const changeQuantity = (product, amount) => {
+    setCart((prev) => {
+      return prev
+        .map((p) => {
+          if (String(p.product.id) !== String(product.id)) return p;
 
-        const newQty = p.quantity + amount;
-        const maxAllowed = p.quantity + getStock(p.product, prev);
+          const newQty = p.quantity + amount;
+          const maxAllowed = p.quantity + getStock(p.product, prev);
 
-        if (newQty <= 0) return null; // ❗ verwijderen
-        if (newQty > maxAllowed) return { ...p, quantity: maxAllowed };
+          if (newQty <= 0) return null; // ❗ verwijderen
+          if (newQty > maxAllowed) return { ...p, quantity: maxAllowed };
 
-        return { ...p, quantity: newQty };
-      })
-      .filter(Boolean); // ❗ verwijder nulls
-  });
-};
-
+          return { ...p, quantity: newQty };
+        })
+        .filter(Boolean); // ❗ verwijder nulls
+    });
+  };
 
   const clearCart = () => {
     setCart([]);

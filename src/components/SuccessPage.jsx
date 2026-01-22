@@ -1,4 +1,3 @@
-// SuccessPage.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/css/SuccessPage.css";
@@ -9,14 +8,56 @@ const SuccessPage = () => {
   const [order, setOrder] = useState(null);
   const [pushed, setPushed] = useState(false);
   const navigate = useNavigate();
-  const paymentId = localStorage.getItem("paymentId");
-  const cart = JSON.parse(localStorage.getItem("cart"));
-  const paymentData = JSON.parse(localStorage.getItem("paymentData"));
 
-  useEffect(() => {
-    if (!paymentId) {
-      return;
+  const paymentId = localStorage.getItem("paymentId");
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+  const paymentData = JSON.parse(localStorage.getItem("paymentData") || "{}");
+
+  // 🔹 parse items string naar array { name, quantity }
+  const parseOrderItems = (itemsStr) => {
+    return itemsStr
+      .split(",")
+      .map((item) => {
+        const match = item.trim().match(/^(\d+)x\s+(.+)$/);
+        if (!match) return null;
+        return { quantity: parseInt(match[1], 10), name: match[2].trim() };
+      })
+      .filter(Boolean);
+  };
+
+  // 🔹 push stock update (batch)
+const pushStock = async (orderItems, currentStock) => {
+  
+  const updateData = orderItems.map((item) => {
+    let stockItem = currentStock.find((s) => s.name === item.name);
+
+    if (!stockItem) {
+      stockItem = currentStock[0]; 
+      console.warn(
+        `Item "${item.name}" niet gevonden in stock, aftrekken van "${stockItem.name}"`
+      );
     }
+
+    return {
+      id: stockItem.id,
+      stock: Math.max(0, stockItem.stock - item.quantity),
+    };
+  });
+
+  if (updateData.length === 0) return;
+
+    await fetch("/api/stock", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updateData),
+    });
+
+    console.log("✅ Stock updated for all items");
+  };
+
+  // 🔹 check payment status
+  useEffect(() => {
+    if (!paymentId) return;
 
     const checkPayment = async () => {
       try {
@@ -28,71 +69,72 @@ const SuccessPage = () => {
           // Build order object
           const orderObj = {
             id: Date.now().toString(),
-            paymentId: paymentId,
-            items: cart
-              .map((i) => `${i.quantity}x ${i.product.name}`)
-              .join(", "),
-            total: cart.reduce(
-              (sum, i) => sum + i.product.price * i.quantity,
-              0,
-            ),
-            pickupTime: paymentData.formData.pickupTime,
+            paymentId,
+            items: cart.map((i) => `${i.quantity}x ${i.product.name}`).join(", "),
+            total: cart.reduce((sum, i) => sum + i.product.price * i.quantity, 0),
+            pickupTime: paymentData.formData?.pickupTime || "",
             orderedTime: new Date().toISOString(),
-            customerName: paymentData.formData.name,
-            customerNotes: paymentData.formData.notes,
+            customerName: paymentData.formData?.name || "",
+            customerNotes: paymentData.formData?.notes || "",
             status: "new",
           };
 
           setOrder(orderObj);
 
+          // clear local storage
           localStorage.removeItem("cart");
           localStorage.removeItem("paymentId");
           localStorage.removeItem("paymentData");
         }
       } catch (err) {
         console.error(err);
-        navigate("/"); // fallback if API fails
+        navigate("/"); // fallback
       }
     };
 
     checkPayment();
-  }, [navigate]);
+  }, [navigate, paymentId, cart, paymentData]);
 
+  // 🔹 push order & stock
   useEffect(() => {
     if (!order || pushed) return;
-    const pushOrder = async () => {
+
+    const pushOrderAndStock = async () => {
       try {
+        // 1️⃣ push order
         const res = await fetch("/api/orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: order.id,
-            paymentId: order.paymentId,
-            items: order.items,
-            total: order.total,
-            pickupTime: order.pickupTime,
-            orderedTime: order.orderedTime,
-            customerName: order.customerName,
-            customerNotes: order.customerNotes,
-            status: order.status,
-          }),
+          body: JSON.stringify(order),
         });
-
         const result = await res.json();
-        if (result.status === "ok") {
-          console.log("✅ Order successfully pushed to Database!");
-          setPushed(true);
-        } else {
+
+        if (!result.success) {
           console.error("❌ Failed to push order:", result);
+          return;
         }
+
+        // 2️⃣ fetch current stock
+        const stockRes = await fetch("/api/stock");
+        const stockData = await stockRes.json(); // [{ id, name, stock }]
+
+        // 3️⃣ parse order items
+        const parsedItems = parseOrderItems(order.items);
+
+        // 4️⃣ batch update stock
+        await pushStock(parsedItems, stockData);
+
+        setPushed(true);
+        console.log("✅ Order pushed & stock updated!");
       } catch (err) {
-        console.error("❌ Failed to push order:", err);
+        console.error("❌ Failed to push order or update stock:", err);
       }
     };
 
-    pushOrder();
+    pushOrderAndStock();
   }, [order, pushed]);
 
+  // 🔹 render content based on payment status
   const renderContent = () => {
     switch (status) {
       case "paid":
