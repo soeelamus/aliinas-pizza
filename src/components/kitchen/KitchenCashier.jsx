@@ -1,11 +1,12 @@
-// PizzaShop.jsx
+// KitchenCashier.jsx
 import React, { useState, useEffect } from "react";
 import Cart from "../Cart";
 import Menu from "../Menu";
+import { useCart } from "../../contexts/CartContext";
 
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
-  const [stockSheet, setStockSheet] = useState([]);
+  const { stockSheetState, setStockSheetState } = useCart();
 
   // Fetch pizzas
   useEffect(() => {
@@ -15,16 +16,16 @@ const PizzaShop = () => {
       .catch(console.error);
   }, []);
 
-  // Fetch stockSheet
+  // Fetch stockSheet en update context
   useEffect(() => {
     fetch("/api/stock")
       .then((res) => res.json())
-      .then(setStockSheet)
+      .then((data) => setStockSheetState(data))
       .catch(console.error);
-  }, []);
+  }, [setStockSheetState]);
 
   // Wacht tot alles geladen is
-  if (pizzas.length === 0 || stockSheet.length === 0) {
+  if (pizzas.length === 0 || stockSheetState.length === 0) {
     return (
       <div className="center margin">
         <p className="loader"></p>
@@ -36,7 +37,7 @@ const PizzaShop = () => {
   return (
     <div className="pizza-shop">
       <Cart isOpen={true} />
-      <Menu pizzas={pizzas} stockSheet={stockSheet} isOpen={true} />
+      <Menu pizzas={pizzas} stockSheet={stockSheetState} isOpen={true} />
     </div>
   );
 };

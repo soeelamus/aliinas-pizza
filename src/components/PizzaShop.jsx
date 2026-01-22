@@ -4,11 +4,12 @@ import Cart from "./Cart";
 import Menu from "./Menu";
 import OrderDate from "./OrderDate";
 import { useEvents } from "../contexts/EventsContext";
+import { useCart } from "../contexts/CartContext";
 
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
-  const [stockSheet, setStockSheet] = useState([]);
   const { events, isOpen, loading } = useEvents();
+  const { stockSheetState, setStockSheetState } = useCart();
 
   // Fetch pizzas
   useEffect(() => {
@@ -18,19 +19,23 @@ const PizzaShop = () => {
       .catch(console.error);
   }, []);
 
-  // Fetch stockSheet
+  // Fetch stockSheet en update globale context
   useEffect(() => {
     fetch("/api/stock")
       .then((res) => res.json())
-      .then(setStockSheet)
+      .then((data) => setStockSheetState(data))
       .catch(console.error);
-  }, []);
+  }, [setStockSheetState]);
 
   // Wacht tot alles geladen is
-  if (loading || pizzas.length === 0 || stockSheet.length === 0) {
-    return <p>Laden…</p>;
+  if (loading || pizzas.length === 0) {
+    return (
+      <div className="center margin">
+        <p className="loader"></p>
+        <p>Loading cashier</p>
+      </div>
+    );
   }
-  console.log(stockSheet);
 
   return (
     <div className="pizza-shop">
@@ -40,7 +45,7 @@ const PizzaShop = () => {
       </div>
       <Menu
         pizzas={pizzas}
-        stockSheet={stockSheet}
+        stockSheet={stockSheetState}
         events={events}
         isOpen={isOpen}
       />

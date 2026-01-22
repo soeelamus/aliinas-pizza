@@ -3,25 +3,36 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext();
 
-export const CartProvider = ({ children, stockSheet = [] }) => {
-  const [stockSheetState, setStockSheetState] = useState(stockSheet);
-  const [cart, setCart] = useState(() => {
+export const CartProvider = ({ children }) => {
+  const [stockSheetState, setStockSheetState] = useState([]);
+const [cart, setCart] = useState(() => {
+  try {
     const saved = localStorage.getItem("cart");
     if (!saved) return [];
-    try {
-      return JSON.parse(saved).map((item) => ({
-        ...item,
-        product: { ...item.product, id: String(item.product.id) },
-      }));
-    } catch {
-      return [];
-    }
-  });
-  console.log(cart);
 
-  useEffect(() => {
-    setStockSheetState(stockSheet);
-  }, [stockSheet]);
+    const parsed = JSON.parse(saved);
+
+    if (!parsed || !Array.isArray(parsed)) return [];
+
+    return parsed
+      .filter(item => item && item.product) // ✅ filter invalid items
+      .map(item => ({
+        quantity: item.quantity || 0,
+        product: {
+          id: String(item.product.id ?? ""),
+          name: item.product.name ?? "",
+          price: item.product.price ?? 0,
+          type: item.product.type ?? "",
+          ingredients: Array.isArray(item.product.ingredients)
+            ? item.product.ingredients
+            : [],
+        },
+      }));
+  } catch (e) {
+    console.error("Failed to parse cart from localStorage:", e);
+    return [];
+  }
+});
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -117,6 +128,8 @@ export const CartProvider = ({ children, stockSheet = [] }) => {
         clearCart,
         totalAmount,
         getStock,
+        stockSheetState,
+        setStockSheetState,
       }}
     >
       {children}
