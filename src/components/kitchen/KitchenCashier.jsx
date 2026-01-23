@@ -4,7 +4,7 @@ import Cart from "../Cart";
 import Menu from "../Menu";
 import { useCart } from "../../contexts/CartContext";
 
-const PizzaShop = () => {
+const KitchenCashier = () => {
   const [pizzas, setPizzas] = useState([]);
   const { stockSheetState, setStockSheetState } = useCart();
 
@@ -42,4 +42,4 @@ const PizzaShop = () => {
   );
 };
 
-export default PizzaShop;
+export default KitchenCashier;
