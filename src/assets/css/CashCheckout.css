@@ -14,7 +14,7 @@
   background: var(--primary-white);
   padding: 2rem;
   border-radius: 1rem;
-  max-width: 50rem;
+  max-width: 40rem;
   width: 100%;
   text-align: center;
   margin: 1rem;
@@ -50,4 +50,18 @@
 }
 .red {
   color: red;
+}
+.cash-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  z-index: 9999;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
 }

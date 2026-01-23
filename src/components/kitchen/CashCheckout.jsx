@@ -9,6 +9,7 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
   const [received, setReceived] = useState(0);
   const [change, setChange] = useState(0);
   const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const euros = [1, 2, 5, 10, 20, 50, 100, 200];
   const coins = [0.05, 0.1, 0.2, 0.5];
@@ -48,6 +49,7 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
   // Bevestig
   const handleConfirm = async () => {
     if (received < total) return;
+    setLoading(true);
 
     // Zorg dat cart een array is
     const safeCart = Array.isArray(cart) ? cart : [];
@@ -130,11 +132,21 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
       onClose();
     } catch (err) {
       console.error("❌ Error in handleConfirm:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return createPortal(
     <div className="cash-popup-overlay">
+      {loading && (
+        <div className="cash-loading-overlay">
+          <div className="center margin">
+            <p className="loader"></p>
+            <p>Order wordt verwerkt</p>
+          </div>
+        </div>
+      )}
       <div className="cash-popup">
         <p>
           Te betalen: <strong className="amount">€{total.toFixed(2)}</strong>
@@ -182,18 +194,22 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
         </div>
 
         {/* Geschiedenis */}
-        {history.length > 0 && (
-          <div className="margin-2">
-            <h4 className="unset">Geschiedenis</h4>
-            <div className="history">
+        <div className="margin-2">
+          <h4 className="unset">Geschiedenis</h4>
+          <div className="history">
+            {history.length <= 0 ? (
+              <ul className="history-list">
+                <li>-</li>
+              </ul>
+            ) : (
               <ul className="history-list">
                 {history.map((amt, idx) => (
                   <li key={idx}>+ €{amt.toFixed(2)}</li>
                 ))}
               </ul>
-            </div>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Acties */}
         <div className="checkout-buttons">
@@ -205,14 +221,14 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
             onClick={handleClear}
             disabled={history.length === 0}
           >
-            Reset
+            Res
           </button>
           <button
             className="btn-purple btn-small-5"
             onClick={handleUndo}
             disabled={history.length === 0}
           >
-            Undo
+            Un
           </button>
 
           <button
