@@ -64,7 +64,7 @@
   gap: 1rem;
 }
 .kitchen-order .heading {
-  /* background-color: var(--primary-purple); */
+  background-color: var(--primary-pink);
   color: var(--primary-white);
   padding: 1.5rem 1rem;
   margin-bottom: 1rem;

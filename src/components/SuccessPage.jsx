@@ -26,42 +26,58 @@ const SuccessPage = () => {
   };
 
   // 🔹 push stock update (batch)
-  const pushStock = async (orderItems, currentStock) => {
-    if (!orderItems || orderItems.length === 0) return;
+ const pushStock = async (orderItems, currentStock) => {
+  if (!orderItems || orderItems.length === 0) return;
 
-    // Map alle items naar stock update
-    const updateData = orderItems.map((item) => {
-      let stockItem = currentStock.find((s) => s.name === item.name);
+  // Eerst alles verzamelen per stock-id
+  const grouped = [];
 
-      // fallback: eerste rij (Deegballen)
-      if (!stockItem) {
-        stockItem = currentStock[0];
-        console.warn(
-          `Item "${item.name}" niet gevonden in stock, aftrekken van "${stockItem.name}"`,
-        );
-      }
+  orderItems.forEach((item) => {
+    let stockItem = currentStock.find((s) => s.name === item.name);
 
-      return {
+    // fallback → Deegballen
+    if (!stockItem) {
+      stockItem = currentStock[0];
+      console.warn(
+        `Item "${item.name}" niet gevonden, fallback naar "${stockItem.name}"`
+      );
+    }
+
+    // Check of deze id al bestaat
+    const existing = grouped.find((g) => g.id === stockItem.id);
+
+    if (existing) {
+      existing.stock -= item.quantity;
+    } else {
+      grouped.push({
         id: stockItem.id,
-        stock: Math.max(0, stockItem.stock - item.quantity),
-      };
+        stock: stockItem.stock - item.quantity,
+      });
+    }
+  });
+
+  // Nooit onder 0
+  const updateData = grouped.map((g) => ({
+    id: g.id,
+    stock: Math.max(0, g.stock),
+  }));
+
+  console.log("Stock update payload:", updateData);
+
+  try {
+    const res = await fetch("/api/stock", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updateData),
     });
 
-    console.log("Stock update payload:", updateData);
+    const text = await res.text();
+    console.log("Stock API response:", text);
+  } catch (err) {
+    console.error("❌ Failed to push stock:", err);
+  }
+};
 
-    try {
-      const res = await fetch("/api/stock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updateData),
-      });
-
-      const text = await res.text(); // Apps Script geeft plain text
-      console.log("Stock API response:", text);
-    } catch (err) {
-      console.error("❌ Failed to push stock:", err);
-    }
-  };
 
   // 🔹 check payment status
   useEffect(() => {
