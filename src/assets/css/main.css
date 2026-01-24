@@ -1829,3 +1829,12 @@ footer a:hover {
 .margin-2 {
   margin: 2rem;
 }
+.leaflet-popup {
+  margin-bottom: 3.7rem !important;
+}
+.leaflet-popup-navigate a {
+  color: var(--primary-purple) !important;
+}
+.leaflet-popup-navigate a:hover {
+  color: var(--primary-pink) !important;
+}

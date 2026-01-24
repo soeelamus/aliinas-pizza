@@ -3,6 +3,12 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 export default function Map({ address }) {
+  const myIcon = L.icon({
+    iconUrl: "/images/logo.png",
+    iconSize: [60, 48],
+    iconAnchor: [20, 41],
+  });
+
   const mapRef = useRef(null);
   const [loading, setLoading] = useState(true);
 
@@ -23,8 +29,8 @@ export default function Map({ address }) {
 
     fetch(
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-        address
-      )}`
+        address,
+      )}`,
     )
       .then((res) => res.json())
       .then((data) => {
@@ -34,11 +40,13 @@ export default function Map({ address }) {
         const lon = parseFloat(data[0].lon);
 
         map.setView([lat, lon], 15);
-
-        L.marker([lat, lon])
+        L.marker([lat, lon], { icon: myIcon })
           .addTo(map)
           .bindPopup(
-            `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">Navigate</a>`
+            `<a href="https://www.google.com/maps/search/?api=1&query=${lat},${lon}" target="_blank">Navigate</a>`,
+            {
+              className: "leaflet-popup-navigate",
+            },
           )
           .openPopup();
 
