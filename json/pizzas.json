@@ -1,0 +1,182 @@
+{
+  "Pizzas": [
+    {
+      "id": 1489,
+      "name": "Margheriita",
+      "type": "🥬",
+      "price": 11,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
+      "id": 2652,
+      "name": "Fungii",
+      "price": 12,
+      "type": "🥬",
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Champignons"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
+      "id": 3498,
+      "name": "Vegii",
+      "type": "🥬",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Pesto"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Paprika"
+        },
+        {
+          "name": "Rode ui"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
+      "id": 9445,
+      "name": "Pepperonii",
+      "type": "",
+      "price": 12,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Pepperoni"
+        }
+      ]
+    },
+    {
+      "id": 5321,
+      "name": "Jaeger",
+      "type": "",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Champignons"
+        },
+        {
+          "name": "Gerookte ham"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },  
+    {
+      "id": 6897,
+      "name": "Sweet Chiicken",
+      "type": "",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Gegrilde kip"
+        },
+        {
+          "name": "Appel"
+        },
+        {
+          "name": "Honing"
+        }
+      ]
+    },
+    {
+      "id": 7565,
+      "name": "Diiavola",
+      "type": "🌶️",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Paprika"
+        },
+        {
+          "name": "Rode ui"
+        },
+        {
+          "name": "Jalapeno"
+        },
+        {
+          "name": "Pepperoni"
+        }
+      ]
+    },
+    {
+      "id": 8123,
+      "name": "Nduja",
+      "type": "🌶️",
+      "price": 13,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Rode ui"
+        },
+        {
+          "name": "Jalapeno"
+        },
+        {
+          "name": "Nduja"
+        },
+        {
+          "name": "Chili honing"
+        }
+      ]
+    }
+  ]
+}
