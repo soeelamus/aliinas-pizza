@@ -1,24 +1,27 @@
 // KitchenCart.jsx
 import React, { useState } from "react";
 import CashCheckout from "./CashCheckout";
+import CardCheckout from "./CardCheckout";
 
 export default function KitchenCart({ total, cart }) {
   const [showCashPopup, setShowCashPopup] = useState(false);
+  const [showCardPopup, setShowCardPopup] = useState(false);
 
   const handleCashCheckout = () => {
     setShowCashPopup(true);
   };
 
   const handleCardCheckout = () => {
-    console.log("Card payment in kitchen!");
+    setShowCardPopup(true);
   };
 
-  const handleClosePopup = () => setShowCashPopup(false);
+  const handleCloseCash = () => setShowCashPopup(false);
+  const handleCloseCard = () => setShowCardPopup(false);
+
   const handleConfirmCash = ({ received, change }) => {
     console.log(
       `Order bevestigd! Gekregen: €${received}, Teruggave: €${change}`,
     );
-    // Hier kan je API call toevoegen
   };
 
   return (
@@ -29,6 +32,7 @@ export default function KitchenCart({ total, cart }) {
       >
         Cash
       </button>
+
       <button
         className="checkout-button btn-purple"
         onClick={handleCardCheckout}
@@ -36,11 +40,21 @@ export default function KitchenCart({ total, cart }) {
         Card
       </button>
 
+      {/* Cash popup */}
       {showCashPopup && (
         <CashCheckout
           total={total}
-          onClose={handleClosePopup}
+          onClose={handleCloseCash}
           onConfirm={handleConfirmCash}
+        />
+      )}
+
+      {/* Card popup */}
+      {showCardPopup && (
+        <CardCheckout
+          total={total}
+          cart={cart}
+          onClose={handleCloseCard}
         />
       )}
     </div>

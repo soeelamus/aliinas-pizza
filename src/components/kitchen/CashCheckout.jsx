@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { useCart } from "../../contexts/CartContext";
+import { finalizeOrder } from "../../utils/finalizeOrder";
 import "./../../assets/css/CashCheckout.css";
 
 export default function CashCheckout({ total, onClose, onConfirm }) {
@@ -51,87 +52,22 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
     if (received < total) return;
     setLoading(true);
 
-    // Zorg dat cart een array is
-    const safeCart = Array.isArray(cart) ? cart : [];
-
-    const orderItemsStr = safeCart
-      .map((i) => `${i.quantity}x ${i.product.name}`)
-      .join(", ");
-
-    const orderObj = {
-      id: Date.now().toString(),
-      paymentId: "cash",
-      items: orderItemsStr,
-      total,
-      received,
-      pickupTime: "ASAP",
-      orderedTime: new Date().toISOString(),
-      customerName: "Cashier",
-      status: "new",
-    };
-
     try {
-      // 1️⃣ Push order
-      const res = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderObj),
-      });
-      if (!res.ok) throw new Error("Failed to push order");
-      const result = await res.json();
-      console.log("✅ Order pushed:", result);
-
-      // 2️⃣ Fetch current stock
-      const stockRes = await fetch("/api/stock");
-      if (!stockRes.ok) throw new Error("Failed to fetch stock");
-      const stockData = await stockRes.json(); // [{ id, name, stock }]
-
-      // 3️⃣ Map cart naar stock update en stapel fallback-items
-      const parsedItems = safeCart.reduce((acc, item) => {
-        const itemName = item?.product?.name || "Onbekend";
-        let stockItem = stockData.find((s) => s.name === itemName);
-
-        if (!stockItem) {
-          // fallback naar eerste rij (Deegballen)
-          stockItem = stockData[0];
-          console.warn(
-            `Item "${itemName}" niet gevonden in stock, aftrekken van "${stockItem.name}"`,
-          );
-        }
-
-        // Check of deze stockItem al in acc zit
-        const existing = acc.find((a) => a.id === stockItem.id);
-        if (existing) {
-          existing.stock = Math.max(0, existing.stock - item.quantity);
-        } else {
-          acc.push({
-            id: stockItem.id,
-            stock: Math.max(0, stockItem.stock - item.quantity),
-          });
-        }
-
-        return acc;
-      }, []);
-
-      // 4️⃣ Push stock update
-      await fetch("/api/stock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(parsedItems),
+      await finalizeOrder({
+        cart,
+        total,
+        paymentMethod: "cash",
+        customerName: "Cashier",
       });
 
-      console.log("✅ Stock updated:", parsedItems);
-
-      // 5️⃣ Clear local cart
-      localStorage.removeItem("cart");
+      clearCart();
       if (setCart) setCart([]);
 
-      // 6️⃣ Close popup
-      clearCart();
       onConfirm({ received, change });
       onClose();
     } catch (err) {
-      console.error("❌ Error in handleConfirm:", err);
+      console.error(err);
+      alert("Order opslaan mislukt");
     } finally {
       setLoading(false);
     }
