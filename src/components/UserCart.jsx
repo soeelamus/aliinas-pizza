@@ -13,7 +13,7 @@ const UserCart = ({ isOpen }) => {
   if (cart.length === 0) return null;
 
   const handleCheckout = () => {
-    navigate(isKitchen ? console.log("Payment in kitchen!") : "/payment");
+    navigate(isKitchen ?? "/payment");
   };
 
   return (
@@ -21,7 +21,6 @@ const UserCart = ({ isOpen }) => {
       <ul>
         {cart.map((cartItem) => {
           const stock = getStock(cartItem.product, cart);
-          console.log(stock);
 
           return (
             <li key={String(cartItem.product.id)} className="cart-item">

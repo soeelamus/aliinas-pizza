@@ -18,12 +18,6 @@ export default function KitchenCart({ total, cart }) {
   const handleCloseCash = () => setShowCashPopup(false);
   const handleCloseCard = () => setShowCardPopup(false);
 
-  const handleConfirmCash = ({ received, change }) => {
-    console.log(
-      `Order bevestigd! Gekregen: €${received}, Teruggave: €${change}`,
-    );
-  };
-
   return (
     <div className="checkout-buttons">
       <button
@@ -45,17 +39,15 @@ export default function KitchenCart({ total, cart }) {
         <CashCheckout
           total={total}
           onClose={handleCloseCash}
-          onConfirm={handleConfirmCash}
+          onConfirm={(data) => {
+            console.log("Order bevestigd!", data);
+          }}
         />
       )}
 
       {/* Card popup */}
       {showCardPopup && (
-        <CardCheckout
-          total={total}
-          cart={cart}
-          onClose={handleCloseCard}
-        />
+        <CardCheckout total={total} cart={cart} onClose={handleCloseCard} />
       )}
     </div>
   );

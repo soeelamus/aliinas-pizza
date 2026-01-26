@@ -16,14 +16,6 @@ const KitchenCashier = () => {
       .catch(console.error);
   }, []);
 
-  // Fetch stockSheet en update context
-  useEffect(() => {
-    fetch("/api/stock")
-      .then((res) => res.json())
-      .then((data) => setStockSheetState(data))
-      .catch(console.error);
-  }, [setStockSheetState]);
-
   // Wacht tot alles geladen is
   if (pizzas.length === 0 || stockSheetState.length === 0) {
     return (

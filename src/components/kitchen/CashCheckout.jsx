@@ -6,7 +6,7 @@ import { finalizeOrder } from "../../utils/finalizeOrder";
 import "./../../assets/css/CashCheckout.css";
 
 export default function CashCheckout({ total, onClose, onConfirm }) {
-  const { cart, clearCart, setCart } = useCart();
+  const { cart, clearCart, setCart, refreshStock } = useCart();
   const [received, setReceived] = useState(0);
   const [change, setChange] = useState(0);
   const [history, setHistory] = useState([]);
@@ -61,7 +61,7 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
       });
 
       clearCart();
-      if (setCart) setCart([]);
+      await refreshStock()
 
       onConfirm({ received, change });
       onClose();

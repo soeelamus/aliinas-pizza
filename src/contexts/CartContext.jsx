@@ -5,34 +5,34 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [stockSheetState, setStockSheetState] = useState([]);
-const [cart, setCart] = useState(() => {
-  try {
-    const saved = localStorage.getItem("cart");
-    if (!saved) return [];
+  const [cart, setCart] = useState(() => {
+    try {
+      const saved = localStorage.getItem("cart");
+      if (!saved) return [];
 
-    const parsed = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
 
-    if (!parsed || !Array.isArray(parsed)) return [];
+      if (!parsed || !Array.isArray(parsed)) return [];
 
-    return parsed
-      .filter(item => item && item.product) // ✅ filter invalid items
-      .map(item => ({
-        quantity: item.quantity || 0,
-        product: {
-          id: String(item.product.id ?? ""),
-          name: item.product.name ?? "",
-          price: item.product.price ?? 0,
-          type: item.product.type ?? "",
-          ingredients: Array.isArray(item.product.ingredients)
-            ? item.product.ingredients
-            : [],
-        },
-      }));
-  } catch (e) {
-    console.error("Failed to parse cart from localStorage:", e);
-    return [];
-  }
-});
+      return parsed
+        .filter((item) => item && item.product) // ✅ filter invalid items
+        .map((item) => ({
+          quantity: item.quantity || 0,
+          product: {
+            id: String(item.product.id ?? ""),
+            name: item.product.name ?? "",
+            price: item.product.price ?? 0,
+            type: item.product.type ?? "",
+            ingredients: Array.isArray(item.product.ingredients)
+              ? item.product.ingredients
+              : [],
+          },
+        }));
+    } catch (e) {
+      console.error("Failed to parse cart from localStorage:", e);
+      return [];
+    }
+  });
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -40,7 +40,7 @@ const [cart, setCart] = useState(() => {
 
   // Helper om stock te checken
   const getStock = (product, currentCart = []) => {
-    if (!stockSheetState.length) return Infinity; // <-- gebruik stockSheetState
+    if (!stockSheetState.length) return 0;
 
     // Pizzas follow 'deegballen'
     if (!product.category || product.category === "") {
@@ -118,6 +118,22 @@ const [cart, setCart] = useState(() => {
   const totalAmount = () =>
     cart.reduce((sum, p) => sum + p.product.price * p.quantity, 0);
 
+  const refreshStock = async () => {
+    console.log("Refreshing stock...");
+    try {
+      const res = await fetch("/api/stock");
+
+      if (!res.ok) {
+        throw new Error("Stock fetch failed");
+      }
+
+      const data = await res.json();
+      setStockSheetState(data);
+    } catch (err) {
+      console.error("Refresh stock error:", err);
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -130,6 +146,7 @@ const [cart, setCart] = useState(() => {
         getStock,
         stockSheetState,
         setStockSheetState,
+        refreshStock,
       }}
     >
       {children}
