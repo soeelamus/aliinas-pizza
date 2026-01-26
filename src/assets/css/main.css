@@ -1729,7 +1729,7 @@ footer a:hover {
 }
 .menu {
   background-color: var(--primary-purple);
-  padding: 0 1rem 5rem;
+  padding: 0 0 5rem 0.5rem;
 }
 .menu .monoton-regular {
   color: var(--primary-pink);
@@ -1763,6 +1763,15 @@ footer a:hover {
 }
 .pizza {
   width: 25rem;
+}
+.kitchen-cashier .pizza {
+  width: 18rem;
+}
+.kitchen-cashier h2 {
+  display: none;
+}
+.kitchen-cashier .menu-box {
+  padding: 4rem;
 }
 .pizza-text {
   display: flex;
