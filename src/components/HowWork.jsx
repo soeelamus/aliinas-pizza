@@ -36,10 +36,7 @@ const HowWork = () => (
                 <li>Transport, Elektriciteit,.. (100)</li>
                 <li>Totaal - €575.</li>
               </ul>
-              <p>
-                We voorzien altijd zelf elektriciteit. Zo kunnen we volledig
-                off-grid werken.
-              </p>
+              <p>Dat is het. Simpel, toch?</p>
             </div>
           </div>
         </div>
@@ -52,10 +49,11 @@ const HowWork = () => (
               Wil je dat onze foodtruck langskomt? Laat je gegevens achter via
               onderstaand contactformulier, dan helpen wij je graag verder.
             </p>
-            <p><a href="#2" className="btn-purple scrolly">
-              Contact
-            </a></p>
-            
+            <p>
+              <a href="#2" className="btn-purple scrolly">
+                Contact
+              </a>
+            </p>
           </div>
         </div>
       </div>
