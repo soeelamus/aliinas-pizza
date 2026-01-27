@@ -29,6 +29,7 @@ export default function KitchenCart({ total, cart }) {
 
       <button
         className="checkout-button btn-purple"
+        disabled={true}
         onClick={handleCardCheckout}
       >
         Card
