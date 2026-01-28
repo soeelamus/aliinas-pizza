@@ -2,11 +2,10 @@
 import React, { useState } from "react";
 import { useCart } from "../contexts/CartContext";
 
-const Menu = ({ pizzas, stockSheet, isOpen }) => {
+const Menu = ({ pizzas, stockSheet, isOpen, isKitchen }) => {
   const { addItem, getStock, cart } = useCart();
-  const [activeTab, setActiveTab] = useState("Pizza"); // default tab
+  const [activeTab, setActiveTab] = useState("Pizza");
 
-  // --- Unieke categorieën ophalen uit stockSheet + Pizza tab
   const categories = [
     "Pizza",
     ...Array.from(
@@ -14,7 +13,6 @@ const Menu = ({ pizzas, stockSheet, isOpen }) => {
     ),
   ];
 
-  // --- Items die we gaan renderen, afhankelijk van tab
   const itemsToRender =
     activeTab === "Pizza"
       ? pizzas
@@ -27,15 +25,19 @@ const Menu = ({ pizzas, stockSheet, isOpen }) => {
 
         {/* --- Tab navigatie --- */}
         <nav className="menu-tabs">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className={activeTab === cat ? "active btn-purple" : "btn-purple"}
-              onClick={() => setActiveTab(cat)}
-            >
-              {cat}
-            </button>
-          ))}
+          {categories
+            .filter((cat) => isKitchen || cat !== "Extra")
+            .map((cat) => (
+              <button
+                key={cat}
+                className={
+                  activeTab === cat ? "active btn-purple" : "btn-purple"
+                }
+                onClick={() => setActiveTab(cat)}
+              >
+                {cat}
+              </button>
+            ))}
         </nav>
 
         <div className="pizza-box">
@@ -60,10 +62,7 @@ const Menu = ({ pizzas, stockSheet, isOpen }) => {
                     <button
                       className="btn-small btn-purple"
                       onClick={() => addItem(item)}
-                      disabled={
-                        !isOpen || // winkel gesloten
-                        getStock(item, cart) <= 0 // stock check
-                      }
+                      disabled={!isOpen || getStock(item, cart) <= 0}
                       title={
                         !isOpen
                           ? "We zijn vandaag gesloten"
