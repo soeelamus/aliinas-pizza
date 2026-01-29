@@ -5,6 +5,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "front": "vite",
     "deploy": "vite build && vercel --prod"
   },
   "dependencies": {
@@ -12,7 +13,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
-    "react-router-dom": "^7.12.0"
+    "react-router-dom": "^7.12.0",
+    "stripe": "^20.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

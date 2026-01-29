@@ -13,7 +13,9 @@ const UserCart = ({ isOpen }) => {
   if (cart.length === 0) return null;
 
   const handleCheckout = () => {
-    navigate(isKitchen ?? "/payment");
+    if (!isKitchen) {
+      navigate("/payment");
+    }
   };
 
   return (
@@ -67,7 +69,7 @@ const UserCart = ({ isOpen }) => {
         </div>
 
         {isKitchen ? (
-          <KitchenCart total={totalAmount()} cart={cart}/>
+          <KitchenCart total={totalAmount()} cart={cart} />
         ) : (
           <button
             className="checkout-button btn-purple"

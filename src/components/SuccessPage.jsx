@@ -1,5 +1,6 @@
+// SuccessPage.jsx
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "../assets/css/SuccessPage.css";
 import Success from "./SuccessCard";
 
@@ -7,100 +8,102 @@ const SuccessPage = () => {
   const [status, setStatus] = useState("loading");
   const [order, setOrder] = useState(null);
   const [pushed, setPushed] = useState(false);
-  const navigate = useNavigate();
 
-  const paymentId = localStorage.getItem("paymentId");
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // 👉 Stripe session id uit URL
+  const sessionId = searchParams.get("session_id");
+
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
   const paymentData = JSON.parse(localStorage.getItem("paymentData") || "{}");
 
-  // 🔹 parse items string naar array { name, quantity }
+  console.log("2. paymentData: ", paymentData);
+
+  // 🔹 parse items string naar array
   const parseOrderItems = (itemsStr) => {
     return itemsStr
       .split(",")
       .map((item) => {
         const match = item.trim().match(/^(\d+)x\s+(.+)$/);
         if (!match) return null;
-        return { quantity: parseInt(match[1], 10), name: match[2].trim() };
+        return {
+          quantity: parseInt(match[1], 10),
+          name: match[2].trim(),
+        };
       })
       .filter(Boolean);
   };
 
-  // 🔹 push stock update (batch)
- const pushStock = async (orderItems, currentStock) => {
-  if (!orderItems || orderItems.length === 0) return;
+  // 🔹 push stock update
+  const pushStock = async (orderItems, currentStock) => {
+    if (!orderItems || orderItems.length === 0) return;
 
-  // Eerst alles verzamelen per stock-id
-  const grouped = [];
+    const grouped = [];
 
-  orderItems.forEach((item) => {
-    let stockItem = currentStock.find((s) => s.name === item.name);
+    orderItems.forEach((item) => {
+      let stockItem = currentStock.find((s) => s.name === item.name);
 
-    // fallback → Deegballen
-    if (!stockItem) {
-      stockItem = currentStock[0];
-      console.warn(
-        `Item "${item.name}" niet gevonden, fallback naar "${stockItem.name}"`
-      );
-    }
+      if (!stockItem) {
+        stockItem = currentStock[0];
+        console.warn(
+          `Item "${item.name}" niet gevonden, fallback naar "${stockItem.name}"`,
+        );
+      }
 
-    // Check of deze id al bestaat
-    const existing = grouped.find((g) => g.id === stockItem.id);
+      const existing = grouped.find((g) => g.id === stockItem.id);
 
-    if (existing) {
-      existing.stock -= item.quantity;
-    } else {
-      grouped.push({
-        id: stockItem.id,
-        stock: stockItem.stock - item.quantity,
-      });
-    }
-  });
-
-  // Nooit onder 0
-  const updateData = grouped.map((g) => ({
-    id: g.id,
-    stock: Math.max(0, g.stock),
-  }));
-
-  console.log("Stock update payload:", updateData);
-
-  try {
-    const res = await fetch("/api/stock", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updateData),
+      if (existing) {
+        existing.stock -= item.quantity;
+      } else {
+        grouped.push({
+          id: stockItem.id,
+          stock: stockItem.stock - item.quantity,
+        });
+      }
     });
 
-    const text = await res.text();
-    console.log("Stock API response:", text);
-  } catch (err) {
-    console.error("❌ Failed to push stock:", err);
-  }
-};
+    const updateData = grouped.map((g) => ({
+      id: g.id,
+      stock: Math.max(0, g.stock),
+    }));
 
+    try {
+      await fetch("/api/stock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updateData),
+      });
+    } catch (err) {
+      console.error("❌ Stock update failed:", err);
+    }
+  };
 
-  // 🔹 check payment status
+  // 🔹 check Stripe payment
   useEffect(() => {
-    if (!paymentId) return;
+    if (!sessionId) return;
 
     const checkPayment = async () => {
       try {
-        const res = await fetch(`/api/payment?paymentId=${paymentId}`);
+        const res = await fetch(`/api/payment?sessionId=${sessionId}`);
         const data = await res.json();
-        setStatus(data.status);
+
+        setStatus(data.status); // paid / unpaid
 
         if (data.status === "paid") {
-          // Build order object
           const orderObj = {
             id: Date.now().toString(),
-            paymentId,
+            sessionId,
+
             items: cart
               .map((i) => `${i.quantity}x ${i.product.name}`)
               .join(", "),
+
             total: cart.reduce(
               (sum, i) => sum + i.product.price * i.quantity,
               0,
             ),
+
             pickupTime: paymentData.formData?.pickupTime || "",
             orderedTime: new Date().toISOString(),
             customerName: paymentData.formData?.name || "",
@@ -109,20 +112,15 @@ const SuccessPage = () => {
           };
 
           setOrder(orderObj);
-
-          // clear local storage
-          localStorage.removeItem("cart");
-          localStorage.removeItem("paymentId");
-          localStorage.removeItem("paymentData");
         }
       } catch (err) {
         console.error(err);
-        navigate("/"); // fallback
+        navigate("/");
       }
     };
 
     checkPayment();
-  }, [navigate, paymentId, cart, paymentData]);
+  }, [sessionId]);
 
   // 🔹 push order & stock
   useEffect(() => {
@@ -130,7 +128,7 @@ const SuccessPage = () => {
 
     const pushOrderAndStock = async () => {
       try {
-        // 1️⃣ push order
+        // push order
         const res = await fetch("/api/orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -139,64 +137,53 @@ const SuccessPage = () => {
 
         const result = await res.json();
 
-        if (result.status !== "ok") {
-          console.error("❌ Failed to push order:", result);
-          return;
-        }
+        if (result.status !== "ok") return;
 
-        console.log("✅ Order pushed:", result);
-
-        // 2️⃣ fetch current stock
+        // fetch stock
         const stockRes = await fetch("/api/stock");
-        const stockData = await stockRes.json(); // [{ id, name, stock }]
+        const stockData = await stockRes.json();
 
-        // 3️⃣ parse order items
+        // parse
         const parsedItems = parseOrderItems(order.items);
 
-        // 4️⃣ batch update stock
+        // update
         await pushStock(parsedItems, stockData);
 
         setPushed(true);
-        console.log("✅ Order pushed & stock updated!");
       } catch (err) {
-        console.error("❌ Failed to push order or update stock:", err);
+        console.error("❌ Push failed:", err);
       }
     };
 
     pushOrderAndStock();
   }, [order, pushed]);
 
-  // 🔹 render content based on payment status
+  console.log("3. Order: ", order);
+  
+  // 🔹 UI
   const renderContent = () => {
     switch (status) {
       case "paid":
         return <Success order={order} />;
+
+      case "unpaid":
+        return (
+          <>
+            <h2>❌ Betaling niet voltooid</h2>
+            <p>Je betaling is niet afgerond.</p>
+          </>
+        );
+
       case "canceled":
         return (
           <>
             <h2>❌ Betaling geannuleerd</h2>
-            <p>
-              Je bestelling is niet betaald.
-              <br />
-              Probeer opnieuw of neem contact op.
-            </p>
+            <p>Je bestelling is niet betaald.</p>
           </>
         );
-      case "failed":
-        return (
-          <>
-            <h2>⚠️ Betaling mislukt</h2>
-            <p>
-              Er is iets misgegaan met de betaling.
-              <br />
-              Probeer opnieuw of neem contact op.
-            </p>
-          </>
-        );
-      case "open":
-        return <p>⏳ Betaling wordt verwerkt…</p>;
+
       default:
-        return <p>⏳ Laden…</p>;
+        return <p>⏳ Betaling controleren…</p>;
     }
   };
 
@@ -205,9 +192,13 @@ const SuccessPage = () => {
       <div className="success-page style-2">
         <div className="success-card">
           {renderContent()}
+
           <button
             className="btn-purple"
             onClick={() => {
+              // clear storage
+              localStorage.removeItem("cart");
+              localStorage.removeItem("paymentData");
               navigate("/");
               window.location.reload();
             }}

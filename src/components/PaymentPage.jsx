@@ -48,37 +48,42 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
   };
 
   const handleCheckout = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
+  e.preventDefault();
+  if (!validate()) return;
 
-    localStorage.setItem(
-      "paymentData",
-      JSON.stringify({ formData })
-    );
+  // Opslaan klantgegevens
+  localStorage.setItem(
+    "paymentData",
+    JSON.stringify({ formData })
+    
+  );
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const res = await fetch("/api/payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          total: totalAmount(),
-          customer: formData,
-          cart: localCart, // gebruik up-to-date cart
-        }),
-      });
+  try {
+    const res = await fetch("/api/payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        total: totalAmount(),
+        customer: formData,
+        cart: localCart,
+      }),
+    });
 
-      const data = await res.json();
-      localStorage.setItem("paymentId", data.paymentId);
-      window.location.href = data.checkoutUrl;
-    } catch (error) {
-      console.error("Checkout error:", error);
-      alert("Betaling kon niet gestart worden.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const data = await res.json();
+
+    // 👉 Stripe redirect
+    window.location.href = data.checkoutUrl;
+
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert("Betaling kon niet gestart worden.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // --- Tijdslots ---
   const today = new Date().toISOString().slice(0, 10);
