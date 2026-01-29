@@ -24,16 +24,14 @@ export default function KitchenScreen({ onStartKitchen }) {
     );
   }
 
-
   return <KitchenActive />;
 }
 
-/* -------- KitchenActive: pas mount na start -------- */
+/* ---------------- KitchenActive ---------------- */
 function KitchenActive() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
-  const [audioAllowed] = useState(true); // al gestart
   const [currentTime, setCurrentTime] = useState(new Date());
   const [pendingUpdates, setPendingUpdates] = useState({});
   const alertAudio = useRef(new Audio("/sound/sound-effect.mp3"));
@@ -41,24 +39,47 @@ function KitchenActive() {
   const firstFetch = useRef(true);
   const intervalRef = useRef(null);
   const { refreshStock } = useCart();
+  const audioAllowed = useRef(true);
 
+  /* ---------------- Refresh stock on mount ---------------- */
   useEffect(() => {
     refreshStock();
+  }, [refreshStock]);
+
+  /* ---------------- Clock ---------------- */
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
   }, []);
 
+  /* ---------------- Helper: get Date object from pickupTime ---------------- */
   const getPickupDate = (order) => {
-    if (!order.pickuptime) return null;
-    if (order.pickuptime === "ASAP") return new Date();
-    const [hours, minutes] = order.pickuptime.split(":").map(Number);
-    const now = new Date();
-    return new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      hours,
-      minutes,
-      0
-    );
+    const pickup = order.pickuptime;
+    if (!pickup) return null;
+
+    // ASAP → nu
+    if (pickup === "ASAP") return new Date();
+
+    // Als pickup al een Date-string is
+    const date = new Date(pickup);
+    if (!isNaN(date.getTime())) return date;
+
+    // HH:MM format
+    const match = pickup.match(/(\d{1,2}):(\d{2})/);
+    if (match) {
+      const [, h, m] = match;
+      const now = new Date();
+      return new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        Number(h),
+        Number(m),
+        0
+      );
+    }
+
+    return null;
   };
 
   const getRemainingSeconds = (order) => {
@@ -67,44 +88,46 @@ function KitchenActive() {
     return Math.max((pickup - currentTime) / 1000, 0);
   };
 
-  /* ---------------- Clock ---------------- */
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
-
   /* ---------------- Fetch orders ---------------- */
   useEffect(() => {
-    async function fetchOrders() {
+    let isMounted = true;
+
+    const fetchOrders = async () => {
       try {
         const res = await fetch("/api/orders");
         const data = await res.json();
-        const now = new Date();
 
+        if (!isMounted) return;
+
+        const now = new Date();
         const filtered = data.filter((o) => {
           const pickup = getPickupDate(o);
           const ordered = new Date(o.orderedtime);
           if (!pickup || isNaN(ordered)) return false;
+
           const diffHours = (pickup - now) / 1000 / 3600;
           if (o.pickuptime !== "ASAP" && diffHours > 10) return false;
+
           const isToday =
             ordered.getFullYear() === now.getFullYear() &&
             ordered.getMonth() === now.getMonth() &&
             ordered.getDate() === now.getDate();
+
           return isToday;
         });
 
+        // Merge pending updates
         const merged = filtered.map((order) =>
           pendingUpdates[order.id]
             ? { ...order, status: pendingUpdates[order.id] }
             : order
         );
 
-        // Alleen nieuwe orders geluid
+        // Play sound for new orders
         if (!firstFetch.current) {
           const prevIds = new Set(prevOrders.current.map((o) => o.id));
           const newOrders = merged.filter((o) => !prevIds.has(o.id));
-          if (audioAllowed && newOrders.length > 0) {
+          if (audioAllowed.current && newOrders.length > 0) {
             alertAudio.current.play().catch(() => {});
           }
         }
@@ -112,19 +135,22 @@ function KitchenActive() {
         prevOrders.current = merged;
         firstFetch.current = false;
         setOrders(merged);
+        setLoading(false);
       } catch (err) {
         console.error(err);
-      } finally {
-        setLoading(false);
       }
-    }
+    };
 
     fetchOrders();
     intervalRef.current = setInterval(fetchOrders, 2500);
-    return () => clearInterval(intervalRef.current);
-  }, [pendingUpdates, audioAllowed]);
 
-  /* ---------------- Handle status ---------------- */
+    return () => {
+      isMounted = false;
+      clearInterval(intervalRef.current);
+    };
+  }, [pendingUpdates]); // ✅ dependency op pendingUpdates, niet orders → voorkomt infinite loop
+
+  /* ---------------- Handle status change ---------------- */
   const handleStatusChange = async (id, newStatus = "done") => {
     try {
       setUpdatingId(id);
@@ -161,13 +187,20 @@ function KitchenActive() {
     }
   };
 
-  /* ---------------- Separate orders ---------------- */
+  /* ---------------- Separate & Sort orders ---------------- */
   const activeOrders = orders
     .filter((o) => o.status !== "pickedup")
     .sort((a, b) => {
+      const aPickup = getPickupDate(a);
+      const bPickup = getPickupDate(b);
+
+      if (!aPickup) return 1;
+      if (!bPickup) return -1;
+
       if (a.pickuptime === "ASAP") return -1;
       if (b.pickuptime === "ASAP") return 1;
-      return getRemainingSeconds(a) - getRemainingSeconds(b);
+
+      return aPickup - bPickup;
     });
 
   const pickedUpOrders = orders.filter((o) => o.status === "pickedup");
@@ -184,6 +217,7 @@ function KitchenActive() {
   return (
     <section className="kitchen-section">
       <h1 className="monoton-regular white">Orders</h1>
+
       {activeOrders.length > 0 ? (
         <ul className="kitchen-orders">
           {activeOrders.map((order) => (
