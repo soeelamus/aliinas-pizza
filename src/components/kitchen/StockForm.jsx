@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Loading from "../Loading/Loading";
 
 export default function StockForm() {
   const [stockItems, setStockItems] = useState([]);
@@ -57,12 +58,7 @@ export default function StockForm() {
   };
 
   if (!stockItems || !stockItems.length)
-    return (
-      <div className="center margin">
-        <p className="loader"></p>
-        <p>Loading stock</p>
-      </div>
-    );
+    return <Loading innerHTML={"Loading stock"} />;
 
   return (
     <div className="kitchen-section form">

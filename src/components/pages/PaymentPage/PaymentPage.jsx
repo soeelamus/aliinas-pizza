@@ -6,6 +6,7 @@ import { useEvents } from "../../../contexts/EventsContext";
 
 import "./PaymentPage.css";
 import "../SuccessPage/SuccessPage.css";
+import Loading from "../../Loading/Loading";
 
 const PaymentPage = ({ isOpen, onSubmit }) => {
   const { cart, totalAmount, getStock } = useCart(); // context cart
@@ -48,47 +49,41 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
   };
 
   const handleCheckout = async (e) => {
-  e.preventDefault();
-  if (!validate()) return;
+    e.preventDefault();
+    if (!validate()) return;
 
-  // Opslaan klantgegevens
-  localStorage.setItem(
-    "paymentData",
-    JSON.stringify({ formData })
-    
-  );
+    // Opslaan klantgegevens
+    localStorage.setItem("paymentData", JSON.stringify({ formData }));
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const res = await fetch("/api/payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        total: totalAmount(),
-        customer: formData,
-        cart: localCart,
-      }),
-    });
+    try {
+      const res = await fetch("/api/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          total: totalAmount(),
+          customer: formData,
+          cart: localCart,
+        }),
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    // 👉 Stripe redirect
-    window.location.href = data.checkoutUrl;
-
-  } catch (error) {
-    console.error("Checkout error:", error);
-    alert("Betaling kon niet gestart worden.");
-  } finally {
-    setLoading(false);
-  }
-};
-
+      // 👉 Stripe redirect
+      window.location.href = data.checkoutUrl;
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert("Betaling kon niet gestart worden.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // --- Tijdslots ---
   const today = new Date().toISOString().slice(0, 10);
   const todaysEvent = events.find(
-    (e) => e.type.toLowerCase() === "standplaats" && e.date === today
+    (e) => e.type.toLowerCase() === "standplaats" && e.date === today,
   );
 
   const roundUpToQuarter = (date) => {
@@ -122,7 +117,9 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
     <div className="payment-page-body">
       <div className="payment-page-margin">
         <form onSubmit={handleCheckout} className="payment-page">
-          {successMessage && <p className="success-message">{successMessage}</p>}
+          {successMessage && (
+            <p className="success-message">{successMessage}</p>
+          )}
           <h2>Afrekenen</h2>
 
           <div className="payment-form">
@@ -139,7 +136,9 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                   disabled={loading}
                   maxLength="25"
                 />
-                {errors.name && <span className="error-message">{errors.name}</span>}
+                {errors.name && (
+                  <span className="error-message">{errors.name}</span>
+                )}
               </div>
 
               <div className="option2">
@@ -154,10 +153,14 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                 >
                   <option value="">Tijdslot</option>
                   {timeSlots.map((slot) => (
-                    <option key={slot} value={slot}>{slot}</option>
+                    <option key={slot} value={slot}>
+                      {slot}
+                    </option>
                   ))}
                 </select>
-                {errors.pickupTime && <span className="error-message">{errors.pickupTime}</span>}
+                {errors.pickupTime && (
+                  <span className="error-message">{errors.pickupTime}</span>
+                )}
               </div>
             </div>
 
@@ -188,17 +191,20 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                     <span className="checkbox"></span>
                   </label>
                   <p>
-                    Ik kom straks ophalen in {todaysEvent.address}, om {formData.pickupTime}
+                    Ik kom straks ophalen in {todaysEvent.address}, om{" "}
+                    {formData.pickupTime}
                   </p>
                 </div>
               ) : (
                 <h3>Het is niet meer mogelijk om een bestelling te plaatsen</h3>
               )
             ) : (
-              <p>laden...</p>
+              <Loading innerHTML={"Wordt geladen"} />
             )}
 
-            {errors.agreeTerms && <span className="error-message">{errors.agreeTerms}</span>}
+            {errors.agreeTerms && (
+              <span className="error-message">{errors.agreeTerms}</span>
+            )}
           </div>
 
           <h3>Bestelling</h3>
@@ -216,7 +222,10 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
           </p>
 
           <div className="nav-btns">
-            <button className="btn-purple btn-small" onClick={() => navigate("/")}>
+            <button
+              className="btn-purple btn-small"
+              onClick={() => navigate("/")}
+            >
               &#60;
             </button>
 

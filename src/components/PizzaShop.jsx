@@ -6,6 +6,7 @@ import OrderDate from "./OrderDate";
 import { useEvents } from "../contexts/EventsContext";
 import { useCart } from "../contexts/CartContext";
 import Wave from "./Wave";
+import Loading from "./Loading/Loading";
 
 
 const PizzaShop = () => {
@@ -32,10 +33,7 @@ const PizzaShop = () => {
   // Wacht tot alles geladen is
   if (loading || pizzas.length === 0) {
     return (
-      <div className="center margin">
-        <p className="loader"></p>
-        <p>Loading cashier</p>
-      </div>
+      <Loading innerHTML={"Loading cashier"}/>
     );
   }
 

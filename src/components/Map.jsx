@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import Loading from "./Loading/Loading";
 
 export default function Map({ address }) {
   const myIcon = L.icon({
@@ -80,7 +81,7 @@ export default function Map({ address }) {
             zIndex: 1000,
           }}
         >
-          <div className="loader"></div>
+        <Loading innerHTML={"Loading map"}/>
         </div>
       )}
       <div ref={mapRef} style={{ height: "100%", width: "100%" }} />

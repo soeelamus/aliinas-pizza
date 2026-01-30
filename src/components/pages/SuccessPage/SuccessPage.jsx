@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import "./SuccessPage.css";
 import Success from "../../SuccessCard";
+import Loading from "../../Loading/Loading";
 
 const SuccessPage = () => {
   const [status, setStatus] = useState("loading");
@@ -160,7 +161,7 @@ const SuccessPage = () => {
   }, [order, pushed]);
 
   console.log("3. Order: ", order);
-  
+
   // 🔹 UI
   const renderContent = () => {
     switch (status) {
@@ -184,7 +185,7 @@ const SuccessPage = () => {
         );
 
       default:
-        return <p>⏳ Betaling controleren…</p>;
+        return <Loading innerHTML={"Bestelling controleren"} />;
     }
   };
 

@@ -1,6 +1,7 @@
 // Menu.jsx
 import React, { useState } from "react";
 import { useCart } from "../contexts/CartContext";
+import Loading from "./Loading/Loading";
 
 const Menu = ({ pizzas, stockSheet, isOpen, isKitchen }) => {
   const { addItem, getStock, cart } = useCart();
@@ -64,13 +65,15 @@ const Menu = ({ pizzas, stockSheet, isOpen, isKitchen }) => {
                       onClick={() => addItem(item)}
                       disabled={!isOpen || getStock(item, cart) <= 0}
                       title={
-                        !isOpen
-                          ? "We zijn vandaag gesloten"
-                          : stockSheet.length === 0
-                            ? "Stock laden..."
-                            : getStock(item, cart) <= 0
-                              ? "Uitverkocht"
-                              : "Toevoegen aan bestelling"
+                        !isOpen ? (
+                          "We zijn vandaag gesloten"
+                        ) : stockSheet.length === 0 ? (
+                          <Loading innerHTML={"Stock laden"} />
+                        ) : getStock(item, cart) <= 0 ? (
+                          "Uitverkocht"
+                        ) : (
+                          "Toevoegen aan bestelling"
+                        )
                       }
                     >
                       +

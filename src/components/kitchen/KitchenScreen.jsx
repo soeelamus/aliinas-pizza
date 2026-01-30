@@ -3,6 +3,7 @@ import Order from "./Order";
 import "./../../assets/css/kitchen.css";
 import StockForm from "./StockForm";
 import { useCart } from "../../contexts/CartContext";
+import Loading from "../Loading/Loading";
 
 export default function KitchenScreen({ onStartKitchen }) {
   const [started, setStarted] = useState(false);
@@ -75,7 +76,7 @@ function KitchenActive() {
         now.getDate(),
         Number(h),
         Number(m),
-        0
+        0,
       );
     }
 
@@ -120,7 +121,7 @@ function KitchenActive() {
         const merged = filtered.map((order) =>
           pendingUpdates[order.id]
             ? { ...order, status: pendingUpdates[order.id] }
-            : order
+            : order,
         );
 
         // Play sound for new orders
@@ -157,8 +158,8 @@ function KitchenActive() {
       setPendingUpdates((prev) => ({ ...prev, [id]: newStatus }));
       setOrders((prev) =>
         prev.map((o) =>
-          String(o.id) === String(id) ? { ...o, status: newStatus } : o
-        )
+          String(o.id) === String(id) ? { ...o, status: newStatus } : o,
+        ),
       );
 
       const res = await fetch("/api/orders", {
@@ -206,13 +207,7 @@ function KitchenActive() {
   const pickedUpOrders = orders.filter((o) => o.status === "pickedup");
 
   /* ---------------- UI ---------------- */
-  if (loading)
-    return (
-      <div className="center margin">
-        <p className="loader"></p>
-        <p>Loading orders...</p>
-      </div>
-    );
+  if (loading) return <Loading innerHTML={"Waiting for new orders"} />;
 
   return (
     <section className="kitchen-section">
@@ -231,10 +226,7 @@ function KitchenActive() {
           ))}
         </ul>
       ) : (
-        <div className="center margin">
-          <p className="loader"></p>
-          <p>Waiting for new orders</p>
-        </div>
+        <Loading innerHTML={"Waiting for new orders"} />
       )}
 
       {pickedUpOrders.length > 0 && (

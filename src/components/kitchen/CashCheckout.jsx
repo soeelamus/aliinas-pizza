@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { useCart } from "../../contexts/CartContext";
 import { finalizeOrder } from "../../utils/finalizeOrder";
 import "./../../assets/css/CashCheckout.css";
+import Loading from "../Loading/Loading";
 
 export default function CashCheckout({ total, onClose, onConfirm }) {
   const { cart, clearCart, setCart, refreshStock } = useCart();
@@ -61,7 +62,7 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
       });
 
       clearCart();
-      await refreshStock()
+      await refreshStock();
 
       onConfirm({ received, change });
       onClose();
@@ -77,10 +78,7 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
     <div className="cash-popup-overlay">
       {loading && (
         <div className="cash-loading-overlay">
-          <div className="center margin">
-            <p className="loader"></p>
-            <p>Order wordt verwerkt</p>
-          </div>
+          <Loading innerHTML={"Bestelling wordt verwerkt"} />
         </div>
       )}
       <div className="cash-popup">
