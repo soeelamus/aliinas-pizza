@@ -131,6 +131,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                   type="text"
                   id="name"
                   name="name"
+                  placeholder="Naam"
                   value={formData.name}
                   onChange={handleChange}
                   disabled={loading}
@@ -150,8 +151,8 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                   value={formData.pickupTime}
                   onChange={handleChange}
                   disabled={loading}
-                >
-                  <option value="">Tijdslot</option>
+                  >
+                  <option value="">Kies</option>
                   {timeSlots.map((slot) => (
                     <option key={slot} value={slot}>
                       {slot}
@@ -169,7 +170,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
               className="form-textarea"
               id="notes"
               name="notes"
-              placeholder="Opmerking (bv. geen ui, later ophalen, …)"
+              placeholder="Opmerking"
               value={formData.notes}
               onChange={handleChange}
               rows={1}
@@ -191,8 +192,14 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                     <span className="checkbox"></span>
                   </label>
                   <p>
-                    Ik kom straks ophalen in {todaysEvent.address}, om{" "}
-                    {formData.pickupTime}
+                    Ik zal mijn bestelling vandaag ophalen in:{" "}
+                    <strong>{todaysEvent.address}</strong>
+                    {formData.pickupTime && (
+                      <>
+                        {" "}
+                        om <strong>{formData.pickupTime}</strong>
+                      </>
+                    )}
                   </p>
                 </div>
               ) : (
@@ -238,7 +245,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                 loading
               }
             >
-              {loading ? "Even geduld..." : "Betalen"}
+              {loading ? "Bezig" : "Betalen"}
             </button>
           </div>
         </form>
