@@ -1,8 +1,9 @@
 // SuccessPage.jsx
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import "../assets/css/SuccessPage.css";
-import Success from "./SuccessCard";
+
+import "./SuccessPage.css";
+import Success from "../../SuccessCard";
 
 const SuccessPage = () => {
   const [status, setStatus] = useState("loading");

@@ -1,11 +1,11 @@
 // PaymentPage.jsx
 import React, { useState, useEffect } from "react";
-import { useCart } from "../contexts/CartContext";
+import { useCart } from "../../../contexts/CartContext";
 import { useNavigate } from "react-router-dom";
-import { useEvents } from "../contexts/EventsContext";
+import { useEvents } from "../../../contexts/EventsContext";
 
-import "../assets/css/PaymentPage.css";
-import "../assets/css/SuccessPage.css";
+import "./PaymentPage.css";
+import "../SuccessPage/SuccessPage.css";
 
 const PaymentPage = ({ isOpen, onSubmit }) => {
   const { cart, totalAmount, getStock } = useCart(); // context cart

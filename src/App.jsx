@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 
-// Pages / components (Main site)
+// Components (Main site)
 import Navbar from "./components/Navbar";
 import Header from "./components/Header";
 import Carousel from "./components/Carousel";
@@ -15,9 +15,11 @@ import HowWork from "./components/HowWork";
 import ContactForm from "./components/ContactForm";
 import ImagesBox from "./components/ImagesBox";
 import PizzaShop from "./components/PizzaShop";
-import PaymentPage from "./components/PaymentPage";
-import SuccessPage from "./components/SuccessPage";
 import Footer from "./components/Footer";
+
+// Pages
+import PaymentPage from "./components/pages/PaymentPage/PaymentPage";
+import SuccessPage from "./components/pages/SuccessPage/SuccessPage";
 
 // Kitchen components
 import KitchenLogin from "./components/kitchen/KitchenLogin";
@@ -31,7 +33,6 @@ import KitchenLayout from "./layouts/KitchenLayout";
 
 // CSS
 import "./assets/css/main.css";
-import "./assets/css/loading.css";
 import "leaflet/dist/leaflet.css";
 
 function App() {
