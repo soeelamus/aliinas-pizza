@@ -1,59 +1,106 @@
-// pages/api/payment.js
+// api/payment.js
+
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-let lastPaymentStatus = "open";
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+});
 
 export default async function handler(req, res) {
   try {
     // =========================
-    // GET → Payment status check
+    // GET → Status check
     // =========================
     if (req.method === "GET") {
-      const sessionId = req.query.sessionId;
+      const { sessionId } = req.query;
 
       if (!sessionId) {
-        return res.status(400).json({ error: "No sessionId provided" });
+        return res.status(400).json({ error: "Missing sessionId" });
       }
 
       const session = await stripe.checkout.sessions.retrieve(sessionId);
 
       return res.status(200).json({
-        status: session.payment_status, // paid / unpaid
+        status: session.payment_status,
       });
     }
 
     // =========================
-    // POST → Nieuwe betaling
+    // POST → Create payment
     // =========================
     if (req.method === "POST") {
-      const { total } = req.body;
+      console.log("PAYMENT BODY:", req.body);
 
-      if (typeof total !== "number") {
-        return res
-          .status(400)
-          .json({ error: "POST body must contain total" });
+      const { cart, customer } = req.body;
+
+      // -------------------------
+      // Validate
+      // -------------------------
+
+      if (!Array.isArray(cart) || cart.length === 0) {
+        return res.status(400).json({
+          error: "Cart is empty",
+        });
       }
 
-      // Maak Stripe Checkout Session
+      if (!customer?.name || !customer?.pickupTime) {
+        return res.status(400).json({
+          error: "Invalid customer data",
+        });
+      }
+
+      // -------------------------
+      // Build line items
+      // -------------------------
+
+      const lineItems = cart.map((item, index) => {
+        if (
+          !item?.product?.name ||
+          typeof item?.product?.price !== "number" ||
+          typeof item?.quantity !== "number"
+        ) {
+          throw new Error(`Invalid cart item at index ${index}`);
+        }
+
+        return {
+          price_data: {
+            currency: "eur",
+
+            product_data: {
+              name: item.product.name,
+            },
+
+            unit_amount: Math.round(item.product.price * 100),
+          },
+
+          quantity: item.quantity,
+        };
+      });
+
+      // -------------------------
+      // Extra info for Stripe
+      // -------------------------
+
+      const metadata = {
+        customer_name: customer.name,
+        pickup_time: customer.pickupTime,
+        notes: customer.notes || "",
+        cart: JSON.stringify(
+          cart.map((i) => `${i.quantity}x ${i.product.name}`),
+        ),
+      };
+
+      // -------------------------
+      // Create session
+      // -------------------------
+
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-
-        line_items: [
-          {
-            price_data: {
-              currency: "eur",
-              product_data: {
-                name: "Take-out bestelling",
-              },
-              unit_amount: Math.round(total * 100), // in centen!
-            },
-            quantity: 1,
-          },
-        ],
-
-        success_url: "https://aliinas.com/success?session_id={CHECKOUT_SESSION_ID}",
+        line_items: lineItems,
+        customer_creation: "always",
+        metadata,
+        success_url:
+          "https://aliinas.com/success?session_id={CHECKOUT_SESSION_ID}",
         cancel_url: "https://aliinas.com/cancel",
       });
 
@@ -63,13 +110,16 @@ export default async function handler(req, res) {
       });
     }
 
-    res.status(405).json({ error: "Method not allowed" });
-  } catch (err) {
-    console.error("Stripe error:", err);
-    res.status(500).json({ error: "Server error" });
-  }
-}
+    // =========================
 
-export function getLastPaymentStatus() {
-  return lastPaymentStatus;
+    return res.status(405).json({
+      error: "Method not allowed",
+    });
+  } catch (err) {
+    console.error("STRIPE ERROR:", err);
+
+    return res.status(500).json({
+      error: err.message || "Server error",
+    });
+  }
 }
