@@ -3,7 +3,7 @@
   --primary-pink: #ffa9c8;
   --primary-purple: #6237c8;
   --primary-blue: #3ec0d1;
-  --primary-white: #F6F6F6;
+  --primary-white: #f6f6f6;
 }
 html {
   scroll-behavior: smooth;
@@ -69,10 +69,18 @@ textarea {
   line-height: 1.65em;
 }
 a {
-  -moz-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-  -webkit-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-  -ms-transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-  transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  -moz-transition:
+    color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+  -webkit-transition:
+    color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+  -ms-transition:
+    color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
+  transition:
+    color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out;
   color: inherit;
   text-decoration: none;
 }
@@ -744,10 +752,18 @@ input[type="submit"] {
   -webkit-appearance: none;
   -ms-appearance: none;
   appearance: none;
-  -moz-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  -webkit-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  -ms-transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  -moz-transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+  -webkit-transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+  -ms-transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
+  transition:
+    background-color 0.2s ease-in-out,
+    color 0.2s ease-in-out;
   background-color: transparent;
   border-radius: 4px;
   border: 0;
@@ -770,7 +786,8 @@ input[type="submit"] {
 .main {
   padding: 5rem 1rem;
 }
-.main.style2 {
+.main.style2,
+.hero {
   background-color: var(--primary-purple);
   background-image: url(/images/logo.png);
   background-size: 15rem;
@@ -794,7 +811,10 @@ body.is-preload #header:after {
     var(--primary-purple),
     var(--primary-pink)
   );
-  background-position: top left, center center, center center;
+  background-position:
+    top left,
+    center center,
+    center center;
   background-size: auto, cover, cover;
   text-align: center;
 }
@@ -899,9 +919,6 @@ footer {
     height: 8em;
     line-height: 8em;
     width: 8em;
-  }
-  .main.style2 {
-    background-attachment: scroll;
   }
   #header {
     padding: 5em 0 5em 0;
@@ -1288,7 +1305,6 @@ button {
   flex-direction: row;
   gap: 1rem;
   margin: 2rem -1rem 0;
-  
 }
 .clearfix::after {
   content: "";
@@ -1378,7 +1394,7 @@ textarea.error {
 }
 .contact-info .text-box {
   margin-top: 2rem;
-  border: 0.3rem solid var(--primary-pink);  
+  border: 0.3rem solid var(--primary-pink);
   border-radius: 1rem;
   padding: 2.5rem;
   text-align: left;
@@ -1417,8 +1433,8 @@ textarea.error {
   max-width: 150%;
 }
 .slideshow-container img {
-    box-shadow: rgba(0, 0, 0, 0.3) 4px 4px 4px;
-    border-radius: 1rem;
+  box-shadow: rgba(0, 0, 0, 0.3) 4px 4px 4px;
+  border-radius: 1rem;
 }
 .slideshow-container a {
   color: var(--primary-white);
@@ -1446,7 +1462,6 @@ footer a:hover {
   color: var(--primary-pink);
 }
 
-
 /* Calendar wrapper */
 .calendar-wrapped {
   display: flex;
@@ -1456,7 +1471,7 @@ footer a:hover {
 }
 
 /* Calendar box */
-.calendar {  
+.calendar {
   width: 60rem;
   max-width: 100%;
   transition: transform 0.2s;
@@ -1514,14 +1529,16 @@ footer a:hover {
 }
 
 /* Days & Dates */
-.days, .dates {
+.days,
+.dates {
   display: flex;
   flex-wrap: wrap;
   list-style: none;
   padding-left: 0.25rem;
 }
 
-.days li, .dates li {
+.days li,
+.dates li {
   background-color: var(--primary-white);
   width: 13%;
   text-align: center;
@@ -1531,9 +1548,11 @@ footer a:hover {
   border-radius: 0.5rem;
   border: 1px solid #d6d6d6;
   min-height: 5rem;
-  transition: background 0.2s, transform 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s;
 }
-.calendar-weekDay { 
+.calendar-weekDay {
   min-height: 2rem !important;
 }
 .days {
@@ -1550,7 +1569,6 @@ footer a:hover {
 /* Date types */
 .dates li.inactive {
   color: #bbb;
-
 }
 
 .dates li.today {
@@ -1567,7 +1585,7 @@ footer a:hover {
 
 .event-map {
   height: 18rem;
-  background: #e0e0e0;    
+  background: #e0e0e0;
   border-radius: 1rem;
   display: flex;
   align-items: center;
@@ -1616,7 +1634,7 @@ footer a:hover {
   font-weight: 400;
 }
 .event-card {
-  padding: 1.25rem;    
+  padding: 1.25rem;
   border-radius: 1rem;
   background: var(--primary-white);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
@@ -1681,7 +1699,7 @@ footer a:hover {
 }
 .dates li.event {
   background: none; /* reset eventuele oude achtergrond */
-  color: inherit;   /* houd de tekstkleur */
+  color: inherit; /* houd de tekstkleur */
 }
 .type-markt {
   background-color: #d4edbc !important; /* forceert de juiste kleur */
@@ -1728,7 +1746,6 @@ footer a:hover {
   padding: 1rem;
 }
 .menu {
-  background-color: var(--primary-purple);
   padding: 0 0 5rem 0.5rem;
 }
 .menu .monoton-regular {
@@ -1736,6 +1753,7 @@ footer a:hover {
   font-size: 5rem;
 }
 .menu-box {
+  background-color: var(--primary-purple);
   padding: 6rem;
   max-width: fit-content;
   margin-left: auto;
@@ -1846,4 +1864,28 @@ footer a:hover {
 }
 .leaflet-popup-navigate a:hover {
   color: var(--primary-pink) !important;
+}
+
+.hero {
+  height: 10rem;
+  position: relative;
+  color: white;
+  bottom: 2px;
+}
+.hero svg.reverse {
+  bottom: 2px;
+}
+.hero-reverse {
+  bottom: -2px;
+}
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 110%;
+  height: 10rem;
+  bottom: -2px;
+}
+.reverse {
+  transform: rotate(180deg);
 }

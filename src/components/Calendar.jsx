@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "leaflet/dist/leaflet.css";
 import { useEvents } from "../contexts/EventsContext";
 import Map from "../components/Map";
+import Wave from "./Wave";
 
 const months = [
   "Januari","Februari","Maart","April","Mei","Juni","Juli",
@@ -76,7 +77,9 @@ const Calendar = () => {
   if (loading) return <p>Even geduld, de kalender wordt geladen…</p>;
 
   return (
-  <section className="style2 main special">
+    <>
+    <Wave reverse={true}/>
+    <section className="style2 main special">
       <h4 className="text-h4 monoton-regular">Kalender</h4>
       <div className="calendar-wrapped">
         <div className="calendar">
@@ -154,6 +157,7 @@ const Calendar = () => {
         )}
       </div>
     </section>
+    <Wave/></>
   );
 };
 

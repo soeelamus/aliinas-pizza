@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Wave from "./Wave";
 
 const ContactForm = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -45,37 +46,37 @@ const ContactForm = () => {
       setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
     }
   };
-  
+
   const prevStep = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
-  
-const [successMessage, setSuccessMessage] = useState("");
-const handleSubmit = async (e) => {
-  e.preventDefault();
 
-  let allValid = true;
-  let allErrors = {};
+  const [successMessage, setSuccessMessage] = useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  steps.forEach((stepFields) => {
-    stepFields.forEach((name) => {
-      if (!formData[name].trim()) {
-        allErrors[name] = "Vul dit veld in";
-        allValid = false;
-      }
+    let allValid = true;
+    let allErrors = {};
+
+    steps.forEach((stepFields) => {
+      stepFields.forEach((name) => {
+        if (!formData[name].trim()) {
+          allErrors[name] = "Vul dit veld in";
+          allValid = false;
+        }
+      });
     });
-  });
 
-  if (!allValid) {
-    setErrors(allErrors);
-    return;
-  }
+    if (!allValid) {
+      setErrors(allErrors);
+      return;
+    }
 
-  const payload = {
-    access_key: "f5f89190-0e09-46e5-9b69-92b1e5419a42",
-    subject: "Nieuwe contactaanvraag",
-    from_name: "aliinas.com",
-    message: `
+    const payload = {
+      access_key: "f5f89190-0e09-46e5-9b69-92b1e5419a42",
+      subject: "Nieuwe contactaanvraag",
+      from_name: "aliinas.com",
+      message: `
     🟣 Nieuwe Eventaanvraag
 
     📍 Locatie
@@ -98,47 +99,46 @@ const handleSubmit = async (e) => {
 
     
     Verzonden via het contactformulier
-    `
-  };
+    `,
+    };
 
-  try {
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response.json();
-
-    if (result.success) {
-      setSuccessMessage("Succesvol verzonden! We bekijken je aanvraag vandaag nog.");
-      setFormData({
-        locatie: "",
-        datum: "",
-        voornaam: "",
-        email: "",
-        gasten: "",
-        info: "",
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
-      setCurrentStep(0);
-    } else {
-      alert("Er ging iets mis. Probeer later opnieuw.");
-    }
-  } catch (error) {
-    console.error(error);
-    alert("Netwerkfout. Probeer later opnieuw.");
-  }
-};
 
+      const result = await response.json();
+
+      if (result.success) {
+        setSuccessMessage(
+          "Succesvol verzonden! We bekijken je aanvraag vandaag nog.",
+        );
+        setFormData({
+          locatie: "",
+          datum: "",
+          voornaam: "",
+          email: "",
+          gasten: "",
+          info: "",
+        });
+        setCurrentStep(0);
+      } else {
+        alert("Er ging iets mis. Probeer later opnieuw.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Netwerkfout. Probeer later opnieuw.");
+    }
+  };
 
   return (
     <>
-    <br id="2"/>
-    <br/>
-    <br/>
-    <br/>
+      <br id="2" />
+      <Wave reverse={true}/>
       <section className="main style2 special">
         <h4 className="text-h4 monoton-regular">contact</h4>
         <img
@@ -290,6 +290,7 @@ const handleSubmit = async (e) => {
           </div>
         </div>
       </section>
+      <Wave/>
     </>
   );
 };

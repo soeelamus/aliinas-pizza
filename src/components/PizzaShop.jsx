@@ -5,6 +5,8 @@ import Menu from "./Menu";
 import OrderDate from "./OrderDate";
 import { useEvents } from "../contexts/EventsContext";
 import { useCart } from "../contexts/CartContext";
+import Wave from "./Wave";
+
 
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
@@ -38,7 +40,10 @@ const PizzaShop = () => {
   }
 
   return (
-    <div className="pizza-shop">
+    <>
+        <Wave reverse={true}/>
+
+    <div className="style2 main special">
       <Cart isOpen={isOpen} />
       <div className="menu">
         <OrderDate events={events} />
@@ -50,6 +55,9 @@ const PizzaShop = () => {
         isOpen={isOpen}
       />
     </div>
+        <Wave/>
+
+    </>
   );
 };
 
