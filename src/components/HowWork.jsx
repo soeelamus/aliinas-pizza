@@ -33,8 +33,8 @@ const HowWork = () => (
                 <li>15x Margheriita (165)</li>
                 <li>15x Pepperonii (180)</li>
                 <li>10x Sweet Chiicken (130)</li>
-                <li>Transport, Elektriciteit,.. (100)</li>
-                <li>Totaal - €575.</li>
+                <li>Transport & Opstart (100)</li>
+                <li>Totaal - <strong>€575 incl. BTW</strong></li>
               </ul>
               <p>Dat is het. Simpel, toch?</p>
             </div>
@@ -47,7 +47,7 @@ const HowWork = () => (
             </div>
             <p>
               Wil je dat onze foodtruck langskomt? Laat je gegevens achter via
-              onderstaand contactformulier, dan helpen wij je graag verder.
+              het contactformulier, dan helpen wij je graag verder.
             </p>
             <p>
               <a href="#contact" className="btn-purple scrolly">
