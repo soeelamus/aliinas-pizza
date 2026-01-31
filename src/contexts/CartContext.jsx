@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 const CartContext = createContext();
 
@@ -43,29 +43,29 @@ export const CartProvider = ({ children }) => {
   // =========================
   // Refresh stock every 30s
   // =========================
-  const refreshStock = async () => {
-    try {
-      const res = await fetch("/api/stock"); // API moet actuele DB stock geven
-      if (!res.ok) throw new Error("Stock fetch failed");
+// houd laatste deegballen voorraad bij
+const lastDoughStock = useRef(null);
 
-      const data = await res.json();
-      setStockSheetState(data);
+const refreshStock = async () => {
+  try {
+    const res = await fetch("/api/stock");
+    if (!res.ok) throw new Error("Stock fetch failed");
 
-      // Log deegballen alleen als voorraad veranderd
-      const dough = data.find((item) => item.name.toLowerCase() === "deegballen");
-      const doughStock = dough ? Number(dough.stock) : 0;
+    const data = await res.json();
+    setStockSheetState(data);
 
-      if (doughStock !== lastDoughStock) {
-        console.log("Refreshing stock... Deegballen:", doughStock);
-        lastDoughStock = doughStock;
-      }
-    } catch (err) {
-      console.error("Refresh stock error:", err);
+    // Log deegballen alleen als voorraad veranderd
+    const dough = data.find((item) => item.name.toLowerCase() === "deegballen");
+    const doughStock = dough ? Number(dough.stock) : 0;
+
+    if (doughStock !== lastDoughStock.current) {
+      console.log("Refreshing stock... Deegballen:", doughStock);
+      lastDoughStock.current = doughStock; // ✅ correct
     }
-  };
-
-  // houd laatste deegballen voorraad bij
-  let lastDoughStock = null;
+  } catch (err) {
+    console.error("Refresh stock error:", err);
+  }
+};
 
   useEffect(() => {
     // Eerst meteen laden

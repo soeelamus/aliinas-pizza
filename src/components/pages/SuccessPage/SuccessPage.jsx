@@ -48,9 +48,6 @@ const SuccessPage = () => {
 
       if (!stockItem) {
         stockItem = currentStock[0];
-        console.warn(
-          `Item "${item.name}" niet gevonden, fallback naar "${stockItem.name}"`,
-        );
       }
 
       const existing = grouped.find((g) => g.id === stockItem.id);

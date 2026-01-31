@@ -65,9 +65,6 @@ export async function finalizeOrder({
     // fallback → deegballen
     if (!stockItem) {
       stockItem = stockData[0];
-      console.warn(
-        `Fallback stock voor ${item.product.name}`,
-      );
     }
 
     const existing = grouped.find(
