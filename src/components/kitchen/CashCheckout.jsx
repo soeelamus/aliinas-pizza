@@ -52,6 +52,12 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
   const handleConfirm = async () => {
     if (received < total) return;
     setLoading(true);
+    
+      setTimeout(() => {
+    setLoading(false);
+    onClose();
+    clearCart();
+  }, 1000);
 
     try {
       await finalizeOrder({
@@ -61,16 +67,12 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
         customerName: "Cashier",
       });
 
-      clearCart();
       await refreshStock();
 
       onConfirm({ received, change });
-      onClose();
     } catch (err) {
       console.error(err);
       alert("Order opslaan mislukt");
-    } finally {
-      setLoading(false);
     }
   };
 
