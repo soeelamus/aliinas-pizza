@@ -109,6 +109,7 @@ const SuccessPage = () => {
             pickupTime: paymentData.formData?.pickupTime || "",
             orderedTime: new Date().toISOString(),
             customerName: paymentData.formData?.name || "",
+            customerEmail: paymentData.formData?.email || "",
             customerNotes: paymentData.formData?.notes || "",
             status: "new",
           };
@@ -160,7 +161,30 @@ const SuccessPage = () => {
     pushOrderAndStock();
   }, [order, pushed]);
 
-  console.log("3. Order: ", order);
+  // 🔹 Send confirmation email
+  useEffect(() => {
+    if (!order) return;
+    if (status !== "paid") return;
+    if (!order.customerEmail) return;
+
+    const sendMail = async () => {
+      try {
+        await fetch("/api/send-mail", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(order),
+        });
+
+        console.log("✅ Email sent");
+      } catch (err) {
+        console.error("❌ Email failed", err);
+      }
+    };
+
+    sendMail();
+  }, [status, order]);
 
   // 🔹 UI
   const renderContent = () => {

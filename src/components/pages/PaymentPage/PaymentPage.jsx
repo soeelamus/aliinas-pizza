@@ -15,6 +15,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
   const [formData, setFormData] = useState({
     name: "",
     pickupTime: "",
+    email: "",
     notes: "",
     agreeTerms: false,
   });
@@ -40,9 +41,10 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Vul je naam in";
-    if (!formData.pickupTime.trim())
-      newErrors.pickupTime = "Kies een afhaaltijd";
+    if (!formData.email.includes("@")) {
+      newErrors.email = "Ongeldig e-mail";
+    }
+
     if (!formData.agreeTerms) newErrors.agreeTerms = "Bevestig de afhaalplaats";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -151,7 +153,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                   value={formData.pickupTime}
                   onChange={handleChange}
                   disabled={loading}
-                  >
+                >
                   <option value="">Kies</option>
                   {timeSlots.map((slot) => (
                     <option key={slot} value={slot}>
@@ -163,6 +165,23 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                   <span className="error-message">{errors.pickupTime}</span>
                 )}
               </div>
+            </div>
+            <div className="option3">
+              <label htmlFor="email">E-mail</label>
+              <input
+                className="form-textarea"
+                type="email"
+                id="email"
+                name="email"
+                placeholder="E-mail"
+                value={formData.email}
+                onChange={handleChange}
+                disabled={loading}
+                maxLength="50"
+              />
+              {errors.email && (
+                <span className="error-message">{errors.email}</span>
+              )}
             </div>
 
             <label htmlFor="notes">Opmerking</label>
@@ -242,6 +261,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
               disabled={
                 !formData?.name?.trim() ||
                 !formData?.pickupTime?.trim() ||
+                !formData?.email?.trim() ||
                 loading
               }
             >
