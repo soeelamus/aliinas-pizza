@@ -1354,6 +1354,10 @@ textarea.error {
   .text-h1 {
     font-size: 3rem;
   }
+  .nav-btns a {
+    width: 4.5rem;
+    font-size: 0.9rem;
+  }
 }
 .text-h4 {
   width: 30rem;
