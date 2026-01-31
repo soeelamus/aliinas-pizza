@@ -21,7 +21,7 @@ const Menu = ({ pizzas, stockSheet, isOpen, isKitchen }) => {
 
   return (
     <div className="menu">
-      <div id="3" className="menu-box">
+      <div className="menu-box">
         <h2 className="monoton-regular">Menu</h2>
 
         {/* --- Tab navigatie --- */}

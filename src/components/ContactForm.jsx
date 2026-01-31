@@ -137,7 +137,7 @@ const ContactForm = () => {
 
   return (
     <>
-      <br id="2" />
+      <br id="contact" />
       <Wave reverse={true}/>
       <section className="main style2 special">
         <h4 className="text-h4 monoton-regular">contact</h4>

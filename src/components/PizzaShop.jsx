@@ -8,7 +8,6 @@ import { useCart } from "../contexts/CartContext";
 import Wave from "./Wave";
 import Loading from "./Loading/Loading";
 
-
 const PizzaShop = () => {
   const [pizzas, setPizzas] = useState([]);
   const { events, isOpen, loading } = useEvents();
@@ -32,29 +31,25 @@ const PizzaShop = () => {
 
   // Wacht tot alles geladen is
   if (loading || pizzas.length === 0) {
-    return (
-      <Loading innerHTML={"Loading cashier"}/>
-    );
+    return <Loading innerHTML={"Loading cashier"} />;
   }
 
   return (
     <>
-        <Wave reverse={true}/>
-
-    <div className="style2 main special">
-      <Cart isOpen={isOpen} />
-      <div className="menu">
+      <Wave reverse={true} />
+      <div className="style2 main special">
+        <div className="menu"></div>
         <OrderDate events={events} />
+        <br id="menu" />
+        <Cart isOpen={isOpen} />
+        <Menu
+          pizzas={pizzas}
+          stockSheet={stockSheetState}
+          events={events}
+          isOpen={isOpen}
+        />
       </div>
-      <Menu
-        pizzas={pizzas}
-        stockSheet={stockSheetState}
-        events={events}
-        isOpen={isOpen}
-      />
-    </div>
-        <Wave/>
-
+      <Wave />
     </>
   );
 };

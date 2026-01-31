@@ -50,7 +50,7 @@ const HowWork = () => (
               onderstaand contactformulier, dan helpen wij je graag verder.
             </p>
             <p>
-              <a href="#2" className="btn-purple scrolly">
+              <a href="#contact" className="btn-purple scrolly">
                 Contact
               </a>
             </p>

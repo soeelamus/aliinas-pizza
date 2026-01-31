@@ -48,11 +48,11 @@ function App() {
                 <Navbar />
                 <Header />
                 <Carousel />
-                <Calendar />
+                <PizzaShop />
                 <HowWork />
                 <ContactForm />
                 <ImagesBox />
-                <PizzaShop />
+                <Calendar />
                 <Footer />
               </>
             }
