@@ -78,27 +78,15 @@ export default async function handler(req, res) {
       });
 
       // -------------------------
-      // Extra info for Stripe
-      // -------------------------
-
-      const metadata = {
-        customer_name: customer.name,
-        pickup_time: customer.pickupTime,
-        notes: customer.notes || "",
-        cart: JSON.stringify(
-          cart.map((i) => `${i.quantity}x ${i.product.name}`),
-        ),
-      };
-
-      // -------------------------
       // Create session
       // -------------------------
 
+      
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
+        customer_email: customer.email,
         line_items: lineItems,
         customer_creation: "always",
-        metadata,
         success_url:
           "https://aliinas.com/success?session_id={CHECKOUT_SESSION_ID}",
         cancel_url: "https://aliinas.com/cancel",
