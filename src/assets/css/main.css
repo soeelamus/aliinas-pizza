@@ -1149,10 +1149,6 @@ textarea.error {
   .text-h1 {
     font-size: 3rem;
   }
-  .nav-btns a {
-    width: 4.5rem;
-    font-size: 0.9rem;
-  }
 }
 .text-h4 {
   width: 30rem;
@@ -1708,4 +1704,33 @@ footer a:hover {
 .outside-month {
   color: #6b6b6b !important;
   font-weight: 100 !important;
+}
+@media screen and (max-width: 580px) {
+  .nav-btns {
+    gap: 0.5rem;
+  }
+  .btn-purple {
+    width: 5rem;
+    font-size: 0.9rem;
+  }
+  .btn-small {
+    width: unset;
+  }
+  .calendar-title {
+    width: 10rem;
+  }
+  section.style2.main.special {
+    padding: 5rem 0;
+  }
+  section .days,
+  section .dates {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    background-color: var(--primary-purple);
+  }
+  .calendar ul * {
+    flex-grow: 1;
+    margin: 1px;
+  }
 }
