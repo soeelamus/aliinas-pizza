@@ -1123,11 +1123,11 @@ button {
 }
 .error-message {
   color: red;
-  font-size: 14px;
-  margin-top: -15px;
-  margin-bottom: 15px;
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   display: block;
-  height: 16px;
+  height: 1rem;
 }
 input.error,
 textarea.error {
@@ -1180,7 +1180,6 @@ textarea.error {
   .text-h4 {
     background-color: unset;
     font-size: 4rem;
-    top: 2rem;
   }
   .side {
     left: -30rem;
@@ -1343,7 +1342,7 @@ textarea.error {
   cursor: pointer;
   border-radius: 0.5rem;
   border: 1px solid #d6d6d6;
-  min-height: 5rem;
+  min-height: 6.5rem;
   transition:
     background 0.2s,
     transform 0.2s;
@@ -1460,7 +1459,13 @@ textarea.error {
   font-weight: 600;
   background: #eee;
 }
-
+.event-address {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.35rem;
+}
+.event-address:hover {
+  color: var(--primary-pink);
+}
 .event-meta {
   list-style: none;
   padding: 0;
@@ -1468,37 +1473,22 @@ textarea.error {
   display: grid;
   gap: 0.5rem;
 }
-
 .event-meta li {
   display: flex;
   gap: 0.5rem;
   align-items: center;
 }
-
 .event-description {
-  color: #444;
-  line-height: 1.4;
   text-align: left;
-}
-
-.event-address {
-  font-style: normal;
-  color: #666;
-}
-
-.event-map-link {
-  margin-top: 0.5rem;
-  align-self: flex-start;
-  text-decoration: none;
-  font-weight: 600;
-  color: #2563eb;
+  margin: 2rem 0.5rem;
+  max-width: 30rem;
 }
 .dates li.event {
-  background: none; /* reset eventuele oude achtergrond */
-  color: inherit; /* houd de tekstkleur */
+  background: none;
+  color: inherit;
 }
 .type-markt {
-  background-color: #d4edbc !important; /* forceert de juiste kleur */
+  background-color: #d4edbc !important;
   color: #11734b !important;
 }
 
@@ -1515,6 +1505,10 @@ textarea.error {
 .type-standplaats {
   background-color: #bfe1f6 !important;
   color: #0a53a8 !important;
+}
+.type-order {
+  background-color: var(--primary-pink);
+  color: var(--primary-purple);
 }
 
 .white {
@@ -1700,7 +1694,6 @@ footer {
   color: var(--primary-white);
 }
 footer .copyright {
-  /* border: 1px solid red; */
   display: flex;
   flex-wrap: wrap;
   text-align: center;
@@ -1711,4 +1704,8 @@ footer .copyright {
 }
 footer a:hover {
   color: var(--primary-pink);
+}
+.outside-month {
+  color: #6b6b6b !important;
+  font-weight: 100 !important;
 }

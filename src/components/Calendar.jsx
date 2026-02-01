@@ -25,50 +25,77 @@ const Calendar = () => {
   const [date, setDate] = useState(today);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
-  const { events, loading } = useEvents(); // Use global context
+  const { events, loading } = useEvents();
   const month = date.getMonth();
   const year = date.getFullYear();
 
-  // Generate calendar dates
   const generateCalendarDates = () => {
-    if (!events) return [];
+    if (!Array.isArray(events)) return [];
 
-    const start = (new Date(year, month, 1).getDay() + 6) % 7;
+    const start = (new Date(year, month, 1).getDay() + 6) % 7; // maandag=0
     const endDate = new Date(year, month + 1, 0).getDate();
     const end = (new Date(year, month, endDate).getDay() + 6) % 7;
     const endDatePrev = new Date(year, month, 0).getDate();
 
     const datesArr = [];
 
+    // ✅ BELANGRIJK: gebruik window.Map zodat we niet jouw Map-component "new Map()" doen
+    const eventByDate = new window.Map();
+    for (const ev of events) {
+      if (ev?.date) eventByDate.set(ev.date, ev);
+    }
+
+    const makeCell = (cellYear, cellMonthIndex, day, inactive) => {
+      const fullDate = `${cellYear}-${String(cellMonthIndex + 1).padStart(
+        2,
+        "0",
+      )}-${String(day).padStart(2, "0")}`;
+
+      const event = eventByDate.get(fullDate);
+
+      const isToday =
+        day === today.getDate() &&
+        cellMonthIndex === today.getMonth() &&
+        cellYear === today.getFullYear();
+
+      let className = isToday ? "today" : "";
+      if (inactive) className += (className ? " " : "") + "outside-month";
+
+      if (event) {
+        className +=
+          (className ? " " : "") +
+          `event type-${event.type.toLowerCase().replace(/\s+/g, "-")}`;
+      } else {
+        className += (className ? " " : "") + "no-event";
+      }
+
+      return { day, fullDate, event, className, inactive };
+    };
+
     // Previous month trailing days
-    for (let i = start; i > 0; i--)
-      datesArr.push({ day: endDatePrev - i + 1, inactive: true });
+    const prevMonthDate = new Date(year, month, 0);
+    const prevYear = prevMonthDate.getFullYear();
+    const prevMonthIndex = prevMonthDate.getMonth();
+
+    for (let i = start; i > 0; i--) {
+      const day = endDatePrev - i + 1;
+      datesArr.push(makeCell(prevYear, prevMonthIndex, day, true));
+    }
 
     // Current month days
     for (let i = 1; i <= endDate; i++) {
-      const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(i).padStart(2, "0")}`;
-      const event = events.find((ev) => ev.date === fullDate);
-      let className =
-        i === today.getDate() &&
-        month === today.getMonth() &&
-        year === today.getFullYear()
-          ? "today"
-          : "";
-      if (event)
-        className += className
-          ? ` event type-${event.type.toLowerCase().replace(/\s+/g, "-")}`
-          : `event type-${event.type.toLowerCase().replace(/\s+/g, "-")}`;
-      datesArr.push({
-        day: i,
-        fullDate,
-        event,
-        className: className || "no-event",
-      });
+      datesArr.push(makeCell(year, month, i, false));
     }
 
     // Next month leading days
-    for (let i = end; i < 6; i++)
-      datesArr.push({ day: i - end + 1, inactive: true });
+    const nextMonthDate = new Date(year, month + 1, 1);
+    const nextYear = nextMonthDate.getFullYear();
+    const nextMonthIndex = nextMonthDate.getMonth();
+
+    for (let i = end; i < 6; i++) {
+      const day = i - end + 1;
+      datesArr.push(makeCell(nextYear, nextMonthIndex, day, true));
+    }
 
     return datesArr;
   };
@@ -76,23 +103,27 @@ const Calendar = () => {
   const handleNav = (dir) => {
     let newMonth = month,
       newYear = year;
+
     if (dir === "prev") {
       if (month === 0) {
         newYear--;
         newMonth = 11;
       } else newMonth--;
     }
+
     if (dir === "next") {
       if (month === 11) {
         newYear++;
         newMonth = 0;
       } else newMonth++;
     }
+
     if (
       newYear < today.getFullYear() ||
       (newYear === today.getFullYear() && newMonth < today.getMonth())
     )
       return;
+
     setDate(new Date(newYear, newMonth, 1));
   };
 
@@ -107,7 +138,7 @@ const Calendar = () => {
 
   return (
     <>
-    <br id="kalender"/>
+      <br id="kalender" />
       <Wave reverse={true} />
       <section className="style2 main special">
         <h4 className="text-h4 monoton-regular">Kalender</h4>
@@ -130,6 +161,7 @@ const Calendar = () => {
                 {">"}
               </button>
             </header>
+
             <section>
               <ul className="days">
                 {["Ma", "Di", "Wo", "Do", "Vr", "Za", "Zo"].map((d) => (
@@ -138,6 +170,7 @@ const Calendar = () => {
                   </li>
                 ))}
               </ul>
+
               <ul className="dates">
                 {calendarDates.map((d, idx) => (
                   <li
@@ -146,14 +179,7 @@ const Calendar = () => {
                     onClick={() => handleEventClick(d.event)}
                   >
                     <span className="day-number">{d.day}</span>
-                    {d.event ? (
-                      <>
-                        <small>{d.event.title}</small>
-                        <small>{d.event.location}</small>
-                      </>
-                    ) : (
-                      !d.inactive
-                    )}
+                    {d.event ? <small>{d.event.location}</small> : !d.inactive}
                   </li>
                 ))}
               </ul>
@@ -161,55 +187,61 @@ const Calendar = () => {
           </div>
 
           {selectedEvent && (
-            <aside
-              id="event-sidebar"
-              style={{ display: selectedEvent ? "block" : "none" }}
-            >
+            <aside id="event-sidebar" style={{ display: "block" }}>
               <button
                 className="btn-purple btn-small btn-close"
                 onClick={() => setSelectedEvent(null)}
               >
                 X
               </button>
+
               <div id="event-content">
                 <article className="event-card">
                   <header className="event-header">
-                    <h4 className="event-title">{selectedEvent.title}</h4>
                     <span
                       className={`event-type type-${selectedEvent.type.toLowerCase()}`}
                     >
                       {selectedEvent.type}
                     </span>
+                    {selectedEvent.type.toLowerCase() !== "privaat" && (
+                      <span className={`event-type type-order`}>
+                        Bestel Online
+                      </span>
+                    )}
                   </header>
+
                   <ul className="event-meta">
                     <li>📅 {selectedEvent.displayDate}</li>
                     <li>
                       ⏰ {selectedEvent.startTime} – {selectedEvent.endTime}
                     </li>
+
                     {selectedEvent.type.toLowerCase() !== "privaat" &&
                       selectedEvent.address && (
                         <li id="event-map-link">
-                          📍<span>{selectedEvent.address}</span>
+                          📍{" "}
+                          <a
+                          className="event-address"
+                            href={
+                              "https://www.google.com/maps/dir/?api=1&destination=" +
+                              encodeURIComponent(selectedEvent.website)
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {selectedEvent.address}
+                          </a>
                         </li>
                       )}
-                    {selectedEvent.website && (
-                      <li>
-                        <a
-                          href={selectedEvent.website}
-                          target="_blank"
-                          rel="noopener"
-                        >
-                          🔗 Website
-                        </a>
-                      </li>
-                    )}
                   </ul>
+
                   <p className="event-description">
                     {selectedEvent.description}
                   </p>
+
                   {selectedEvent.type.toLowerCase() !== "privaat" &&
-                    selectedEvent.address && (
-                      <Map address={selectedEvent.address} />
+                    selectedEvent.website && (
+                      <Map address={selectedEvent.website} />
                     )}
                 </article>
               </div>
