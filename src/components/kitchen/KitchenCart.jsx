@@ -27,7 +27,7 @@ export default function KitchenCart({ total, cart }) {
         <CashCheckout
           total={total}
           onClose={() => setShowCashPopup(false)}
-          onConfirm={(data)}
+          onConfirm={(data) => console.log("Order bevestigd!", data)}
         />
       )}
 
