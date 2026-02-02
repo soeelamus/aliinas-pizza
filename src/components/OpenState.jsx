@@ -1,6 +1,6 @@
 import React from "react";
 
-const OrderDate = ({ events }) => {
+const OpenState = ({ events }) => {
   const today = new Date().toISOString().slice(0, 10); // "2026-01-09"
 
   const todayEvent = events?.find(
@@ -13,8 +13,9 @@ sessionStorage.setItem("location", JSON.stringify(todayEvent));
     <div className="menu-openStatus" style={{ fontWeight: "bold" }}>
       {isOpen ? (
         <div>
+          <a href="#menu" className="btn-purple btn-wide cta-open">✅ Bestellen ✅</a>
           <h3 className="menu-openStatus">
-            We zijn vandaag geopend vanaf {todayEvent.startTime}
+           ✅ We zijn vandaag geopend vanaf {todayEvent.startTime} 
           </h3>
           <p className="menu-openStatus-p">Bestel nu al online</p>
           <p className="menu-openStatus-p">Ophalen: {todayEvent.address}</p>
@@ -26,4 +27,4 @@ sessionStorage.setItem("location", JSON.stringify(todayEvent));
   );
 };
 
-export default OrderDate;
+export default OpenState;

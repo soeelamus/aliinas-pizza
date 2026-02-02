@@ -697,6 +697,13 @@ header.major p {
 header.special {
   text-align: center;
 }
+.cta-open {
+  border: 2px solid yellow !important;
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 10000;
+}
 ul.icons {
   cursor: default;
   list-style: none;
@@ -818,6 +825,12 @@ body.is-preload #header:after {
   }
   h4 {
     font-size: 1em;
+  }
+    .cta-open {
+    left: unset;
+    top: unset;
+    right: 6rem;
+    bottom: 4rem;
   }
 }
 @media screen and (max-width: 480px) {
@@ -1308,7 +1321,8 @@ textarea.error {
   color: var(--primary-white);
   z-index: 10;
 }
-.calendar-title {
+.calendar-title,
+.btn-wide {
   width: 15rem;
 }
 .calendar-title:hover {
@@ -1705,18 +1719,24 @@ footer a:hover {
   color: #6b6b6b !important;
   font-weight: 100 !important;
 }
+
 @media screen and (max-width: 580px) {
   .nav-btns {
     gap: 0.5rem;
   }
+  .btn-small,
   .btn-purple {
-    width: 5rem;
+    width: unset;
     font-size: 0.9rem;
   }
-  .btn-small {
-    width: unset;
+  .menu-tabs {
+    gap: 0.5rem;
   }
-  .calendar-title {
+  .menu-tabs * {
+    padding: 0.5rem;
+  }
+  .calendar-title,
+  .btn-wide {
     width: 10rem;
   }
   section.style2.main.special {
@@ -1734,3 +1754,4 @@ footer a:hover {
     margin: 1px;
   }
 }
+

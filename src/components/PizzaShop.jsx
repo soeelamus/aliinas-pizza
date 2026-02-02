@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Cart from "./Cart";
 import Menu from "./Menu";
-import OrderDate from "./OrderDate";
+import OpenState from "./OpenState";
 import { useEvents } from "../contexts/EventsContext";
 import { useCart } from "../contexts/CartContext";
 import Wave from "./Wave";
@@ -39,7 +39,7 @@ const PizzaShop = () => {
       <Wave reverse={true} />
       <div className="style2 main special">
         <div className="menu"></div>
-        <OrderDate events={events} />
+        <OpenState events={events} />
         <br id="menu" />
         <Cart isOpen={isOpen} />
         <Menu
