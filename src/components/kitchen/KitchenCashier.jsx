@@ -4,6 +4,7 @@ import Cart from "../Cart";
 import Menu from "../Menu";
 import { useCart } from "../../contexts/CartContext";
 import Loading from "../Loading/Loading";
+import ConnectTerminalButton from "./ConnectTerminalButton";
 
 const KitchenCashier = () => {
   const [pizzas, setPizzas] = useState([]);
@@ -24,6 +25,7 @@ const KitchenCashier = () => {
 
   return (
     <div className="pizza-shop">
+      <ConnectTerminalButton />
       <Cart isOpen={true} />
       <Menu
         pizzas={pizzas}

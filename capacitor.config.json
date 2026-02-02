@@ -1,0 +1,9 @@
+{
+  "appId": "com.aliinas.foodtruck",
+  "appName": "Aliinas POS",
+  "webDir": "dist",
+  "server": {
+    "url": "https://aliinas-pizza.vercel.app/kitchen",
+    "cleartext": false
+  }
+}

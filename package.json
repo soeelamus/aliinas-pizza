@@ -6,9 +6,17 @@
   "type": "module",
   "scripts": {
     "front": "vite",
-    "deploy": "vite build && vercel --prod"
+    "build": "vite build",
+    "deploy": "vite build && vercel --prod",
+    "android": "vite build && vercel --prod && npx cap sync android && npx cap open android"
   },
   "dependencies": {
+    "@capacitor-community/bluetooth-le": "^8.0.3",
+    "@capacitor-community/stripe-terminal": "^8.0.1",
+    "@capacitor/android": "^8.0.2",
+    "@capacitor/cli": "^8.0.2",
+    "@capacitor/core": "^8.0.2",
+    "@capacitor/device": "^8.0.0",
     "leaflet": "^1.9.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
