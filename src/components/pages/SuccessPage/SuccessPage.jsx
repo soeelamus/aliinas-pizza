@@ -1,5 +1,5 @@
 // SuccessPage.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import "./SuccessPage.css";
@@ -7,9 +7,8 @@ import Success from "../../SuccessCard";
 import Loading from "../../Loading/Loading";
 
 const SuccessPage = () => {
-  const [status, setStatus] = useState("loading");
+  const [status, setStatus] = useState("loading"); // loading | paid | unpaid | canceled
   const [order, setOrder] = useState(null);
-  const [pushed, setPushed] = useState(false);
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -17,13 +16,19 @@ const SuccessPage = () => {
   // 👉 Stripe session id uit URL
   const sessionId = searchParams.get("session_id");
 
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  const paymentData = JSON.parse(localStorage.getItem("paymentData") || "{}");
+  const cart = useMemo(
+    () => JSON.parse(localStorage.getItem("cart") || "[]"),
+    [],
+  );
 
-  console.log("2. paymentData: ", paymentData);
+  const paymentData = useMemo(
+    () => JSON.parse(localStorage.getItem("paymentData") || "{}"),
+    [],
+  );
 
   // 🔹 parse items string naar array
   const parseOrderItems = (itemsStr) => {
+    if (!itemsStr) return [];
     return itemsStr
       .split(",")
       .map((item) => {
@@ -46,6 +51,7 @@ const SuccessPage = () => {
     orderItems.forEach((item) => {
       let stockItem = currentStock.find((s) => s.name === item.name);
 
+      // fallback (zoals je had)
       if (!stockItem) {
         stockItem = currentStock[0];
       }
@@ -87,21 +93,18 @@ const SuccessPage = () => {
         const res = await fetch(`/api/payment?sessionId=${sessionId}`);
         const data = await res.json();
 
-        setStatus(data.status); // paid / unpaid
+        setStatus(data.status); // paid / unpaid / canceled
 
         if (data.status === "paid") {
           const orderObj = {
-            id: Date.now().toString(),
+            id: sessionId,
             sessionId,
 
             items: cart
               .map((i) => `${i.quantity}x ${i.product.name}`)
               .join(", "),
 
-            total: cart.reduce(
-              (sum, i) => sum + i.product.price * i.quantity,
-              0,
-            ),
+            total: cart.reduce((sum, i) => sum + i.product.price * i.quantity, 0),
 
             pickupTime: paymentData.formData?.pickupTime || "",
             orderedTime: new Date().toISOString(),
@@ -112,6 +115,8 @@ const SuccessPage = () => {
           };
 
           setOrder(orderObj);
+        } else {
+          setOrder(null);
         }
       } catch (err) {
         console.error(err);
@@ -120,11 +125,14 @@ const SuccessPage = () => {
     };
 
     checkPayment();
-  }, [sessionId]);
+  }, [sessionId, navigate, cart, paymentData]);
 
-  // 🔹 push order & stock
   useEffect(() => {
-    if (!order || pushed) return;
+    if (!order) return;
+    if (status !== "paid") return;
+
+    const pushedKey = `pushed_${order.sessionId}`;
+    if (sessionStorage.getItem(pushedKey)) return;
 
     const pushOrderAndStock = async () => {
       try {
@@ -137,7 +145,9 @@ const SuccessPage = () => {
 
         const result = await res.json();
 
-        if (result.status !== "ok") return;
+        if (result.status !== "ok" && result.status !== "already_exists") {
+          return;
+        }
 
         // fetch stock
         const stockRes = await fetch("/api/stock");
@@ -149,31 +159,33 @@ const SuccessPage = () => {
         // update
         await pushStock(parsedItems, stockData);
 
-        setPushed(true);
+        // ✅ guard opslaan (overleeft refresh)
+        sessionStorage.setItem(pushedKey, "1");
       } catch (err) {
         console.error("❌ Push failed:", err);
       }
     };
 
     pushOrderAndStock();
-  }, [order, pushed]);
+  }, [order, status]);
 
-  // 🔹 Send confirmation email
   useEffect(() => {
     if (!order) return;
     if (status !== "paid") return;
     if (!order.customerEmail) return;
 
+    const mailKey = `mail_${order.sessionId}`;
+    if (sessionStorage.getItem(mailKey)) return;
+
     const sendMail = async () => {
       try {
         await fetch("/api/send-mail", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(order),
         });
 
+        sessionStorage.setItem(mailKey, "1");
         console.log("✅ Email sent");
       } catch (err) {
         console.error("❌ Email failed", err);
@@ -219,9 +231,12 @@ const SuccessPage = () => {
           <button
             className="btn-purple"
             onClick={() => {
-              // clear storage
               localStorage.removeItem("cart");
               localStorage.removeItem("paymentData");
+              if (sessionId) {
+                sessionStorage.removeItem(`pushed_${sessionId}`);
+                sessionStorage.removeItem(`mail_${sessionId}`);
+              }
               navigate("/");
               window.location.reload();
             }}

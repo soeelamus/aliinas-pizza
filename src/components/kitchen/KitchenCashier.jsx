@@ -22,14 +22,6 @@ const KitchenCashier = () => {
     return <Loading innerHTML={"Loading cashier"} />;
   }
 
-  console.log("stockSheetState[0] =", stockSheetState[0]);
-  console.log(
-    "unique category keys:",
-    Object.keys(stockSheetState[0] || {}).filter((k) =>
-      k.toLowerCase().includes("cat"),
-    ),
-  );
-
   return (
     <div className="pizza-shop">
       <Cart isOpen={true} />

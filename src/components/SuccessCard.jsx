@@ -25,7 +25,7 @@ export default function Success({ order }) {
 
   // Get location
   const location = JSON.parse(sessionStorage.getItem("location"));
-
+  
   return (
     <div className="success-details">
       <h3>✅ Bedankt, {order.customerName}!</h3>
@@ -35,9 +35,9 @@ export default function Success({ order }) {
         <br />
         Ophalen: <strong>{location.address}</strong>
       </p>
-      {location.address && (
+      {location.website && (
         <div id="event-map" className="event-map">
-          <Map address={location.address} />
+          <Map address={location.website} />
         </div>
       )}
       <br />

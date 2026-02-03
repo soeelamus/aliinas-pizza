@@ -59,7 +59,9 @@ const Menu = ({ pizzas, stockSheet, isOpen, isKitchen }) => {
                   </h3>
 
                   <div className="price-box">
-                    <h3 className="pizza-price">€{item.price}</h3>
+                    <h3 className="pizza-price">
+                      {item.price != null ? `€${item.price}` : ""}
+                    </h3>
                     <button
                       className="btn-small btn-purple"
                       onClick={() => addItem(item)}

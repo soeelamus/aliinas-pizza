@@ -54,6 +54,8 @@ export const CartProvider = ({ children }) => {
         id: String(x.id ?? x.name ?? ""),
         name: x.name ?? "",
         stock: Number(x.stock ?? 0),
+        category: (x.category ?? "").toString().trim(),
+        price: Number(x.price ?? x.Price ?? 0),
       }));
   };
 
@@ -67,7 +69,7 @@ export const CartProvider = ({ children }) => {
     // Dev servers geven bij 404 soms index.html terug (text/html)
     if (!ct.includes("application/json")) {
       throw new Error(
-        `[${url}] Expected JSON but got "${ct}". Snippet: ${text.slice(0, 80)}`
+        `[${url}] Expected JSON but got "${ct}". Snippet: ${text.slice(0, 80)}`,
       );
     }
 
@@ -75,14 +77,14 @@ export const CartProvider = ({ children }) => {
     try {
       json = JSON.parse(text);
     } catch (e) {
-      throw new Error(
-        `[${url}] Invalid JSON. Snippet: ${text.slice(0, 80)}`
-      );
+      throw new Error(`[${url}] Invalid JSON. Snippet: ${text.slice(0, 80)}`);
     }
 
     // Als jouw API { ok:false } terugstuurt
     if (json && typeof json === "object" && json.ok === false) {
-      throw new Error(`[${url}] API returned ok:false: ${json.error || "unknown"}`);
+      throw new Error(
+        `[${url}] API returned ok:false: ${json.error || "unknown"}`,
+      );
     }
 
     if (!res.ok) {
@@ -105,7 +107,7 @@ export const CartProvider = ({ children }) => {
       } catch (localErr) {
         // Geef beide fouten terug (heel nuttig in console)
         throw new Error(
-          `Stock fetch failed.\nAPI error: ${apiErr.message}\nLOCAL error: ${localErr.message}`
+          `Stock fetch failed.\nAPI error: ${apiErr.message}\nLOCAL error: ${localErr.message}`,
         );
       }
     }
@@ -117,7 +119,7 @@ export const CartProvider = ({ children }) => {
       setStockSheetState(items);
 
       const dough = items.find(
-        (item) => (item.name || "").toLowerCase() === "deegballen"
+        (item) => (item.name || "").toLowerCase() === "deegballen",
       );
       const doughStock = dough ? Number(dough.stock) : 0;
 
@@ -145,7 +147,7 @@ export const CartProvider = ({ children }) => {
 
     if (!product.category || product.category === "") {
       const dough = stockSheetState.find(
-        (item) => (item.name || "").toLowerCase() === "deegballen"
+        (item) => (item.name || "").toLowerCase() === "deegballen",
       );
       const totalStock = dough ? Number(dough.stock) : 0;
 
@@ -176,13 +178,13 @@ export const CartProvider = ({ children }) => {
       if (remaining <= 0) return prev;
 
       const existing = prev.find(
-        (p) => String(p.product.id) === String(product.id)
+        (p) => String(p.product.id) === String(product.id),
       );
       if (existing) {
         return prev.map((p) =>
           String(p.product.id) === String(product.id)
             ? { ...p, quantity: p.quantity + 1 }
-            : p
+            : p,
         );
       }
 
@@ -192,7 +194,7 @@ export const CartProvider = ({ children }) => {
 
   const removeItem = (product) =>
     setCart((prev) =>
-      prev.filter((p) => String(p.product.id) !== String(product.id))
+      prev.filter((p) => String(p.product.id) !== String(product.id)),
     );
 
   const changeQuantity = (product, amount) => {
