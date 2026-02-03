@@ -1,8 +1,8 @@
 import "./Loading.css";
 
-const Loading = ({ innerHTML }) => {
+const Loading = ({ innerHTML, margin }) => {
   return (
-    <div className="center margin">
+    <div className={`center margin${margin}`}>
       <p className="loader"></p>
       <p>{innerHTML}</p>
     </div>

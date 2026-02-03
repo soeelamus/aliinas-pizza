@@ -162,6 +162,9 @@
 .margin {
   margin: 10rem 0 !important;
 }
+.margin-5 {
+  margin: 5rem 0 !important;
+}
 .btn-margin {
   margin-bottom: 5rem;
 }

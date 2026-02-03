@@ -27,6 +27,7 @@ let tokenReadyResolve = null;
 let discoveredResolve = null;
 let lastDiscoveredReaders = [];
 let connectedResolve = null;
+let paymentInFlight = null;
 
 // -------------------- helpers --------------------
 function log(...args) {
@@ -322,35 +323,53 @@ export async function connectReaderOnce() {
  */
 export async function startTerminalPayment({ totalEur, orderId }) {
   assertNative();
-  await connectReaderOnce();
 
-  const amount = eurosToCents(totalEur);
-  log("Creating PaymentIntent… amount =", amount, "orderId =", orderId);
-
-  const r = await fetch(`${API_BASE}/api/terminal/payment_intent`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ amount, currency: "eur", orderId }),
-  });
-
-  if (!r.ok) {
-    const txt = await r.text();
-    log("payment_intent endpoint failed:", txt);
-    throw new Error(txt);
+  if (paymentInFlight) {
+    log("Payment already in flight → returning same promise");
+    return paymentInFlight;
   }
 
-  const { client_secret, id } = await r.json();
-  if (!client_secret)
-    throw new Error("payment_intent endpoint gaf geen client_secret terug");
+  paymentInFlight = (async () => {
+    try {
+      await connectReaderOnce();
 
-  log("Collecting payment method… PI =", id);
-  await StripeTerminal.collectPaymentMethod({ paymentIntent: client_secret });
+      const amount = eurosToCents(totalEur);
+      log("Creating PaymentIntent… amount =", amount, "orderId =", orderId);
 
-  log("Confirming payment intent… PI =", id);
-  await StripeTerminal.confirmPaymentIntent();
+      const r = await fetch(`${API_BASE}/api/terminal/payment_intent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount, currency: "eur", orderId }),
+      });
 
-  return { paymentIntentId: id };
+      if (!r.ok) throw new Error(await r.text());
+      const { client_secret, id } = await r.json();
+      if (!client_secret) throw new Error("payment_intent endpoint gaf geen client_secret terug");
+
+      log("Collecting payment method… PI =", id);
+      await withTimeout(
+        StripeTerminal.collectPaymentMethod({ paymentIntent: client_secret }),
+        90000,
+        "collectPaymentMethod"
+      );
+
+      log("Confirming payment intent… PI =", id);
+      await withTimeout(
+        StripeTerminal.confirmPaymentIntent(),
+        30000,
+        "confirmPaymentIntent"
+      );
+
+      log("Payment finished ✅ PI =", id);
+      return { paymentIntentId: id };
+    } finally {
+      paymentInFlight = null;
+    }
+  })();
+
+  return paymentInFlight;
 }
+
 
 /**
  * Optional: disconnect reader

@@ -24,7 +24,7 @@ export default function ConnectTerminalButton() {
   return (
     <div className={{ marginBottom: 12 }}>
       <button
-        className="checkout-button btn-purple"
+        className="btn-purple"
         onClick={onConnect}
         disabled={status === "scanning" || status === "connected"}
       >

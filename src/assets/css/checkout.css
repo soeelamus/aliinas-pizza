@@ -1,4 +1,4 @@
-.cash-popup-overlay {
+.checkout-popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -10,7 +10,7 @@
   align-items: center;
   z-index: 1000;
 }
-.cash-popup {
+.checkout-popup {
   background: var(--primary-white);
   padding: 2rem;
   border-radius: 1rem;
@@ -51,17 +51,21 @@
 .red {
   color: red;
 }
-.cash-loading-overlay {
+.checkout-loading-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.8);
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   z-index: 9999;
   color: white;
   font-size: 2rem;
   font-weight: bold;
+}
+.largest-font {
+  font-size: 3rem;
+}
+.large-font {
+  font-size: 2rem;
 }

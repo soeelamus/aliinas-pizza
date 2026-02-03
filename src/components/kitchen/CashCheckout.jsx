@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { createPortal } from "react-dom";
 import { useCart } from "../../contexts/CartContext";
 import { finalizeOrder } from "../../utils/finalizeOrder";
-import "./../../assets/css/CashCheckout.css";
+import "./../../assets/css/checkout.css";
 import Loading from "../Loading/Loading";
 
 export default function CashCheckout({ total, onClose, onConfirm }) {
@@ -77,13 +77,13 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
   };
 
   return createPortal(
-    <div className="cash-popup-overlay">
+    <div className="checkout-popup-overlay">
       {loading && (
-        <div className="cash-loading-overlay">
+        <div className="checkout-loading-overlay">
           <Loading innerHTML={"Bestelling wordt verwerkt"} />
         </div>
       )}
-      <div className="cash-popup">
+      <div className="checkout-popup">
         <p>
           Te betalen: <strong className="amount">€{total.toFixed(2)}</strong>
         </p>
