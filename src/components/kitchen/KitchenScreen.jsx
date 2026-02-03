@@ -35,13 +35,25 @@ function KitchenActive() {
   const [updatingId, setUpdatingId] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [pendingUpdates, setPendingUpdates] = useState({});
-  const alertAudio = useRef(new Audio("/sound/sound-effect.mp3"));
+  const alertAudio = useRef(null);
   const prevOrders = useRef([]);
   const firstFetch = useRef(true);
   const intervalRef = useRef(null);
   const { refreshStock } = useCart();
   const audioAllowed = useRef(true);
 
+  useEffect(() => {
+    const audio = new Audio("/sound/sound-effect.mp3");
+    audio.preload = "auto";
+    alertAudio.current = audio;
+
+    return () => {
+      // cleanup: stop en release
+      audio.pause();
+      audio.src = "";
+      alertAudio.current = null;
+    };
+  }, []);
   /* ---------------- Refresh stock on mount ---------------- */
   useEffect(() => {
     refreshStock();
@@ -128,8 +140,15 @@ function KitchenActive() {
         if (!firstFetch.current) {
           const prevIds = new Set(prevOrders.current.map((o) => o.id));
           const newOrders = merged.filter((o) => !prevIds.has(o.id));
-          if (audioAllowed.current && newOrders.length > 0) {
-            alertAudio.current.play().catch(() => {});
+
+          if (
+            audioAllowed.current &&
+            newOrders.length > 0 &&
+            alertAudio.current
+          ) {
+            const a = alertAudio.current;
+            a.currentTime = 0;
+            a.play().catch(() => {});
           }
         }
 

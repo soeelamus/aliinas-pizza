@@ -11,7 +11,6 @@ export const CartProvider = ({ children }) => {
       if (!saved) return [];
 
       const parsed = JSON.parse(saved);
-
       if (!parsed || !Array.isArray(parsed)) return [];
 
       return parsed
@@ -35,47 +34,107 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // Save cart in localStorage
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
   // =========================
-  // Refresh stock every 30s
+  // Stock fetch (API -> fallback)
   // =========================
-// houd laatste deegballen voorraad bij
-const lastDoughStock = useRef(null);
+  const lastDoughStock = useRef(null);
 
-const refreshStock = async () => {
-  try {
-    const res = await fetch("/api/stock");
-    if (!res.ok) throw new Error("Stock fetch failed");
+  const API_URL = "/api/stock";
+  const LOCAL_URL = "/json/stock.json";
 
-    const data = await res.json();
-    setStockSheetState(data);
+  const normalizeStockArray = (data) => {
+    if (!Array.isArray(data)) return [];
+    return data
+      .filter((x) => x && (x.id !== undefined || x.name))
+      .map((x) => ({
+        id: String(x.id ?? x.name ?? ""),
+        name: x.name ?? "",
+        stock: Number(x.stock ?? 0),
+      }));
+  };
 
-    // Log deegballen alleen als voorraad veranderd
-    const dough = data.find((item) => item.name.toLowerCase() === "deegballen");
-    const doughStock = dough ? Number(dough.stock) : 0;
+  // ✅ Leest response als text, checkt content-type, parse JSON zelf
+  const fetchJsonStrict = async (url) => {
+    const res = await fetch(url, { cache: "no-store" });
 
-    if (doughStock !== lastDoughStock.current) {
-      console.log("Refreshing stock... Deegballen:", doughStock);
-      lastDoughStock.current = doughStock; // ✅ correct
+    const ct = res.headers.get("content-type") || "";
+    const text = await res.text();
+
+    // Dev servers geven bij 404 soms index.html terug (text/html)
+    if (!ct.includes("application/json")) {
+      throw new Error(
+        `[${url}] Expected JSON but got "${ct}". Snippet: ${text.slice(0, 80)}`
+      );
     }
-  } catch (err) {
-    console.error("Refresh stock error:", err);
-  }
-};
+
+    let json;
+    try {
+      json = JSON.parse(text);
+    } catch (e) {
+      throw new Error(
+        `[${url}] Invalid JSON. Snippet: ${text.slice(0, 80)}`
+      );
+    }
+
+    // Als jouw API { ok:false } terugstuurt
+    if (json && typeof json === "object" && json.ok === false) {
+      throw new Error(`[${url}] API returned ok:false: ${json.error || "unknown"}`);
+    }
+
+    if (!res.ok) {
+      throw new Error(`[${url}] HTTP ${res.status}`);
+    }
+
+    return json;
+  };
+
+  const fetchStockWithFallback = async () => {
+    // 1) probeer API
+    try {
+      const apiData = await fetchJsonStrict(API_URL);
+      return { source: "api", items: normalizeStockArray(apiData) };
+    } catch (apiErr) {
+      // 2) fallback naar local JSON (ook strict!)
+      try {
+        const localData = await fetchJsonStrict(LOCAL_URL);
+        return { source: "local", items: normalizeStockArray(localData) };
+      } catch (localErr) {
+        // Geef beide fouten terug (heel nuttig in console)
+        throw new Error(
+          `Stock fetch failed.\nAPI error: ${apiErr.message}\nLOCAL error: ${localErr.message}`
+        );
+      }
+    }
+  };
+
+  const refreshStock = async () => {
+    try {
+      const { source, items } = await fetchStockWithFallback();
+      setStockSheetState(items);
+
+      const dough = items.find(
+        (item) => (item.name || "").toLowerCase() === "deegballen"
+      );
+      const doughStock = dough ? Number(dough.stock) : 0;
+
+      if (doughStock !== lastDoughStock.current) {
+        console.log(`Refreshing stock (${source})... Deegballen:`, doughStock);
+        lastDoughStock.current = doughStock;
+      }
+    } catch (err) {
+      console.error("Refresh stock error:", err.message || err);
+    }
+  };
 
   useEffect(() => {
-    // Eerst meteen laden
     refreshStock();
-
-    // Interval elke 30 seconden
     const interval = setInterval(refreshStock, 30000);
-
-    // Cleanup bij unmount
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // =========================
@@ -84,9 +143,10 @@ const refreshStock = async () => {
   const getStock = (product, currentCart = []) => {
     if (!stockSheetState.length) return 0;
 
-    // Pizzas → deegballen
     if (!product.category || product.category === "") {
-      const dough = stockSheetState.find((item) => item.name.toLowerCase() === "deegballen");
+      const dough = stockSheetState.find(
+        (item) => (item.name || "").toLowerCase() === "deegballen"
+      );
       const totalStock = dough ? Number(dough.stock) : 0;
 
       const pizzasInCart = currentCart
@@ -96,13 +156,15 @@ const refreshStock = async () => {
       return Math.max(0, totalStock - pizzasInCart);
     }
 
-    // Drinks / other items
-    const itemStock = stockSheetState.find((s) => s.id === product.id)?.stock ?? 0;
+    const itemStock =
+      stockSheetState.find((s) => String(s.id) === String(product.id))?.stock ??
+      0;
+
     const quantityInCart = currentCart
-      .filter((p) => p.product.id === product.id)
+      .filter((p) => String(p.product.id) === String(product.id))
       .reduce((sum, p) => sum + p.quantity, 0);
 
-    return Math.max(0, itemStock - quantityInCart);
+    return Math.max(0, Number(itemStock) - quantityInCart);
   };
 
   // =========================
@@ -113,7 +175,9 @@ const refreshStock = async () => {
       const remaining = getStock(product, prev);
       if (remaining <= 0) return prev;
 
-      const existing = prev.find((p) => String(p.product.id) === String(product.id));
+      const existing = prev.find(
+        (p) => String(p.product.id) === String(product.id)
+      );
       if (existing) {
         return prev.map((p) =>
           String(p.product.id) === String(product.id)
@@ -157,9 +221,6 @@ const refreshStock = async () => {
   const totalAmount = () =>
     cart.reduce((sum, p) => sum + p.product.price * p.quantity, 0);
 
-  // =========================
-  // Provider
-  // =========================
   return (
     <CartContext.Provider
       value={{
