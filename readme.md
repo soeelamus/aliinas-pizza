@@ -75,7 +75,7 @@ Built for **mobile-first usage** and **Android POS devices** using **Capacitor**
 
 Create `.env` configuration in Vercel:
 
-```env
+```
 STRIPE_SECRET_KEY
 RESEND_KEY
 STRIPE_READER_ID
