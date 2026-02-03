@@ -27,10 +27,13 @@ export default function CardCheckout({ total, cart, onClose }) {
   const [readerInputMsg, setReaderInputMsg] = useState("");
   const [err, setErr] = useState(null);
   const [paymentIntentId, setPaymentIntentId] = useState(null);
+
   const orderId = useMemo(() => crypto.randomUUID(), []);
   const cartSnapshotRef = useRef(cart);
+
   const startedRef = useRef(false);
   const stoppedRef = useRef(false);
+  const finalizedRef = useRef(false); // <-- voorkomt dubbele finalize bij meerdere "paid" events
 
   useEffect(() => {
     const subs = [];
@@ -41,12 +44,12 @@ export default function CardCheckout({ total, cart, onClose }) {
           TerminalEventsEnum.PaymentStatusChange,
           ({ status }) => {
             setPaymentStatus(status);
-            const s = String(status || "");
-            if (s.includes("WAIT") || s.includes("INPUT"))
-              setPhase("waiting_card");
+            const s = String(status || "").toUpperCase();
+
+            if (s.includes("WAIT") || s.includes("INPUT")) setPhase("waiting_card");
             if (s.includes("PROCESS")) setPhase("processing");
-          },
-        ),
+          }
+        )
       );
 
       subs.push(
@@ -54,8 +57,8 @@ export default function CardCheckout({ total, cart, onClose }) {
           TerminalEventsEnum.RequestDisplayMessage,
           ({ message }) => {
             setDisplayMsg(message || "");
-          },
-        ),
+          }
+        )
       );
 
       subs.push(
@@ -64,21 +67,21 @@ export default function CardCheckout({ total, cart, onClose }) {
           ({ message }) => {
             setReaderInputMsg(message || "");
             setPhase("waiting_card");
-          },
-        ),
+          }
+        )
       );
 
       subs.push(
         await StripeTerminal.addListener(TerminalEventsEnum.Canceled, () => {
-          stoppedRef.current = true; // <-- voorkomt herstart
+          stoppedRef.current = true;
           setPhase("canceled");
-        }),
+        })
       );
 
       subs.push(
         await StripeTerminal.addListener(TerminalEventsEnum.Failed, (info) => {
-          // Als user cancelled op terminal, komt dit soms als Failed of Canceled
           const msg = info?.message || "Payment failed";
+
           if (
             msg.toLowerCase().includes("canceled") ||
             msg.toLowerCase().includes("cancelled")
@@ -87,18 +90,20 @@ export default function CardCheckout({ total, cart, onClose }) {
             setPhase("canceled");
             return;
           }
+
           setErr(msg);
           setPhase("error");
-        }),
+        })
       );
 
       subs.push(
         await StripeTerminal.addListener(
           TerminalEventsEnum.ConfirmedPaymentIntent,
           () => {
-            setPhase("success");
-          },
-        ),
+            // NIET sluiten hier, enkel "paid" bepaalt sluiten
+            setPhase("processing");
+          }
+        )
       );
     })();
 
@@ -113,7 +118,7 @@ export default function CardCheckout({ total, cart, onClose }) {
     };
   }, []);
 
-  // 2) start payment: één keer per overlay
+  // Start payment: één keer per overlay
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
@@ -129,27 +134,12 @@ export default function CardCheckout({ total, cart, onClose }) {
         if (cancelled || stoppedRef.current) return;
 
         setPaymentIntentId(res?.paymentIntentId || null);
-        setPhase("success");
-
-        await finalizeOrder({
-          cart: cartSnapshotRef.current,
-          total,
-          paymentMethod: "card",
-          customerName: "Cashier",
-          paymentIntentId: res?.paymentIntentId,
-          orderId,
-        });
-
-        await refreshStock();
-        clearCart();
-
-        setTimeout(() => {
-          if (!cancelled) onClose?.();
-        }, 700);
+        setPhase("waiting_card");
       } catch (e) {
         if (cancelled) return;
 
         const msg = e?.message || String(e);
+
         if (
           msg.toLowerCase().includes("canceled") ||
           msg.toLowerCase().includes("cancelled")
@@ -166,7 +156,45 @@ export default function CardCheckout({ total, cart, onClose }) {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [total, orderId]);
+
+  // Sluit popup ENKEL wanneer status = paid (en finalize ook pas dan)
+  useEffect(() => {
+    if (!paymentStatus) return;
+    if (stoppedRef.current) return;
+
+    const s = String(paymentStatus).toLowerCase();
+
+    if (s === "paid") {
+      if (finalizedRef.current) return;
+      finalizedRef.current = true;
+
+      (async () => {
+        try {
+          setPhase("success");
+
+          await finalizeOrder({
+            cart: cartSnapshotRef.current,
+            total,
+            paymentMethod: "card",
+            customerName: "Cashier",
+            paymentIntentId,
+            orderId,
+          });
+
+          await refreshStock();
+          clearCart();
+
+          onClose?.(); // <-- ENKEL HIER
+        } catch (e) {
+          // Als finalize faalt, NIET sluiten
+          finalizedRef.current = false;
+          setErr(e?.message || String(e));
+          setPhase("error");
+        }
+      })();
+    }
+  }, [paymentStatus, total, paymentIntentId, orderId, refreshStock, clearCart, onClose]);
 
   const hint =
     readerInputMsg ||
@@ -205,11 +233,14 @@ export default function CardCheckout({ total, cart, onClose }) {
           phase === "processing") && (
           <Loading innerHTML={"Kaartbetaling bezig…"} margin="5" />
         )}
+
         <p className="largest-font">€{Number(total).toFixed(2)}</p>
 
         {paymentStatus && (
           <p className="large-font">Status: {prettyStatus(paymentStatus)}</p>
         )}
+
+        <p className="large-font">{hint}</p>
 
         {err && <p className="large-font error-message margin-5">{err}</p>}
 
@@ -226,6 +257,6 @@ export default function CardCheckout({ total, cart, onClose }) {
         </div>
       </div>
     </div>,
-    document.body,
+    document.body
   );
 }

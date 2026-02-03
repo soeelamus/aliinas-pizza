@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">foodtruck-pos</string>
-    <string name="title_activity_main">foodtruck-pos</string>
+    <string name="app_name">Soe Elamus OÜ Aliinas</string>
+    <string name="title_activity_main">Soe Elamus OÜ Aliinas</string>
     <string name="package_name">com.aliinas.foodtruck</string>
     <string name="custom_url_scheme">com.aliinas.foodtruck</string>
 </resources>
