@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       .container {
         max-width: 600px;
         margin: 20px auto;
-        background: #ffffff;
+        background: #f6f6f6;
         border-radius: 10px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         overflow: hidden;
@@ -60,8 +60,8 @@ export default async function handler(req, res) {
       }
       .order-details {
         margin: 20px 0;
-        border-top: 1px solid #eee;
-        border-bottom: 1px solid #eee;
+        border-top: 1px solid #f6f6f6;
+        border-bottom: 1px solid #f6f6f6;
         padding: 10px 0;
       }
       .order-details p {
@@ -75,8 +75,8 @@ export default async function handler(req, res) {
       }
       .btn {
         display: inline-block;
-        background-color: #ffa9c8;
-        color: white;
+        background-color: #6237c8;
+        color: #f6f6f6;
         padding: 10px 20px;
         border-radius: 5px;
         text-decoration: none;
@@ -107,7 +107,7 @@ export default async function handler(req, res) {
         <a href="https://aliinas.com/" class="btn">Website</a>
         </div>
         <div class="footer">
-        Aliina's Pizza – jouw favoriete pizza in de buurt!<br/>
+        Aliina's Pizza, altijd in de buurt!<br/>
         <a href="mailto:aliinas.pizza@hotmail.com" style="color:#888;">aliinas.pizza@hotmail.com</a>
       </div>
     </div>
