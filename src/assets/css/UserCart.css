@@ -46,12 +46,6 @@
   border-radius: 6px;
   cursor: pointer;
 }
-
-.checkout-button {
-  border: 2px solid yellow;
-  color: yellow;
-  width: 100%;
-}
 .checkout-buttons {
   display: flex;
   gap: 0.5rem;
@@ -62,8 +56,8 @@
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
-
-.btn-cta {
+.btn-cta,
+.btn-order {
   position: fixed;
   bottom: 1rem;
   right: 0;
@@ -71,12 +65,19 @@
   justify-content: center;
   z-index: 1000;
 }
-.btn-cart {
-  width: 17rem;
+.btn-order,
+.btn-cart,
+.checkout-button {
   margin: 1rem;
-  position: relative;
+  width: 17rem;
   border: 2px solid yellow;
   color: yellow;
+}
+.checkout-button {
+  width: calc(100% - 2rem);
+}
+.btn-cart {
+  position: relative;
 }
 .cart-count {
   background-color: yellow;
@@ -90,4 +91,11 @@
   position: absolute;
   right: -1rem;
   top: -1rem;
+}
+
+@media (max-width: 700px) {
+  .btn-order,
+  .btn-cart {
+    max-width: 8rem !important;
+  }
 }

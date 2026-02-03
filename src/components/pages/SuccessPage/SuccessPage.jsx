@@ -132,7 +132,7 @@ const SuccessPage = () => {
     if (status !== "paid") return;
 
     const pushedKey = `pushed_${order.sessionId}`;
-    if (sessionStorage.getItem(pushedKey)) return;
+    if (localStorage.getItem(pushedKey)) return;
 
     const pushOrderAndStock = async () => {
       try {
@@ -160,7 +160,7 @@ const SuccessPage = () => {
         await pushStock(parsedItems, stockData);
 
         // ✅ guard opslaan (overleeft refresh)
-        sessionStorage.setItem(pushedKey, "1");
+        localStorage.setItem(pushedKey, "1");
       } catch (err) {
         console.error("❌ Push failed:", err);
       }
@@ -175,7 +175,7 @@ const SuccessPage = () => {
     if (!order.customerEmail) return;
 
     const mailKey = `mail_${order.sessionId}`;
-    if (sessionStorage.getItem(mailKey)) return;
+    if (localStorage.getItem(mailKey)) return;
 
     const sendMail = async () => {
       try {
@@ -185,7 +185,7 @@ const SuccessPage = () => {
           body: JSON.stringify(order),
         });
 
-        sessionStorage.setItem(mailKey, "1");
+        localStorage.setItem(mailKey, "1");
         console.log("✅ Email sent");
       } catch (err) {
         console.error("❌ Email failed", err);
@@ -234,8 +234,8 @@ const SuccessPage = () => {
               localStorage.removeItem("cart");
               localStorage.removeItem("paymentData");
               if (sessionId) {
-                sessionStorage.removeItem(`pushed_${sessionId}`);
-                sessionStorage.removeItem(`mail_${sessionId}`);
+                localStorage.removeItem(`pushed_${sessionId}`);
+                localStorage.removeItem(`mail_${sessionId}`);
               }
               navigate("/");
               window.location.reload();

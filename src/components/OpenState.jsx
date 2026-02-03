@@ -6,14 +6,14 @@ const OpenState = ({ events }) => {
   const todayEvent = events?.find(
     (e) => e.type.toLowerCase() === "standplaats" && e.date === today
   );
-sessionStorage.setItem("location", JSON.stringify(todayEvent));
+localStorage.setItem("location", JSON.stringify(todayEvent));
 
   const isOpen = !!todayEvent;
   return (
     <div className="menu-openStatus" style={{ fontWeight: "bold" }}>
       {isOpen ? (
         <div>
-          <a href="#menu" className="btn-purple btn-wide cta-open">✅ Bestellen ✅</a>
+          <a href="#menu" className="btn-purple btn-order">✅ Bestellen</a>
           <h3 className="menu-openStatus">
            ✅ We zijn vandaag geopend vanaf {todayEvent.startTime} 
           </h3>

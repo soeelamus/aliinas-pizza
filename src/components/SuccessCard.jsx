@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import "../assets/css/kitchen.css";
 import Map from "./Map";
 
 export default function Success({ order }) {
+  // Guard: order kan even null zijn tijdens laden
   if (!order) return <p>⏳ Loading order details…</p>;
 
+  // Items parser (zoals je had)
   function parseItems(itemsString) {
     if (!itemsString) return [];
 
@@ -23,35 +25,65 @@ export default function Success({ order }) {
       .filter(Boolean);
   }
 
-  // Get location
-  const location = JSON.parse(sessionStorage.getItem("location"));
-  
+  // ✅ ANDROID SAFE: location uit localStorage kan null/invalid zijn
+  const location = useMemo(() => {
+    try {
+      const raw = localStorage.getItem("location");
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      console.error("❌ location parse failed:", e);
+      return null;
+    }
+  }, []);
+
+  // Veilig afleiden
+  const pickupAddress = location?.address || "Adres niet beschikbaar";
+  const mapAddress = location?.address || ""; // (gebruik adres; website is meestal geen adres)
+
+  const items = useMemo(() => parseItems(order.items), [order.items]);
+
   return (
     <div className="success-details">
-      <h3>✅ Bedankt, {order.customerName}!</h3>
+      <h3>✅ Bedankt, {order.customerName || "!"}</h3>
+
       <p>
-        Je kan je bestelling vandaag ophalen om
-        <strong> {order.pickupTime}</strong>
+        Je kan je bestelling vandaag ophalen{" "}
+        {order.pickupTime ? (
+          <>
+            om <strong> {order.pickupTime}</strong>
+          </>
+        ) : null}
         <br />
-        Ophalen: <strong>{location.address}</strong>
+        Ophalen: <strong>{pickupAddress}</strong>
       </p>
-      {location.website && (
+
+      {/* ✅ Alleen Map renderen als we effectief een adres hebben */}
+      {mapAddress ? (
         <div id="event-map" className="event-map">
-          <Map address={location.website} />
+          <Map address={mapAddress} />
         </div>
-      )}
+      ) : null}
+
       <br />
+
       <h4 className="success-total">Bestelling</h4>
-      {parseItems(order.items).map((item, index) => (
-        <li key={index} className="success-row">
-          <span className="success-name">{item.name}</span>
-          <span className="success-qty">{item.quantity}x</span>
-        </li>
-      ))}
-      <h4 className="success-total">Totaal: €{order.total}</h4>
-      {order.customerNotes && (
-        <p className="success-notes">Notes: {order.customerNotes}</p>
+
+      {items.length ? (
+        items.map((item, index) => (
+          <li key={index} className="success-row">
+            <span className="success-name">{item.name}</span>
+            <span className="success-qty">{item.quantity}x</span>
+          </li>
+        ))
+      ) : (
+        <p style={{ opacity: 0.8 }}>Geen items gevonden.</p>
       )}
+
+      <h4 className="success-total">Totaal: €{Number(order.total || 0).toFixed(2)}</h4>
+
+      {order.customerNotes ? (
+        <p className="success-notes">Notes: {order.customerNotes}</p>
+      ) : null}
     </div>
   );
 }
