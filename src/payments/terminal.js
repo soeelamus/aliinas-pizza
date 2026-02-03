@@ -7,7 +7,7 @@ import {
 } from "@capacitor-community/stripe-terminal";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
-const LOCATION_ID = "tml_GXCRdwizjsEgt2"; // jouw live location
+const LOCATION_ID = "tml_GXCRdwizjsEgt2";
 
 // centen helper
 export const eurosToCents = (eur) => Math.round(Number(eur) * 100);
@@ -15,10 +15,8 @@ export const eurosToCents = (eur) => Math.round(Number(eur) * 100);
 // -------------------- internal state --------------------
 let initialized = false;
 let listenersAttached = false;
-
 let terminalLoaded = false;
 let loadedPromise = null;
-
 let tokenReady = false;
 let tokenReadyPromise = null;
 let tokenReadyResolve = null;
@@ -36,10 +34,10 @@ function log(...args) {
 
 function assertNative() {
   if (!Capacitor.isNativePlatform()) {
-    throw new Error("Terminal werkt alleen in de Android app (Capacitor).");
+    throw new Error("Terminal werkt alleen in de Android app.");
   }
   if (!API_BASE) {
-    throw new Error("VITE_API_BASE_URL ontbreekt (zet naar je Vercel domain).");
+    throw new Error("VITE_API_BASE_URL ontbreekt.");
   }
 }
 
