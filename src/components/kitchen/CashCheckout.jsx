@@ -131,7 +131,7 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
 
         {/* Geschiedenis */}
         <div className="margin-2">
-          <h4 className="unset">Geschiedenis</h4>
+          <p>Geschiedenis</p>
           <div className="history">
             {history.length <= 0 ? (
               <ul className="history-list">

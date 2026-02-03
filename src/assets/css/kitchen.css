@@ -154,10 +154,22 @@
 }
 .form {
   align-items: unset;
+  text-align: left;
   max-width: 20rem;
 }
+.form-popup {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  max-height: 95vh;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+
 .form-text {
   color: var(--primary-white);
+  font-weight: 100;
 }
 .margin {
   margin: 10rem 0 !important;
@@ -166,8 +178,14 @@
   margin: 5rem 0 !important;
 }
 .btn-margin {
-  margin-bottom: 5rem;
+  margin-bottom: 3rem !important;
+  width: 15rem !important;
 }
 .cart {
   color: var(--primary-purple);
+}
+.btn-settings {
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
 }

@@ -24,15 +24,15 @@ export default function ConnectTerminalButton() {
   return (
     <div className={{ marginBottom: 12 }}>
       <button
-        className="btn-purple"
+        className="btn-purple btn-margin"
         onClick={onConnect}
         disabled={status === "scanning" || status === "connected"}
       >
         {status === "connected"
-          ? "Terminal verbonden ✅"
+          ? "Verbonden ✅"
           : status === "scanning"
           ? "Zoeken..."
-          : "Connect terminal"}
+          : "Terminal"}
       </button>
 
       {err && <div style={{ color: "red", marginTop: 6 }}>{err}</div>}

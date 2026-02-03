@@ -11,7 +11,8 @@
   z-index: 1000;
 }
 .checkout-popup {
-  background: var(--primary-white);
+  background: var(--primary-purple);
+  color: var(--primary-white);
   padding: 2rem;
   border-radius: 1rem;
   max-width: 40rem;
@@ -29,10 +30,6 @@
 .quick-buttons button {
   height: 5rem;
 }
-.unset {
-  width: unset;
-  margin: unset;
-}
 .amounts,
 .history-list {
   display: flex;
@@ -49,7 +46,7 @@
   font-size: 2.5rem;
 }
 .red {
-  color: red;
+  color: var(--primary-pink);
 }
 .checkout-loading-overlay {
   position: fixed;

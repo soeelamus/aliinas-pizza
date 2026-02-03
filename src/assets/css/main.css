@@ -2,7 +2,6 @@
 :root {
   --primary-pink: #ffa9c8;
   --primary-purple: #6237c8;
-  --primary-blue: #3ec0d1;
   --primary-white: #f6f6f6;
 }
 html {
@@ -826,7 +825,7 @@ body.is-preload #header:after {
   h4 {
     font-size: 1em;
   }
-    .cta-open {
+  .cta-open {
     left: unset;
     top: unset;
     right: 6rem;
@@ -1520,10 +1519,9 @@ textarea.error {
   background-color: var(--primary-pink);
   color: var(--primary-purple);
 }
-
 .white {
   color: var(--primary-white) !important;
-  font-size: 2.5rem;
+  font-size: 2.5rem !important;
 }
 .add-event-btn:hover::after {
   opacity: 1;
@@ -1754,4 +1752,3 @@ footer a:hover {
     margin: 1px;
   }
 }
-
