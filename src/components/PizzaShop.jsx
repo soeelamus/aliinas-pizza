@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useLocation } from "react-router-dom";
 import Cart from "./Cart";
 import Menu from "./Menu";
 import OpenState from "./OpenState";
@@ -8,6 +9,9 @@ import Wave from "./Wave";
 import Loading from "./Loading/Loading";
 
 const PizzaShop = () => {
+  const location = useLocation();
+  const isOrderingRoute = location.pathname === "/ordering";
+
   const [pizzas, setPizzas] = useState([]);
   const [stockLoading, setStockLoading] = useState(false);
   const [stockLoaded, setStockLoaded] = useState(false);
@@ -25,12 +29,11 @@ const PizzaShop = () => {
 
   // ✅ On-demand stock loader
   const ensureStockLoaded = useCallback(async () => {
-    // al geladen? niks doen
     if (stockLoaded && stockSheetState?.length) return;
 
     setStockLoading(true);
     try {
-      await refreshStock(); // ✅ gebruikt version check + full fetch indien nodig
+      await refreshStock();
       setStockLoaded(true);
     } catch (e) {
       console.error(e);
@@ -39,42 +42,36 @@ const PizzaShop = () => {
     }
   }, [refreshStock, stockLoaded, stockSheetState?.length]);
 
+  // ✅ Op /ordering: stock meteen ophalen
+  useEffect(() => {
+    if (isOrderingRoute) {
+      ensureStockLoaded();
+    }
+  }, [isOrderingRoute, ensureStockLoaded]);
+
   // Wacht tot basisdata (events + pizzas) geladen is
   if (loading || pizzas.length === 0) {
-    return <Loading innerHTML={"Loading cashier"} />;
+    return <Loading innerHTML={"Menu laden..."} />;
   }
 
+  if (isOrderingRoute && stockLoading && !stockSheetState?.length) {
+    return <Loading innerHTML={"Menu laden..."} />;
+  }
+
+  console.log("isOpen pizzashop: ", isOpen);
+  
   return (
     <>
       <Wave reverse={true} />
-      <div className="style2 main special">
-        <div className="menu"></div>
-        <OpenState events={events} />
-
-        <br id="menu" />
-
-        {/* ✅ knop om stock te laden + naar menu te gaan */}
-        {!stockSheetState?.length ? (
-          <div style={{ display: "flex", justifyContent: "center", margin: "12px 0" }}>
-            <button
-              className="btn-purple"
-              onClick={async () => {
-                await ensureStockLoaded();
-                // scroll naar menu na load
-                document.getElementById("menu")?.scrollIntoView({ behavior: "smooth" });
-              }}
-              disabled={stockLoading}
-            >
-              {stockLoading ? "Stock laden..." : "Bestel nu"}
-            </button>
-          </div>
-        ) : null}
-
-        {/* Cart kan blijven, maar als je wil kan je die ook pas tonen na stock */}
+      <div className="style2 main">
+        {!isOrderingRoute && (
+          <>
+            <OpenState events={events} onRoute={isOrderingRoute} />
+            <br id="menu" />
+          </>
+        )}
         <Cart isOpen={isOpen} />
-
-        {/* Menu tonen pas als stock beschikbaar is */}
-        {stockSheetState?.length ? (
+        {isOrderingRoute ? (
           <Menu
             pizzas={pizzas}
             stockSheet={stockSheetState}
@@ -82,7 +79,7 @@ const PizzaShop = () => {
             isOpen={isOpen}
           />
         ) : (
-          <Loading innerHTML={"Klik op 'Bestel nu' om het menu te laden"} />
+          <Menu pizzas={pizzas} events={events} isOpen={false} />
         )}
       </div>
       <Wave />

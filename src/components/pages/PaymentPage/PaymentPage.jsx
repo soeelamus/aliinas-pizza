@@ -250,7 +250,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
           <div className="nav-btns">
             <button
               className="btn-purple btn-small"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/ordering")}
             >
               &#60;
             </button>

@@ -89,7 +89,7 @@ export default async function handler(req, res) {
         customer_creation: "always",
         success_url:
           "https://aliinas.com/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "https://aliinas.com/cancel",
+        cancel_url: "https://aliinas.com/ordering",
       });
 
       return res.status(200).json({

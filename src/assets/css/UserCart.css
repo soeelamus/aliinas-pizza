@@ -67,7 +67,8 @@
 }
 .btn-order,
 .btn-cart,
-.checkout-button {
+.checkout-button,
+.cta-btn {
   margin: 1rem;
   width: 17rem;
   border: 2px solid yellow;

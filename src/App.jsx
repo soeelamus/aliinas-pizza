@@ -45,7 +45,7 @@ function App() {
             path="/"
             element={
               <>
-                <Navbar />
+                <Navbar/>
                 <Header />
                 <Carousel />
                 <PizzaShop />
@@ -57,18 +57,24 @@ function App() {
               </>
             }
           />
+          <Route
+            path="/ordering"
+            element={
+              <>
+                <Navbar onMain = {false} />
+                <PizzaShop />
+                <Footer />
+              </>
+            }
+          />
         </Route>
-
-        {/* 🟠 REDIRECT / SIMPLE LAYOUT */}
         <Route element={<RedirectLayout />}>
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/success" element={<SuccessPage />} />
         </Route>
 
-        {/* 🟢 KITCHEN LOGIN (PUBLIC) */}
+          {/* 🟣 KITCHEN */}
         <Route path="/kitchen/login" element={<KitchenLogin />} />
-
-        {/* 🔵 PROTECTED KITCHEN AREA */}
         <Route
           path="/kitchen"
           element={
@@ -84,17 +90,11 @@ function App() {
           <Route path="dashboard" element={<KitchenDashboard />} />
 
           {/* Catch-all for invalid kitchen routes */}
-          <Route
-            path="*"
-            element={<Navigate to="/kitchen/login" replace />}
-          />
+          <Route path="*" element={<Navigate to="/kitchen/login" replace />} />
         </Route>
 
-        {/* 🔴 GLOBAL FALLBACK (optioneel) */}
-        <Route
-          path="*"
-          element={<Navigate to="/" replace />}
-        />
+        {/* 🔴 GLOBAL FALLBACK */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

@@ -3,21 +3,27 @@ import React, { useState } from "react";
 import { useCart } from "../contexts/CartContext";
 import Loading from "./Loading/Loading";
 
-const Menu = ({ pizzas, stockSheet, isOpen, isKitchen }) => {
+const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   const { addItem, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState("Pizza");
 
-  const categories = [
-    "Pizza",
-    ...Array.from(
-      new Set(stockSheet.map((item) => item.category).filter(Boolean)),
-    ),
-  ];
+ const hasStock = stockSheet.length > 0;
+
+const categories = hasStock
+  ? [
+      "Pizza",
+      ...Array.from(
+        new Set(stockSheet.map((item) => item.category).filter(Boolean))
+      ),
+    ]
+  : [];
 
   const itemsToRender =
     activeTab === "Pizza"
       ? pizzas
       : stockSheet.filter((item) => item.category === activeTab);
+
+  console.log("isOpen MENU: ", isOpen);
 
   return (
     <div className="menu">
@@ -62,24 +68,24 @@ const Menu = ({ pizzas, stockSheet, isOpen, isKitchen }) => {
                     <h3 className="pizza-price">
                       {item.price != null ? `€${item.price}` : ""}
                     </h3>
-                    <button
-                      className="btn-small btn-purple"
-                      onClick={() => addItem(item)}
-                      disabled={!isOpen || getStock(item, cart) <= 0}
-                      title={
-                        !isOpen ? (
-                          "We zijn vandaag gesloten"
-                        ) : stockSheet.length === 0 ? (
-                          <Loading innerHTML={"Stock laden"} />
-                        ) : getStock(item, cart) <= 0 ? (
-                          "Uitverkocht"
-                        ) : (
-                          "Toevoegen aan bestelling"
-                        )
-                      }
-                    >
-                      +
-                    </button>
+                    {isOpen && (
+                      <button
+                        className="btn-small btn-purple"
+                        onClick={() => addItem(item)}
+                        disabled={!isOpen || getStock(item, cart) <= 0}
+                        title={
+                          stockSheet.length === 0 ? (
+                            <Loading innerHTML={"Stock laden"} />
+                          ) : getStock(item, cart) <= 0 ? (
+                            "Uitverkocht"
+                          ) : (
+                            "Toevoegen aan bestelling"
+                          )
+                        }
+                      >
+                        +
+                      </button>
+                    )}
                   </div>
                 </div>
 

@@ -1,23 +1,31 @@
 import React from "react";
 
-const OpenState = ({ events }) => {
+const OpenState = ({ events, onRoute }) => {
   const today = new Date().toISOString().slice(0, 10); // "2026-01-09"
 
   const todayEvent = events?.find(
-    (e) => e.type.toLowerCase() === "standplaats" && e.date === today
+    (e) => e.type.toLowerCase() === "standplaats" && e.date === today,
   );
-localStorage.setItem("location", JSON.stringify(todayEvent));
+  localStorage.setItem("location", JSON.stringify(todayEvent));
 
   const isOpen = !!todayEvent;
   return (
     <div className="menu-openStatus" style={{ fontWeight: "bold" }}>
       {isOpen ? (
-        <div>
-          <a href="#menu" className="btn-purple btn-order">✅ Bestellen</a>
+        <div className="center">
+          {!onRoute && (
+            <a href="./ordering" className="btn-purple btn-order">
+              ✅ Bestellen
+            </a>
+          )}
           <h3 className="menu-openStatus">
-           ✅ We zijn vandaag geopend vanaf {todayEvent.startTime} 
+            We zijn vandaag geopend vanaf {todayEvent.startTime}
           </h3>
-          <p className="menu-openStatus-p">Bestel nu al online</p>
+
+          <a href="/ordering" className="btn-purple cta-btn">
+            ✅ Bestellen
+          </a>
+          <br />
           <p className="menu-openStatus-p">Ophalen: {todayEvent.address}</p>
         </div>
       ) : (
