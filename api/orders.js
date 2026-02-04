@@ -1,7 +1,5 @@
 // pages/api/orders.js
-const SHEET_CSV_URL =
-  "https://script.google.com/macros/s/AKfycbw4uwNWSSy5eVChMrBIMW82aA4JihGp07DUw85zqEzGdxFvHRYVrQh1DoULQ_A-PcR8Qw/exec";
-
+const GAS_URL = process.env.SHEETS_ORDER;
 const SESSION_ID_HEADER = "sessionid";
 
 function parseCsvToObjects(csvText) {
@@ -36,7 +34,7 @@ function orderAlreadyExists(rows, incomingSessionId) {
 export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
-      const response = await fetch(SHEET_CSV_URL);
+      const response = await fetch(GAS_URL);
       const csvText = await response.text();
 
       const { rows } = parseCsvToObjects(csvText);
@@ -47,9 +45,11 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       const incoming = req.body || {};
 
-      const incomingSessionId = String(incoming.sessionId || incoming.id || "").trim();
+      const incomingSessionId = String(
+        incoming.sessionId || incoming.id || "",
+      ).trim();
 
-      const existingRes = await fetch(SHEET_CSV_URL);
+      const existingRes = await fetch(GAS_URL);
       const existingCsv = await existingRes.text();
       const { headers, rows } = parseCsvToObjects(existingCsv);
 
@@ -62,7 +62,7 @@ export default async function handler(req, res) {
         }
       }
 
-      const response = await fetch(SHEET_CSV_URL, {
+      const response = await fetch(GAS_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(incoming),

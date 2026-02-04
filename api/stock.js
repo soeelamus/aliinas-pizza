@@ -1,7 +1,6 @@
 // /api/stock.js
 export default async function handler(req, res) {
-  const GAS_URL =
-    "https://script.google.com/macros/s/AKfycbwWXO257hSAM3xViRi4uF-wZvfvQ3KEs4oR2Hf8SKeIav0OX3yokPDmOqN69ySy9hF7/exec";
+  const GAS_URL = process.env.SHEETS_STOCK;
 
   // CORS (handig als je ooit extern aanroept)
   res.setHeader("Access-Control-Allow-Origin", "*");

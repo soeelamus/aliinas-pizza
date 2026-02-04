@@ -4,7 +4,6 @@ import "./../../assets/css/kitchen.css";
 import "./../../assets/css/checkout.css";
 import StockForm from "./StockForm";
 import ConnectTerminalButton from "./ConnectTerminalButton";
-import { useCart } from "../../contexts/CartContext";
 import Loading from "../Loading/Loading";
 
 export default function KitchenScreen({ onStartKitchen }) {
@@ -52,9 +51,12 @@ function KitchenActive({ onBackToSetup }) {
   const alertAudio = useRef(null);
   const prevOrders = useRef([]);
   const firstFetch = useRef(true);
+
   const intervalRef = useRef(null);
-  const { refreshStock } = useCart();
   const audioAllowed = useRef(true);
+
+  // ✅ nieuw: version tracking
+  const lastOrdersVersion = useRef(null);
 
   useEffect(() => {
     const audio = new Audio("/sound/sound-effect.mp3");
@@ -67,10 +69,6 @@ function KitchenActive({ onBackToSetup }) {
       alertAudio.current = null;
     };
   }, []);
-
-  useEffect(() => {
-    refreshStock();
-  }, [refreshStock]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -109,73 +107,116 @@ function KitchenActive({ onBackToSetup }) {
     return Math.max((pickup - currentTime) / 1000, 0);
   };
 
-  useEffect(() => {
-    let isMounted = true;
+ useEffect(() => {
+  let isMounted = true;
 
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch("/api/orders");
-        const data = await res.json();
-        if (!isMounted) return;
+  const fetchOrders = async () => {
+    try {
+      const res = await fetch("/api/orders", { cache: "no-store" });
+      const data = await res.json();
+      if (!isMounted) return;
 
-        const now = new Date();
-        const filtered = data.filter((o) => {
-          const pickup = getPickupDate(o);
-          const ordered = new Date(o.orderedtime);
-          if (!pickup || isNaN(ordered)) return false;
+      const now = new Date();
+      const filtered = data.filter((o) => {
+        const pickup = getPickupDate(o);
+        const ordered = new Date(o.orderedtime);
+        if (!pickup || isNaN(ordered)) return false;
 
-          const diffHours = (pickup - now) / 1000 / 3600;
-          if (o.pickuptime !== "ASAP" && diffHours > 10) return false;
+        const diffHours = (pickup - now) / 1000 / 3600;
+        if (o.pickuptime !== "ASAP" && diffHours > 10) return false;
 
-          const isToday =
-            ordered.getFullYear() === now.getFullYear() &&
-            ordered.getMonth() === now.getMonth() &&
-            ordered.getDate() === now.getDate();
+        const isToday =
+          ordered.getFullYear() === now.getFullYear() &&
+          ordered.getMonth() === now.getMonth() &&
+          ordered.getDate() === now.getDate();
 
-          return isToday;
-        });
+        return isToday;
+      });
 
-        const merged = filtered.map((order) =>
-          pendingUpdates[order.id]
-            ? { ...order, status: pendingUpdates[order.id] }
-            : order
-        );
+      const merged = filtered.map((order) =>
+        pendingUpdates[order.id]
+          ? { ...order, status: pendingUpdates[order.id] }
+          : order
+      );
 
-        if (!firstFetch.current) {
-          const prevIds = new Set(prevOrders.current.map((o) => o.id));
-          const newOrders = merged.filter((o) => !prevIds.has(o.id));
+      if (!firstFetch.current) {
+        const prevIds = new Set(prevOrders.current.map((o) => o.id));
+        const newOrders = merged.filter((o) => !prevIds.has(o.id));
 
-          if (audioAllowed.current && newOrders.length > 0 && alertAudio.current) {
-            const a = alertAudio.current;
-            a.currentTime = 0;
-            a.play().catch(() => {});
-          }
+        if (audioAllowed.current && newOrders.length > 0 && alertAudio.current) {
+          const a = alertAudio.current;
+          a.currentTime = 0;
+          a.play().catch(() => {});
         }
-
-        prevOrders.current = merged;
-        firstFetch.current = false;
-        setOrders(merged);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
       }
-    };
 
-    fetchOrders();
-    intervalRef.current = setInterval(fetchOrders, 2500);
+      prevOrders.current = merged;
+      firstFetch.current = false;
+      setOrders(merged);
+      setLoading(false);
 
-    return () => {
-      isMounted = false;
-      clearInterval(intervalRef.current);
-    };
-  }, [pendingUpdates]);
+      console.log("🍳 Orders fetched:", merged.length);
+    } catch (err) {
+      console.error("🍳 fetchOrders error:", err);
+    }
+  };
+
+  const checkVersionAndFetch = async () => {
+    try {
+      const vRes = await fetch("/api/orders-version", { cache: "no-store" });
+      const vJson = await vRes.json();
+      const version = String(vJson?.version ?? "");
+
+      if (version && version === lastOrdersVersion.current) {
+        console.log("🍳 Orders unchanged → skip fetch (version:", version, ")");
+        return;
+      }
+
+      console.log("🍳 Orders changed", lastOrdersVersion.current, "→", version);
+      lastOrdersVersion.current = version;
+
+      await fetchOrders();
+    } catch (e) {
+      console.warn("🍳 orders-version failed → fallback to full fetch:", e);
+      await fetchOrders();
+    }
+  };
+
+  const stop = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = null;
+  };
+
+  const start = () => {
+    stop(); // ✅ belangrijk: voorkomt dubbele intervals
+    checkVersionAndFetch(); // meteen 1x
+    intervalRef.current = setInterval(checkVersionAndFetch, 20000);
+  };
+
+  const onVis = () => {
+    if (document.visibilityState === "visible") start();
+    else stop();
+  };
+
+  document.addEventListener("visibilitychange", onVis);
+  onVis(); // init
+
+  return () => {
+    isMounted = false;
+    stop();
+    document.removeEventListener("visibilitychange", onVis);
+  };
+}, [pendingUpdates]);
+
 
   const handleStatusChange = async (id, newStatus = "done") => {
     try {
       setUpdatingId(id);
       setPendingUpdates((prev) => ({ ...prev, [id]: newStatus }));
       setOrders((prev) =>
-        prev.map((o) => (String(o.id) === String(id) ? { ...o, status: newStatus } : o))
+        prev.map((o) =>
+          String(o.id) === String(id) ? { ...o, status: newStatus } : o
+        )
       );
 
       const res = await fetch("/api/orders", {
@@ -185,6 +226,7 @@ function KitchenActive({ onBackToSetup }) {
       });
 
       const data = await res.json();
+
       if (data.status === "ok") {
         setPendingUpdates((prev) => {
           const copy = { ...prev };
@@ -224,7 +266,10 @@ function KitchenActive({ onBackToSetup }) {
   if (loading) {
     return (
       <section className="kitchen-section">
-        <button className="btn-settings btn-purple btn-small fa fa-gear" onClick={onBackToSetup}>
+        <button
+          className="btn-settings btn-purple btn-small fa fa-gear"
+          onClick={onBackToSetup}
+        >
           
         </button>
         <Loading innerHTML={"Waiting for new orders"} />
@@ -234,7 +279,10 @@ function KitchenActive({ onBackToSetup }) {
 
   return (
     <section className="kitchen-section">
-      <button className="btn-settings btn-purple btn-small fa fa-gear" onClick={onBackToSetup}>
+      <button
+        className="btn-settings btn-purple btn-small fa fa-gear"
+        onClick={onBackToSetup}
+      >
         
       </button>
 
