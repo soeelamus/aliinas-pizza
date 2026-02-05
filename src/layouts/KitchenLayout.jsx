@@ -1,10 +1,17 @@
 import React, { useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
+import { useEvents } from "../contexts/EventsContext";
 
 const KitchenLayout = () => {
   const { refreshStock } = useCart();
+  const { setForcedIsOpen } = useEvents();
   const intervalRef = useRef(null);
+
+    useEffect(() => {
+    setForcedIsOpen(true);
+    return () => setForcedIsOpen(false);
+  }, [setForcedIsOpen]);
 
   useEffect(() => {
     const start = () => {

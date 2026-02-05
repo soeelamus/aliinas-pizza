@@ -76,7 +76,7 @@ const UserCart = ({ isOpen }) => {
             onClick={handleCheckout}
             disabled={!isOpen}
           >
-            {isOpen ? "Bestellen" : "Vandaag gesloten"}
+            {isOpen ? "Bestellen" : "Gesloten"}
           </button>
         )}
       </div>

@@ -32,8 +32,11 @@ const formatDateForDisplay = (sheetDate) => {
 
 export const EventsProvider = ({ children }) => {
   const [events, setEvents] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
+  const [openToday, setOpenToday] = useState(false);
+  const [forcedIsOpen, setForcedIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const isOpen = forcedIsOpen || openToday;
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -63,9 +66,9 @@ export const EventsProvider = ({ children }) => {
         // check if shop is open today
         const today = new Date().toISOString().slice(0, 10);
         const openToday = parsedEvents.some(
-          (e) => e.type.toLowerCase() !== "privaat" && e.date === today,
+          (e) => (e.type || "").toLowerCase() !== "privaat" && e.date === today,
         );
-        setIsOpen(openToday);
+        setOpenToday(openToday);
       } catch (err) {
         console.error("Error fetching events:", err);
       } finally {
@@ -77,7 +80,9 @@ export const EventsProvider = ({ children }) => {
   }, []);
 
   return (
-    <EventsContext.Provider value={{ events, isOpen, loading }}>
+    <EventsContext.Provider
+      value={{ events, isOpen, loading, setForcedIsOpen }}
+    >
       {children}
     </EventsContext.Provider>
   );
