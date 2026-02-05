@@ -63,7 +63,7 @@ export const EventsProvider = ({ children }) => {
         // check if shop is open today
         const today = new Date().toISOString().slice(0, 10);
         const openToday = parsedEvents.some(
-          (e) => e.type.toLowerCase() === "standplaats" && e.date === today
+          (e) => e.type.toLowerCase() !== "privaat" && e.date === today,
         );
         setIsOpen(openToday);
       } catch (err) {

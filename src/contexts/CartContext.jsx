@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useEvents } from "../contexts/EventsContext";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [stockSheetState, setStockSheetState] = useState([]);
+  const { isOpen } = useEvents();
 
   const [cart, setCart] = useState(() => {
     try {
@@ -47,7 +49,6 @@ export const CartProvider = ({ children }) => {
   const API_URL = "/api/stock";
   const VERSION_URL = "/api/stock-version";
   const LOCAL_URL = "/json/stock.json";
-
 
   const normalizeStockArray = (data) => {
     if (!Array.isArray(data)) return [];
@@ -116,53 +117,51 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-const refreshStock = async () => {
-  try {
-    try {
-      const vRes = await fetchJsonStrict(VERSION_URL);
-      const version = String(vRes?.version ?? "");
+  const refreshStock = async () => {
+    if (!isOpen) return;
 
-      if (version && version === lastStockVersion.current) {
-        console.log("📦 Stock unchanged → skip full fetch (version:", version, ")");
-        return;
+    try {
+      try {
+        const vRes = await fetchJsonStrict(VERSION_URL);
+        const version = String(vRes?.version ?? "");
+
+        if (version && version === lastStockVersion.current) {
+          console.log(
+            "📦 Stock unchanged → skip full fetch (version:",
+            version,
+            ")",
+          );
+          return;
+        }
+
+        console.log("📦 Stock changed", lastStockVersion.current, "→", version);
+        lastStockVersion.current = version;
+      } catch (e) {
+        console.warn(
+          "⚠️ Stock version check failed → fallback to full fetch:",
+          e.message,
+        );
       }
 
-      console.log(
-        "📦 Stock changed",
-        lastStockVersion.current,
-        "→",
-        version
+      // 2) full stock fetch
+      const { source, items } = await fetchStockWithFallback();
+      console.log(`📦 Full stock fetch (${source}) → items:`, items.length);
+
+      setStockSheetState(items);
+
+      const dough = items.find(
+        (item) => (item.name || "").toLowerCase() === "deegballen",
       );
-      lastStockVersion.current = version;
-    } catch (e) {
-      console.warn(
-        "⚠️ Stock version check failed → fallback to full fetch:",
-        e.message
-      );
+      const doughStock = dough ? Number(dough.stock) : 0;
+
+      if (doughStock !== lastDoughStock.current) {
+        console.log("🍕 Deegballen stock changed:", doughStock);
+        lastDoughStock.current = doughStock;
+      }
+    } catch (err) {
+      console.error("❌ Refresh stock error:", err.message || err);
     }
-
-    // 2) full stock fetch
-    const { source, items } = await fetchStockWithFallback();
-    console.log(
-      `📦 Full stock fetch (${source}) → items:`,
-      items.length
-    );
-
-    setStockSheetState(items);
-
-    const dough = items.find(
-      (item) => (item.name || "").toLowerCase() === "deegballen",
-    );
-    const doughStock = dough ? Number(dough.stock) : 0;
-
-    if (doughStock !== lastDoughStock.current) {
-      console.log("🍕 Deegballen stock changed:", doughStock);
-      lastDoughStock.current = doughStock;
-    }
-  } catch (err) {
-    console.error("❌ Refresh stock error:", err.message || err);
-  }
-};
+  };
 
   // =========================
   // Stock helper

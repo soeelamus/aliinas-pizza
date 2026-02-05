@@ -85,7 +85,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
   // --- Tijdslots ---
   const today = new Date().toISOString().slice(0, 10);
   const todaysEvent = events.find(
-    (e) => e.type.toLowerCase() === "standplaats" && e.date === today,
+    (e) => e.type.toLowerCase() !== "privaat" && e.date === today,
   );
 
   const roundUpToQuarter = (date) => {

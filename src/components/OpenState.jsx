@@ -4,7 +4,7 @@ const OpenState = ({ events, onRoute }) => {
   const today = new Date().toISOString().slice(0, 10); // "2026-01-09"
 
   const todayEvent = events?.find(
-    (e) => e.type.toLowerCase() === "standplaats" && e.date === today,
+    (e) => e.type.toLowerCase() !== "privaat" && e.date === today,
   );
   localStorage.setItem("location", JSON.stringify(todayEvent));
 
