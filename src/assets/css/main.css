@@ -1670,6 +1670,14 @@ textarea.error {
   height: 10rem;
   bottom: -2px;
 }
+
+@media (max-width: 640px) {
+  .hero,
+  .wave {
+    height: 5rem;
+  }
+}
+
 .reverse {
   transform: rotate(180deg);
 }
