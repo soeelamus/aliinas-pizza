@@ -5,7 +5,7 @@ const ImagesBox = () => (
             <img className="imagesbox-img" loading="lazy" src="images/Mood.png" alt="Friends sitting around a table sharing a fresh Neapolitan pizza"/>
             <img className="imagesbox-img" loading="lazy" src="images/foodtruck.jpg" alt="Pizza on a plate, next to a lovely dessert"/>
             <img className="imagesbox-img" loading="lazy" src="images/mood-pizza.jpg" alt="Friends sitting around a table sharing a fresh Neapolitan pizza"/>
-            <img className="imagesbox-img" loading="lazy" src="images/image-pizza.png" alt="Pizza on a plate, next to a lovely dessert"/>
+            <img className="imagesbox-img" loading="lazy" src="images/mood-pizza2.png" alt="Pizza on a plate, next to a lovely dessert"/>
       </section>
 );
 
