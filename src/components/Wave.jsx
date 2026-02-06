@@ -1,5 +1,4 @@
 const Wave = ({
-  color = "#f6f6f6",
   height = 120,
   reverse = false,
   className = "",
@@ -14,7 +13,7 @@ const Wave = ({
       >
         <path
           d="M0,60 C240,100 480,20 720,40 960,60 1200,100 1440,40 L1440,120 L0,120 Z"
-          fill={color}
+          fill="var(--primary-white)"
         />
       </svg>
     </section>

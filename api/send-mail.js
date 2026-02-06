@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     <style>
       body {
         font-family: 'Helvetica', Arial, sans-serif;
-        background-color: #f6f6f6;
+        background-color: ##Fefaf4;
         color: #333;
         margin: 0;
         padding: 0;
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       .container {
         max-width: 600px;
         margin: 20px auto;
-        background: #f6f6f6;
+        background: ##Fefaf4;
         border-radius: 10px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         overflow: hidden;
@@ -60,8 +60,8 @@ export default async function handler(req, res) {
       }
       .order-details {
         margin: 20px 0;
-        border-top: 1px solid #f6f6f6;
-        border-bottom: 1px solid #f6f6f6;
+        border-top: 1px solid ##Fefaf4;
+        border-bottom: 1px solid ##Fefaf4;
         padding: 10px 0;
       }
       .order-details p {
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
       .btn {
         display: inline-block;
         background-color: #6237c8;
-        color: #f6f6f6;
+        color: ##Fefaf4;
         padding: 10px 20px;
         border-radius: 5px;
         text-decoration: none;
