@@ -43,7 +43,6 @@
 }
 .kitchen-orders {
   display: flex;
-  gap: 1rem;
   flex-direction: column;
   max-width: 40rem;
   margin: 0 auto;
@@ -55,20 +54,23 @@
     transform 0.2s,
     box-shadow 0.2s;
 }
-.kitchen-order .pizzas,
-.kitchen-order .heading {
+.kitchen-order .pizzas {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   padding: 0 1rem;
   gap: 1rem;
 }
 .kitchen-order .heading {
+  display: flex;
+  justify-content: space-between;
   background-color: var(--primary-pink);
   color: var(--primary-white);
   padding: 1.5rem 1rem;
   margin-bottom: 1rem;
   font-size: 2rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
 }
 .kitchen-order button {
   width: 50%;
@@ -101,7 +103,7 @@
 }
 .pizzas {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   gap: 0.75rem;
   list-style: none;
   padding: 0;

@@ -1,25 +1,32 @@
 import { PickupCountdown } from "./PickupCountdown";
 
-export default function Order({ order, onStatusChange, updatingId, currentTime }) {
+export default function Order({
+  order,
+  onStatusChange,
+  updatingId,
+  currentTime,
+}) {
   // ✅ PickupCountdown met fallback
   const countdown = PickupCountdown(order.pickuptime) || {
     hours: 0,
     minutes: 0,
-    seconds: 0,
     pickupTimeFormatted: order.pickuptime || "Onbekend",
     isRed: order.pickuptime === "ASAP",
     isOrange: false,
   };
 
   // ✅ Parse pizza items
-  const pizzas = order.items
-    ?.split(",")
-    .map((item) => item.trim())
-    .map((item) => {
-      const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
-      return match ? { quantity: Number(match[1]), name: match[2].trim() } : null;
-    })
-    .filter(Boolean) || [];
+  const pizzas =
+    order.items
+      ?.split(",")
+      .map((item) => item.trim())
+      .map((item) => {
+        const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
+        return match
+          ? { quantity: Number(match[1]), name: match[2].trim() }
+          : null;
+      })
+      .filter(Boolean) || [];
 
   const handleClick = (newStatus) => onStatusChange(order.id, newStatus);
 
@@ -35,20 +42,17 @@ export default function Order({ order, onStatusChange, updatingId, currentTime }
       {/* Heading */}
       <div className="heading-box">
         <ul className="heading">
-          <li>Naam: {order.customername?.toUpperCase() || "Onbekend"}</li>
+          <li>{order.customername?.toUpperCase() || "Onbekend"}</li>
           <li>
-            Pickup:{" "}
             <strong className={order.pickuptime === "ASAP" ? "urgent-red" : ""}>
               {countdown.pickupTimeFormatted}
             </strong>
           </li>
-          {order.status !== "pickedup" && (
+          {order.status !== "pickedup" && order.pickuptime !== "ASAP" && (
             <li>
-              {order.pickuptime === "ASAP"
-                ? ""
-                : `${countdown.hours.toString().padStart(2, "0")}:${countdown.minutes
-                    .toString()
-                    .padStart(2, "0")}:${countdown.seconds.toString().padStart(2, "0")}`}
+              {`${countdown.hours.toString().padStart(2, "0")}:${countdown.minutes
+                .toString()
+                .padStart(2, "0")}`}
             </li>
           )}
         </ul>
