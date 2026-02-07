@@ -1,7 +1,9 @@
+// CardCheckout.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "./../../assets/css/checkout.css";
 import Loading from "../Loading/Loading";
+
 import {
   StripeTerminal,
   TerminalEventsEnum,
@@ -21,20 +23,22 @@ function prettyStatus(s) {
 export default function CardCheckout({ total, cart, onClose }) {
   const { clearCart, refreshStock } = useCart();
 
-  const [phase, setPhase] = useState("starting"); // starting | waiting_card | processing | success | canceled | error
+  const orderId = useMemo(() => crypto.randomUUID(), []);
+  const cartSnapshotRef = useRef(cart);
+
+  const startedRef = useRef(false);
+  const stoppedRef = useRef(false); // gezet bij cancel / unmount
+  const finalizedRef = useRef(false); // voorkomt dubbel pushen
+
+  const [phase, setPhase] = useState("starting");
+  // starting | waiting_card | processing | success | canceled | error
   const [paymentStatus, setPaymentStatus] = useState("");
   const [displayMsg, setDisplayMsg] = useState("");
   const [readerInputMsg, setReaderInputMsg] = useState("");
   const [err, setErr] = useState(null);
   const [paymentIntentId, setPaymentIntentId] = useState(null);
 
-  const orderId = useMemo(() => crypto.randomUUID(), []);
-  const cartSnapshotRef = useRef(cart);
-
-  const startedRef = useRef(false);
-  const stoppedRef = useRef(false);
-  const finalizedRef = useRef(false); // <-- voorkomt dubbele finalize bij meerdere "paid" events
-
+  // 1) Attach listeners enkel voor UI hints (niet voor “truth”)
   useEffect(() => {
     const subs = [];
 
@@ -48,8 +52,8 @@ export default function CardCheckout({ total, cart, onClose }) {
 
             if (s.includes("WAIT") || s.includes("INPUT")) setPhase("waiting_card");
             if (s.includes("PROCESS")) setPhase("processing");
-          }
-        )
+          },
+        ),
       );
 
       subs.push(
@@ -57,8 +61,8 @@ export default function CardCheckout({ total, cart, onClose }) {
           TerminalEventsEnum.RequestDisplayMessage,
           ({ message }) => {
             setDisplayMsg(message || "");
-          }
-        )
+          },
+        ),
       );
 
       subs.push(
@@ -67,21 +71,20 @@ export default function CardCheckout({ total, cart, onClose }) {
           ({ message }) => {
             setReaderInputMsg(message || "");
             setPhase("waiting_card");
-          }
-        )
+          },
+        ),
       );
 
       subs.push(
         await StripeTerminal.addListener(TerminalEventsEnum.Canceled, () => {
           stoppedRef.current = true;
           setPhase("canceled");
-        })
+        }),
       );
 
       subs.push(
         await StripeTerminal.addListener(TerminalEventsEnum.Failed, (info) => {
           const msg = info?.message || "Payment failed";
-
           if (
             msg.toLowerCase().includes("canceled") ||
             msg.toLowerCase().includes("cancelled")
@@ -90,20 +93,19 @@ export default function CardCheckout({ total, cart, onClose }) {
             setPhase("canceled");
             return;
           }
-
           setErr(msg);
           setPhase("error");
-        })
+        }),
       );
 
       subs.push(
         await StripeTerminal.addListener(
           TerminalEventsEnum.ConfirmedPaymentIntent,
           () => {
-            // NIET sluiten hier, enkel "paid" bepaalt sluiten
+            // Dit is een sterke “success hint”, maar we finalizen pas als startTerminalPayment resolve't.
             setPhase("processing");
-          }
-        )
+          },
+        ),
       );
     })();
 
@@ -118,7 +120,7 @@ export default function CardCheckout({ total, cart, onClose }) {
     };
   }, []);
 
-  // Start payment: één keer per overlay
+  // 2) Start payment EXACT 1x en finalize direct na succes
   useEffect(() => {
     if (startedRef.current) return;
     startedRef.current = true;
@@ -127,74 +129,61 @@ export default function CardCheckout({ total, cart, onClose }) {
 
     (async () => {
       try {
-        setPhase("starting");
         setErr(null);
+        setPhase("starting");
 
         const res = await startTerminalPayment({ totalEur: total, orderId });
         if (cancelled || stoppedRef.current) return;
 
         setPaymentIntentId(res?.paymentIntentId || null);
-        setPhase("waiting_card");
+        setPhase("success");
+        clearCart();
+        onClose?.();
+
+        // ✅ push order/stock in background (NIET await)
+        if (!finalizedRef.current) {
+          finalizedRef.current = true;
+
+          (async () => {
+            try {
+              await finalizeOrder({
+                cart: cartSnapshotRef.current,
+                total,
+                paymentMethod: "card",
+                customerName: "Cashier",
+                paymentIntentId: res?.paymentIntentId,
+                orderId,
+              });
+
+              await refreshStock();
+            } catch (e) {
+              console.error("Finalize/push failed after payment:", e);
+            }
+          })();
+        }
       } catch (e) {
         if (cancelled) return;
 
         const msg = e?.message || String(e);
-
         if (
           msg.toLowerCase().includes("canceled") ||
           msg.toLowerCase().includes("cancelled")
         ) {
           stoppedRef.current = true;
           setPhase("canceled");
-        } else {
-          setErr(msg);
-          setPhase("error");
+          return;
         }
+
+        setErr(msg);
+        setPhase("error");
       }
     })();
 
     return () => {
       cancelled = true;
+      stoppedRef.current = true;
     };
-  }, [total, orderId]);
-
-  // Sluit popup ENKEL wanneer status = paid (en finalize ook pas dan)
-  useEffect(() => {
-    if (!paymentStatus) return;
-    if (stoppedRef.current) return;
-
-    const s = String(paymentStatus).toLowerCase();
-
-    if (s === "paid") {
-      if (finalizedRef.current) return;
-      finalizedRef.current = true;
-
-      (async () => {
-        try {
-          setPhase("success");
-
-          await finalizeOrder({
-            cart: cartSnapshotRef.current,
-            total,
-            paymentMethod: "card",
-            customerName: "Cashier",
-            paymentIntentId,
-            orderId,
-          });
-
-          await refreshStock();
-          clearCart();
-
-          onClose?.(); // <-- ENKEL HIER
-        } catch (e) {
-          // Als finalize faalt, NIET sluiten
-          finalizedRef.current = false;
-          setErr(e?.message || String(e));
-          setPhase("error");
-        }
-      })();
-    }
-  }, [paymentStatus, total, paymentIntentId, orderId, refreshStock, clearCart, onClose]);
+  }, [total, orderId, clearCart, refreshStock, onClose]);
 
   const hint =
     readerInputMsg ||
@@ -242,6 +231,12 @@ export default function CardCheckout({ total, cart, onClose }) {
 
         <p className="large-font">{hint}</p>
 
+        {paymentIntentId && (
+          <p className="large-font" style={{ opacity: 0.7, fontSize: 12 }}>
+            PI: {paymentIntentId}
+          </p>
+        )}
+
         {err && <p className="large-font error-message margin-5">{err}</p>}
 
         <div className="checkout-buttons">
@@ -257,6 +252,6 @@ export default function CardCheckout({ total, cart, onClose }) {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }

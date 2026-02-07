@@ -8,7 +8,7 @@
     "front": "vite",
     "build": "vite build",
     "deploy": "vercel --prod",
-    "android": "vercel --prod && npx cap sync android && npx cap open android"
+    "android": "vercel --prod && npx cap sync android"
   },
   "dependencies": {
     "@capacitor-community/bluetooth-le": "^8.0.3",
