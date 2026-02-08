@@ -58,18 +58,14 @@ const PizzaShop = () => {
     return <Loading innerHTML={"Menu laden..."} />;
   }
 
-  console.log("isOpen pizzashop: ", isOpen);
-  
+  console.log("Pizzashop is open: ", isOpen);
+
   return (
     <>
       <Wave reverse={true} />
       <div className="style2 main">
-        {!isOrderingRoute && (
-          <>
-            <OpenState events={events} onRoute={isOrderingRoute} />
-            <br id="menu" />
-          </>
-        )}
+        <OpenState events={events} onRoute={isOrderingRoute} />
+        <br id="menu" />
         <Cart isOpen={isOpen} />
         {isOrderingRoute ? (
           <Menu

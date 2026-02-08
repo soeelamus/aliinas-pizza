@@ -13,18 +13,19 @@ const OpenState = ({ events, onRoute }) => {
     <div className="menu-openStatus" style={{ fontWeight: "bold" }}>
       {isOpen ? (
         <div className="center">
-          {!onRoute && (
-            <a href="./ordering" className="btn-purple btn-order">
-              ✅ Bestellen
-            </a>
-          )}
           <h3 className="menu-openStatus">
             We zijn vandaag geopend vanaf {todayEvent.startTime}
           </h3>
-
-          <a href="/ordering" className="btn-purple cta-btn">
-            ✅ Bestellen
-          </a>
+          {!onRoute && (
+            <>
+            <a href="/ordering" className="btn-purple btn-order">
+              ✅ Bestellen
+            </a>
+            <a href="/ordering" className="btn-purple cta-btn">
+              ✅ Bestellen
+            </a>
+            </>
+          )}
           <br />
           <p className="menu-openStatus-p">Ophalen: {todayEvent.address}</p>
         </div>

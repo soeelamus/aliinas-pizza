@@ -23,8 +23,6 @@ const categories = hasStock
       ? pizzas
       : stockSheet.filter((item) => item.category === activeTab);
 
-  console.log("isOpen MENU: ", isOpen);
-
   return (
     <div className="menu">
       <div className="menu-box">
@@ -66,7 +64,7 @@ const categories = hasStock
 
                   <div className="price-box">
                     <h3 className="pizza-price">
-                      {item.price != null ? `€${item.price}` : ""}
+                      {item.price != null ? `${item.price}` : ""}
                     </h3>
                     {isOpen && (
                       <button
