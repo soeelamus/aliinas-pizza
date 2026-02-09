@@ -191,3 +191,9 @@
   right: 1rem;
   top: 1rem;
 }
+.dashed {
+  text-decoration-line: line-through;
+}
+.unset {
+  margin: 0;
+}

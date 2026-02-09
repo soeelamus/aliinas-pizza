@@ -1,22 +1,19 @@
 // Menu.jsx
 import React, { useState } from "react";
 import { useCart } from "../contexts/CartContext";
-import Loading from "./Loading/Loading";
 
 const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   const { addItem, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState("Pizza");
 
- const hasStock = stockSheet.length > 0;
+  const hasStock = stockSheet.length > 0;
 
-const categories = hasStock
-  ? [
-      "Pizza",
-      ...Array.from(
-        new Set(stockSheet.map((item) => item.category).filter(Boolean))
-      ),
-    ]
-  : [];
+  const categories = [
+    "Pizza",
+    ...Array.from(
+      new Set(stockSheet.map((item) => item.category).filter(Boolean)),
+    ),
+  ];
 
   const itemsToRender =
     activeTab === "Pizza"
@@ -28,16 +25,13 @@ const categories = hasStock
       <div className="menu-box">
         <h2 className="monoton-regular">Menu</h2>
 
-        {/* --- Tab navigatie --- */}
         <nav className="menu-tabs">
           {categories
-            .filter((cat) => isKitchen || cat !== "Extra")
+            .filter((cat) => hasStock && (isKitchen || cat !== "Extra"))
             .map((cat) => (
               <button
                 key={cat}
-                className={
-                  activeTab === cat ? "active btn-purple" : "btn-purple"
-                }
+                className={`btn-purple ${activeTab === cat ? "active" : ""}`}
                 onClick={() => setActiveTab(cat)}
               >
                 {cat}
@@ -47,39 +41,51 @@ const categories = hasStock
 
         <div className="pizza-box">
           {itemsToRender.map((item) => {
-            const description =
-              activeTab === "Pizza"
-                ? item.ingredients?.map((i) => i.name).join(" • ")
-                : "";
+            const stock = getStock(item, cart);
+            const hasItemStock = stock > 0;
+            const isPizza = activeTab === "Pizza";
+
+            const isItemAvailable =
+              typeof item.available === "boolean"
+                ? item.available
+                : hasItemStock;
+
+            const dashed = !hasStock || !isItemAvailable ? "dashed" : "";
+
+            const canAdd =
+              isOpen && hasStock && isItemAvailable && hasItemStock;
+
+            const description = isPizza
+              ? item.ingredients?.map((i) => i.name).join(" • ")
+              : "";
+
+            const title = !hasStock
+              ? "Stock laden"
+              : !hasItemStock
+                ? "Uitverkocht"
+                : "Toevoegen aan bestelling";
 
             return (
               <div key={item.id} className="pizza">
                 <div className="pizza-text">
-                  <h3 className="pizza-name">
-                    {item.name}{" "}
-                    {activeTab === "Pizza" && (
+                  <h3 className={`pizza-name ${dashed}`}>
+                    {item.name}
+                    {isPizza && (
                       <span className="pizza-symbol">{item.type}</span>
                     )}
                   </h3>
 
                   <div className="price-box">
-                    <h3 className="pizza-price">
-                      {item.price != null ? `${item.price}` : ""}
+                    <h3 className={`pizza-price ${dashed}`}>
+                      {item.price ?? ""}
                     </h3>
-                    {isOpen && (
+
+                    {isOpen && hasStock && (
                       <button
                         className="btn-small btn-purple"
                         onClick={() => addItem(item)}
-                        disabled={!isOpen || getStock(item, cart) <= 0}
-                        title={
-                          stockSheet.length === 0 ? (
-                            <Loading innerHTML={"Stock laden"} />
-                          ) : getStock(item, cart) <= 0 ? (
-                            "Uitverkocht"
-                          ) : (
-                            "Toevoegen aan bestelling"
-                          )
-                        }
+                        disabled={!canAdd}
+                        title={title}
                       >
                         +
                       </button>
