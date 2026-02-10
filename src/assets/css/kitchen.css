@@ -197,3 +197,15 @@
 .unset {
   margin: 0;
 }
+@media (max-width: 600px) {
+  .menu {
+    padding: 0;
+  }
+  .kitchen-cashier {
+    width: 100%;
+  }
+  .kitchen-screen {
+    width: 0;
+    padding: 0;
+  }
+}
