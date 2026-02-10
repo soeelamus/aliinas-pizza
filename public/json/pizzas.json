@@ -5,7 +5,7 @@
       "name": "Margheriita",
       "type": "🥬",
       "price": 11,
-      "available": true,
+      "stock": 1,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -23,7 +23,7 @@
       "name": "Fungii",
       "price": 12,
       "type": "🥬",
-      "available": true,
+      "stock": 1,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -44,7 +44,7 @@
       "name": "Vegii",
       "type": "🥬",
       "price": 13,
-      "available": true,
+      "stock": 1,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -71,7 +71,7 @@
       "name": "Pepperonii",
       "type": "",
       "price": 12,
-      "available": true,
+      "stock": 1,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -89,7 +89,7 @@
       "name": "Jaeger",
       "type": "",
       "price": 13,
-      "available": true,
+      "stock": 1,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -113,7 +113,7 @@
       "name": "Sweet Chiicken",
       "type": "",
       "price": 13,
-      "available": true,
+      "stock": 1,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -137,7 +137,7 @@
       "name": "Diiavola",
       "type": "🌶️",
       "price": 13,
-      "available": true,
+      "stock": 1,
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -164,7 +164,7 @@
       "name": "Nduja",
       "type": "🌶️",
       "price": 13,
-      "available": false,
+      "stock": 0,
       "ingredients": [
         {
           "name": "Tomatensaus"

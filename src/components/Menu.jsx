@@ -46,12 +46,9 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
             const isPizza = activeTab === "Pizza";
 
             const isItemAvailable =
-              typeof item.available === "boolean"
-                ? item.available
-                : hasItemStock;
+              typeof item.stock === "number" ? item.stock : hasItemStock;
 
-            const dashed = !hasStock || !isItemAvailable ? "dashed" : "";
-
+            const dashed = !isItemAvailable ? "dashed" : "";
             const canAdd =
               isOpen && hasStock && isItemAvailable && hasItemStock;
 
