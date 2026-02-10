@@ -18,6 +18,7 @@ export default async function handler(req, res) {
       from: "Aliina's Pizza <orders@aliinas.com>",
       replyTo: "aliinas.pizza@hotmail.com",
       to: order.customerEmail,
+      bcc: "aliinas.pizza@hotmail.com",
       subject: "Je bestelling is ontvangen 🍕",
 
       html: `
