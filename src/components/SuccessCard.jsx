@@ -37,9 +37,8 @@ export default function Success({ order }) {
   }, []);
 
   // Veilig afleiden
-  const pickupAddress = location?.address || "Adres niet beschikbaar";
-  const mapAddress = location?.address || ""; // (gebruik adres; website is meestal geen adres)
-
+  const pickupAddress = location?.address;
+  const pickupMapCoords = location?.website;
   const items = useMemo(() => parseItems(order.items), [order.items]);
 
   return (
@@ -57,10 +56,9 @@ export default function Success({ order }) {
         Ophalen: <strong>{pickupAddress}</strong>
       </p>
 
-      {/* ✅ Alleen Map renderen als we effectief een adres hebben */}
-      {mapAddress ? (
+      {pickupMapCoords ? (
         <div id="event-map" className="event-map">
-          <Map address={mapAddress} />
+          <Map address={pickupMapCoords} />
         </div>
       ) : null}
 
