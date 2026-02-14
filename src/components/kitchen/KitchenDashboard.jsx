@@ -8,20 +8,31 @@ export default function KitchenDashboard() {
   const isAuthed = localStorage.getItem("kitchenAuth") === "true";
   const [cashierActive, setCashierActive] = useState(false);
 
+  // 👇 bepaalt welke view fullscreen is op mobile
+  const [showScreen, setShowScreen] = useState(true);
+
   if (!isAuthed) {
     return <Navigate to="/kitchen" />;
   }
 
   return (
-    <div className="kitchen-dashboard">
-      <div className="kitchen-screen">
-        <KitchenScreen
-          onStartKitchen={() => setCashierActive(true)}
-        />
+    <>
+      <button
+        className="btn-settings btn-purple btn-small btn-phone"
+        onClick={() => setShowScreen((v) => !v)}
+      >
+        {showScreen ? "Orders" : "Kassa"}
+      </button>
+
+      <div className={`kitchen-dashboard ${showScreen ? "screen-active" : ""}`}>
+        <div className="kitchen-screen">
+          <KitchenScreen onStartKitchen={() => setCashierActive(true)} />
+        </div>
+
+        <div className="kitchen-cashier">
+          {cashierActive && <KitchenCashier />}
+        </div>
       </div>
-      <div className="kitchen-cashier">
-        {cashierActive && <KitchenCashier />}
-      </div>
-    </div>
+    </>
   );
 }

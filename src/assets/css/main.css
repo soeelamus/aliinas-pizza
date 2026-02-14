@@ -1546,9 +1546,6 @@ textarea.error {
 .kitchen-cashier h2 {
   display: none;
 }
-.kitchen-cashier .menu-box {
-  padding: 4rem;
-}
 .pizza-text {
   display: flex;
   justify-content: space-between;

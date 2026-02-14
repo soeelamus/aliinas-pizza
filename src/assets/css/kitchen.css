@@ -187,6 +187,7 @@
   color: var(--primary-purple);
 }
 .btn-settings {
+  z-index: 100;
   position: fixed;
   right: 1rem;
   top: 1rem;
@@ -197,15 +198,36 @@
 .unset {
   margin: 0;
 }
+.btn-phone {
+  display: none;
+}
 @media (max-width: 600px) {
+  .btn-phone {
+    display: flex;
+    right: 5rem;
+  }
   .menu {
     padding: 0;
   }
   .kitchen-cashier {
     width: 100%;
+    transition: 0.3s;
   }
   .kitchen-screen {
     width: 0;
     padding: 0;
+    overflow: hidden;
+    transition: 0.3s;
+  }
+}
+@media (max-width: 600px) {
+  .kitchen-dashboard.screen-active .kitchen-screen {
+    width: 100%;
+  }
+
+  .kitchen-dashboard.screen-active .kitchen-cashier {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
   }
 }
