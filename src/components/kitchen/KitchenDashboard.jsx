@@ -21,7 +21,7 @@ export default function KitchenDashboard() {
         className="btn-settings btn-purple btn-small btn-phone"
         onClick={() => setShowScreen((v) => !v)}
       >
-        {showScreen ? "Orders" : "Kassa"}
+        ||
       </button>
 
       <div className={`kitchen-dashboard ${showScreen ? "screen-active" : ""}`}>
