@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 
 const EventsContext = createContext();
 
@@ -30,14 +30,34 @@ const formatDateForDisplay = (sheetDate) => {
   return `${d.padStart(2, "0")}-${m.padStart(2, "0")}-${y}`;
 };
 
+const pad2 = (n) => String(n).padStart(2, "0");
+
+const toLocalYMD = (d) =>
+  `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+
+// Build a local Date from "YYYY-MM-DD" and "HH:mm"
+const parseEventDateTimeLocal = (ymd, hm) => {
+  const [y, mo, da] = ymd.split("-").map(Number);
+  const [hh = "0", mm = "0"] = (hm || "0:0").split(":");
+  return new Date(y, mo - 1, da, Number(hh), Number(mm), 0, 0);
+};
+
 export const EventsProvider = ({ children }) => {
   const [events, setEvents] = useState([]);
   const [openToday, setOpenToday] = useState(false);
   const [forcedIsOpen, setForcedIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // tick so "openToday" updates when endTime-30min passes
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+  
   const isOpen = forcedIsOpen || openToday;
 
+  // Fetch once
   useEffect(() => {
     const fetchEvents = async () => {
       try {
@@ -62,13 +82,6 @@ export const EventsProvider = ({ children }) => {
         });
 
         setEvents(parsedEvents);
-
-        // check if shop is open today
-        const today = new Date().toISOString().slice(0, 10);
-        const openToday = parsedEvents.some(
-          (e) => (e.type || "").toLowerCase() !== "privaat" && e.date === today,
-        );
-        setOpenToday(openToday);
       } catch (err) {
         console.error("Error fetching events:", err);
       } finally {
@@ -79,16 +92,32 @@ export const EventsProvider = ({ children }) => {
     fetchEvents();
   }, []);
 
+  // Recompute "openToday" whenever events or time changes
+  useEffect(() => {
+    const THIRTY_MIN = 30 * 60 * 1000;
+    const today = toLocalYMD(now);
+
+    const todaysEvent = events.find(
+      (e) => (e.type || "").toLowerCase() !== "privaat" && e.date === today
+    );
+
+    if (!todaysEvent) {
+      setOpenToday(false);
+      return;
+    }
+
+    const end = parseEventDateTimeLocal(todaysEvent.date, todaysEvent.endTime);
+
+    // if now >= end - 30min => closed
+    const stillOpen = now.getTime() < end.getTime() - THIRTY_MIN;
+    setOpenToday(stillOpen);
+  }, [events, now]);
+
   return (
-    <EventsContext.Provider
-      value={{ events, isOpen, loading, setForcedIsOpen }}
-    >
+    <EventsContext.Provider value={{ events, isOpen, loading, setForcedIsOpen }}>
       {children}
     </EventsContext.Provider>
   );
 };
 
-// 🔹 Hook to use context
-export const useEvents = () => {
-  return useContext(EventsContext);
-};
+export const useEvents = () => useContext(EventsContext);

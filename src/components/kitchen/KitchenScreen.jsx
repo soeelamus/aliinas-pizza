@@ -292,7 +292,7 @@ function KitchenActive({ onBackToSetup }) {
         >
           
         </button>
-        <Loading innerHTML={"Waiting for new orders"} />
+        <Loading innerHTML={"Loading orders"} />
       </section>
     );
   }

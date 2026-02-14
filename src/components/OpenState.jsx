@@ -1,6 +1,6 @@
 import React from "react";
 
-const OpenState = ({ events, onRoute }) => {
+const OpenState = ({ isOpen, events, onRoute }) => {
   const today = new Date().toISOString().slice(0, 10); // "2026-01-09"
 
   const todayEvent = events?.find(
@@ -8,13 +8,12 @@ const OpenState = ({ events, onRoute }) => {
   );
   localStorage.setItem("location", JSON.stringify(todayEvent));
 
-  const isOpen = !!todayEvent;
   return (
     <div className="menu-openStatus" style={{ fontWeight: "bold" }}>
       {isOpen ? (
         <div className="center">
           <h3 className="menu-openStatus">
-            We zijn vandaag geopend vanaf {todayEvent.startTime}
+            We zijn vandaag geopend van {todayEvent.startTime} tot {todayEvent.endTime} 
           </h3>
           {!onRoute && (
             <>

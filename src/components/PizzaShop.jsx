@@ -64,7 +64,7 @@ const PizzaShop = () => {
     <>
       <Wave reverse={true} />
       <div className="style2 main">
-        <OpenState events={events} onRoute={isOrderingRoute} />
+        <OpenState isOpen={isOpen} events={events} onRoute={isOrderingRoute} />
         <br id="menu" />
         <Cart isOpen={isOpen} />
         {isOrderingRoute ? (

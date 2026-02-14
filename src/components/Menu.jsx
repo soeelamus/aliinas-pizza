@@ -58,7 +58,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
 
             const title = !hasStock
               ? "Stock laden"
-              : !hasItemStock
+              : !hasItemStock || !isItemAvailable
                 ? "Uitverkocht"
                 : "Toevoegen aan bestelling";
 
