@@ -12,9 +12,8 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
   const [change, setChange] = useState(0);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const euros = [0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100];
 
-  const euros = [1, 2, 5, 10, 20, 50, 100, 200];
-  const coins = [0.05, 0.1, 0.2, 0.5];
   const round2 = (num) => Math.round(num * 100) / 100;
 
   // Voeg bedrag toe + history
@@ -52,12 +51,12 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
   const handleConfirm = async () => {
     if (received < total) return;
     setLoading(true);
-    
-      setTimeout(() => {
-    setLoading(false);
-    onClose();
-    clearCart();
-  }, 1000);
+
+    setTimeout(() => {
+      setLoading(false);
+      onClose();
+      clearCart();
+    }, 1000);
 
     try {
       await finalizeOrder({
@@ -109,29 +108,22 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
         </div>
 
         <div className="quick-buttons">
-          {coins.map((coin) => (
+          {euros.map((euro) => (
             <button
-              key={coin}
+              key={euro}
+              onClick={() => addAmount(euro)}
               className="btn-purple"
-              onClick={() => addAmount(coin)}
-            >
-              €{coin.toFixed(2)}
-            </button>
-          ))}
-          {euros.map((bill) => (
-            <button
-              key={bill}
-              className="btn-purple"
-              onClick={() => addAmount(bill)}
-            >
-              €{bill}
-            </button>
+              style={{
+                backgroundImage: `url(/images/euros/${euro}.jpg)`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            ></button>
           ))}
         </div>
 
         {/* Geschiedenis */}
         <div className="margin-2">
-          <p>Geschiedenis</p>
           <div className="history">
             {history.length <= 0 ? (
               <ul className="history-list">

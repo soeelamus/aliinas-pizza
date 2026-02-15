@@ -25,10 +25,14 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   width: 25rem;
+  max-width: 100%;
   margin: 0 auto 1rem;
 }
 .quick-buttons button {
-  height: 5rem;
+  width: 6rem;
+  flex-grow: 1;
+  height: 6rem;
+  border: none;
 }
 .amounts,
 .history-list {
