@@ -1690,6 +1690,7 @@ footer a:hover {
   .btn-small,
   .btn-purple {
     width: unset;
+    max-width: 8rem;
     font-size: 0.9rem;
   }
   .menu-tabs {

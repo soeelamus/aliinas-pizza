@@ -146,7 +146,7 @@ const Calendar = () => {
           <div className="calendar">
             <header className="calendar-header">
               <button className="btn-purple calendar-title">
-                {months[month]} {year}
+                {months[month].slice(0, 3)} {year}
               </button>
               <button
                 className="btn-small btn-purple"
