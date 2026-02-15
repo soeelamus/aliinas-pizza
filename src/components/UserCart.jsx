@@ -2,7 +2,7 @@ import React from "react";
 import "../assets/css/UserCart.css";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../contexts/CartContext";
-import KitchenCart from "./kitchen/KitchenCart";
+import KitchenCart from "./kitchen/checkout/KitchenCart";
 
 const UserCart = ({ isOpen }) => {
   const navigate = useNavigate();

@@ -1,10 +1,10 @@
 // CashCheckout.jsx
 import React, { useState } from "react";
 import { createPortal } from "react-dom";
-import { useCart } from "../../contexts/CartContext";
-import { finalizeOrder } from "../../utils/finalizeOrder";
-import "./../../assets/css/checkout.css";
-import Loading from "../Loading/Loading";
+import { useCart } from "../../../contexts/CartContext";
+import { finalizeOrder } from "../../../utils/finalizeOrder";
+import "./../../../assets/css/checkout.css";
+import Loading from "../../Loading/Loading";
 
 export default function CashCheckout({ total, onClose, onConfirm }) {
   const { cart, clearCart, setCart, refreshStock } = useCart();
@@ -142,7 +142,7 @@ export default function CashCheckout({ total, onClose, onConfirm }) {
         {/* Acties */}
         <div className="checkout-buttons">
           <button className="btn-purple" onClick={onClose}>
-            Cancel
+            X
           </button>
           <button
             className="btn-purple btn-small-5"

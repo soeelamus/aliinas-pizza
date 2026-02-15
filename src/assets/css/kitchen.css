@@ -197,6 +197,7 @@
 }
 .unset {
   margin: 0;
+  max-width: 15rem;
 }
 .btn-phone {
   display: none;

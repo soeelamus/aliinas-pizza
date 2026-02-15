@@ -1,8 +1,8 @@
 // CardCheckout.jsx
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import "./../../assets/css/checkout.css";
-import Loading from "../Loading/Loading";
+import "./../../../assets/css/checkout.css";
+import Loading from "../../Loading/Loading";
 
 import {
   StripeTerminal,
@@ -11,9 +11,9 @@ import {
 import {
   startTerminalPayment,
   cancelCurrentTerminalAction,
-} from "../../payments/terminal";
-import { finalizeOrder } from "../../utils/finalizeOrder";
-import { useCart } from "../../contexts/CartContext";
+} from "../../../payments/terminal";
+import { finalizeOrder } from "../../../utils/finalizeOrder";
+import { useCart } from "../../../contexts/CartContext";
 
 function prettyStatus(s) {
   if (!s) return "";
@@ -242,7 +242,7 @@ export default function CardCheckout({ total, cart, onClose }) {
         <div className="checkout-buttons">
           {canCancel ? (
             <button className="btn-purple" onClick={cancel}>
-              Cancel
+              X
             </button>
           ) : (
             <button className="btn-purple" onClick={onClose}>
