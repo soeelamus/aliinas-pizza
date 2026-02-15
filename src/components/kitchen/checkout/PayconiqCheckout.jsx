@@ -14,9 +14,15 @@ export default function PayconiqCheckout({ total, cart, onClose }) {
   const [err, setErr] = useState(null);
   const orderId = useMemo(() => crypto.randomUUID(), []);
 
-  const confirmPaid = async () => {
+  const handleConfirm = async () => {
     setErr(null);
     setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      onClose();
+      clearCart();
+    }, 1000);
 
     try {
       await finalizeOrder({
@@ -28,20 +34,20 @@ export default function PayconiqCheckout({ total, cart, onClose }) {
       });
 
       await refreshStock();
-      clearCart();
-
-      onClose?.();
-    } catch (e) {
-      setErr(e?.message || String(e));
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      alert("Order opslaan mislukt");
     }
   };
 
   return createPortal(
     <div className="checkout-popup-overlay">
+      {loading && (
+        <div className="checkout-loading-overlay">
+          <Loading innerHTML={"Bestelling wordt verwerkt"} />
+        </div>
+      )}
       <div className="checkout-popup">
-        {loading && <Loading innerHTML={"Bestelling verwerken"} margin="5" />}
         <p>
           Te betalen: <strong className="amount">€{total.toFixed(2)}</strong>
         </p>
@@ -58,7 +64,7 @@ export default function PayconiqCheckout({ total, cart, onClose }) {
 
           <button
             className="btn-purple checkout-button unset"
-            onClick={confirmPaid}
+            onClick={handleConfirm}
             disabled={loading}
           >
             Confirm
