@@ -51,11 +51,11 @@ const PizzaShop = () => {
 
   // Wacht tot basisdata (events + pizzas) geladen is
   if (loading || pizzas.length === 0) {
-    return <Loading innerHTML={"Menu laden..."} />;
+    return <Loading innerHTML={" Menu wordt geladen"} />;
   }
 
   if (isOrderingRoute && stockLoading && !stockSheetState?.length) {
-    return <Loading innerHTML={"Menu laden..."} />;
+    return <Loading innerHTML={" Menu wordt geladen"} />;
   }
 
   console.log("Pizzashop is open: ", isOpen);
