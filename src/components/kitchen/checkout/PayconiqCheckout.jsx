@@ -6,7 +6,7 @@ import Loading from "../../Loading/Loading";
 import { finalizeOrder } from "../../../utils/finalizeOrder";
 import { useCart } from "../../../contexts/CartContext";
 
-const STATIC_QR_SRC = "/images/logo.png";
+const STATIC_QR_SRC = "/images/qr_payconiq.png";
 
 export default function PayconiqCheckout({ total, cart, onClose }) {
   const { clearCart, refreshStock } = useCart();
@@ -48,14 +48,18 @@ export default function PayconiqCheckout({ total, cart, onClose }) {
         </div>
       )}
       <div className="checkout-popup">
-        <p>
-          Te betalen: <strong className="amount">€{total.toFixed(2)}</strong>
+        <p className="amount">
+          Scan en betaal met <br />
+          <span className="red">Payconiq</span> by Bancontact
         </p>
-        <p>Scan de QR-code</p>
+        <div className="amounts">
+          <p className="amount-text">
+            <strong className="amount">€{total.toFixed(2)}</strong>
+          </p>
+        </div>
         <div>
           <img className="payconiq--qr" src={STATIC_QR_SRC} alt="Payconiq QR" />
         </div>
-        {err && <p className="error-message margin-5">{err}</p>}
 
         <div className="checkout-buttons">
           <button className="btn-purple" onClick={onClose} disabled={loading}>

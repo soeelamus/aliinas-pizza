@@ -189,15 +189,15 @@ export default function CardCheckout({ total, cart, onClose }) {
     readerInputMsg ||
     displayMsg ||
     (phase === "starting"
-      ? "Terminal voorbereiden…"
+      ? "Terminal voorbereiden"
       : phase === "waiting_card"
-        ? "Klant tap/insert."
+        ? "Klant tap/insert"
         : phase === "processing"
-          ? "Verwerken…"
+          ? "Verwerken"
           : phase === "success"
-            ? "Betaling bevestigd."
+            ? "Betaling bevestigd"
             : phase === "canceled"
-              ? "Betaling geannuleerd."
+              ? "Betaling geannuleerd"
               : "Er ging iets mis.");
 
   const canCancel =
@@ -220,7 +220,7 @@ export default function CardCheckout({ total, cart, onClose }) {
         {(phase === "starting" ||
           phase === "waiting_card" ||
           phase === "processing") && (
-          <Loading innerHTML={"Kaartbetaling bezig…"} margin="5" />
+          <Loading innerHTML={"Kaartbetaling bezig"} margin="5" />
         )}
 
         <p className="largest-font">€{Number(total).toFixed(2)}</p>
