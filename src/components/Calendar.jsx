@@ -133,6 +133,7 @@ const Calendar = () => {
   };
 
   const calendarDates = generateCalendarDates();
+  const privateEvent = selectedEvent?.type.toLowerCase() === "privaat";
 
   if (loading) return <Loading innerHTML={"De kalender wordt geladen"} />;
 
@@ -187,65 +188,89 @@ const Calendar = () => {
           </div>
 
           {selectedEvent && (
-            <aside id="event-sidebar" style={{ display: "block" }}>
-              <button
-                className="btn-purple btn-small btn-close"
-                onClick={() => setSelectedEvent(null)}
+            <div
+              className="checkout-popup-overlay"
+              onClick={() => setSelectedEvent(null)}
+            >
+              <aside
+                id="event-sidebar"
+                style={{ display: "block" }}
+                onClick={(e) => e.stopPropagation()}
               >
-                X
-              </button>
+                <button
+                  className="btn-purple btn-small btn-close"
+                  onClick={() => setSelectedEvent(null)}
+                >
+                  X
+                </button>
 
-              <div id="event-content">
-                <article className="event-card">
-                  <header className="event-header">
-                    <span
-                      className={`event-type type-${selectedEvent.type.toLowerCase()}`}
-                    >
-                      {selectedEvent.type}
-                    </span>
-                    {selectedEvent.type.toLowerCase() !== "privaat" && (
-                      <span className={`event-type type-order`}>
-                        Bestel Online
+                <div id="event-content">
+                  <article className="event-card">
+                    <header className="event-header">
+                      <span
+                        className={`event-type type-${selectedEvent.type.toLowerCase()}`}
+                      >
+                        {selectedEvent.type}
                       </span>
-                    )}
-                  </header>
-
-                  <ul className="event-meta">
-                    <li>📅 {selectedEvent.displayDate}</li>
-                    <li>
-                      ⏰ {selectedEvent.startTime} – {selectedEvent.endTime}
-                    </li>
-
-                    {selectedEvent.type.toLowerCase() !== "privaat" &&
-                      selectedEvent.address && (
-                        <li id="event-map-link">
-                          📍{" "}
-                          <a
-                          className="event-address"
-                            href={
-                              "https://www.google.com/maps/dir/?api=1&destination=" +
-                              encodeURIComponent(selectedEvent.website)
-                            }
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {selectedEvent.address}
-                          </a>
-                        </li>
+                      {!privateEvent && (
+                        <a
+                          href="/ordering"
+                          target="_blank"
+                          className="event-type type-order"
+                        >
+                          Bestel Online
+                        </a>
                       )}
-                  </ul>
+                    </header>
 
-                  <p className="event-description">
-                    {selectedEvent.description}
-                  </p>
+                    <ul className="event-meta">
+                      <div className="event-meta--flex">
+                        <li>⏰ {selectedEvent.displayDate}</li>
+                        <li>
+                          {selectedEvent.startTime} – {selectedEvent.endTime}
+                        </li>
+                      </div>
 
-                  {selectedEvent.type.toLowerCase() !== "privaat" &&
-                    selectedEvent.website && (
+                      {!privateEvent && selectedEvent.address && (
+                        <>
+                          <li id="event-map-link">
+                            📍{" "}
+                            <a
+                              className="link"
+                              href={
+                                "https://www.google.com/maps/dir/?api=1&destination=" +
+                                encodeURIComponent(selectedEvent.website)
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {selectedEvent.address}
+                            </a>
+                          </li>
+                        </>
+                      )}
+                    </ul>
+
+                    <p className="event-description">
+                      {!privateEvent && (
+                        <span>
+                          ✅ Bestel de dag zelf{" "}
+                          <a className="link" href="/ordering" target="_blank">
+                            gemakkelijk online
+                          </a>
+                        </span>
+                      )}
+                      <br />
+                      {selectedEvent.description}
+                    </p>
+
+                    {!privateEvent && selectedEvent.website && (
                       <Map address={selectedEvent.website} />
                     )}
-                </article>
-              </div>
-            </aside>
+                  </article>
+                </div>
+              </aside>
+            </div>
           )}
         </div>
       </section>

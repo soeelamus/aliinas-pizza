@@ -1246,7 +1246,7 @@ textarea.error {
   top: 4rem;
   align-self: center;
   max-width: 100%;
-  width: 40rem;
+  width: 35rem;
   position: absolute;
   z-index: 1000;
 }
@@ -1428,13 +1428,6 @@ textarea.error {
   font-weight: 600;
   background: #eee;
 }
-.event-address {
-  text-decoration: underline dotted;
-  text-underline-offset: 0.35rem;
-}
-.event-address:hover {
-  color: var(--primary-pink);
-}
 .event-meta {
   list-style: none;
   padding: 0;
@@ -1442,9 +1435,13 @@ textarea.error {
   display: grid;
   gap: 0.5rem;
 }
+.event-meta--flex {
+  display: flex;
+  gap: 3rem;
+}
 .event-meta li {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.25rem;
   align-items: center;
 }
 .event-description {
@@ -1478,6 +1475,11 @@ textarea.error {
 .type-order {
   background-color: var(--primary-pink);
   color: var(--primary-purple);
+  transition: 0.3s ease;
+}
+.type-order:hover {
+  background-color: var(--primary-purple);
+  color: var(--primary-pink);
 }
 .white {
   color: var(--primary-white) !important;
@@ -1614,8 +1616,12 @@ textarea.error {
 .leaflet-popup {
   margin-bottom: 3.7rem !important;
 }
-.leaflet-popup-navigate a {
-  color: var(--primary-purple) !important;
+.link {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.25rem;
+}
+.link:hover {
+  color: var(--primary-pink);
 }
 .leaflet-popup-navigate a:hover {
   color: var(--primary-pink) !important;
