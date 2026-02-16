@@ -20,6 +20,7 @@ import Footer from "./components/Footer";
 // Pages
 import PaymentPage from "./components/pages/PaymentPage/PaymentPage";
 import SuccessPage from "./components/pages/SuccessPage/SuccessPage";
+import ImagesPage from "./components/pages/ImagesPage/ImagesPage";
 
 // Kitchen components
 import KitchenLogin from "./components/kitchen/KitchenLogin";
@@ -45,7 +46,7 @@ function App() {
             path="/"
             element={
               <>
-                <Navbar/>
+                <Navbar />
                 <Header />
                 <Carousel />
                 <PizzaShop />
@@ -61,8 +62,18 @@ function App() {
             path="/ordering"
             element={
               <>
-                <Navbar onMain = {false} />
+                <Navbar onMain={false} />
                 <PizzaShop />
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/images"
+            element={
+              <>
+                <Navbar onMain={false} />
+                <ImagesPage />
                 <Footer />
               </>
             }
@@ -73,7 +84,7 @@ function App() {
           <Route path="/success" element={<SuccessPage />} />
         </Route>
 
-          {/* 🟣 KITCHEN */}
+        {/* 🟣 KITCHEN */}
         <Route path="/kitchen/login" element={<KitchenLogin />} />
         <Route
           path="/kitchen"

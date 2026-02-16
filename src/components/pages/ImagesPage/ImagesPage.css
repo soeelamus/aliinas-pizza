@@ -1,0 +1,26 @@
+.images-container,
+.images-box {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.images-container {
+    margin: 10rem 0;
+  flex-direction: column;
+}
+.images-box {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.images-box--img {
+  width: 30rem;
+  max-width: 100%;
+  border-radius: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.3) 4px 4px 4px;
+  transition: 0.3s ease;
+}
+.images-box--img:hover {
+  transform: scale(105%);
+  cursor: pointer;
+}

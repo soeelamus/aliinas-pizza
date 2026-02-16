@@ -1,12 +1,25 @@
-import React from "react";
+import "../components/pages/ImagesPage/ImagesPage.css";
 
-const ImagesBox = () => (
-      <section className="imagesbox">
-            <img className="imagesbox-img" loading="lazy" src="images/Mood.png" alt="Friends sitting around a table sharing a fresh Neapolitan pizza"/>
-            <img className="imagesbox-img" loading="lazy" src="images/foodtruck.jpg" alt="Pizza on a plate, next to a lovely dessert"/>
-            <img className="imagesbox-img" loading="lazy" src="images/mood-pizza.jpg" alt="Friends sitting around a table sharing a fresh Neapolitan pizza"/>
-            <img className="imagesbox-img" loading="lazy" src="images/mood-pizza2.png" alt="Pizza on a plate, next to a lovely dessert"/>
+const images = ["Mood.png", "foodtruck.jpg", "mood-pizza.jpg"];
+
+export default function ImagesBox() {
+  return (
+    <div className="images-container">
+      <section className="images-box">
+        {images?.map((img, i) => (
+          <img
+            key={img}
+            className="images-box--img"
+            loading="lazy"
+            src={new URL(`../assets/ImagesPage/${img}`, import.meta.url).href}
+            alt={`Pizza sfeerbeeld ${i}`}
+          />
+        ))}
       </section>
-);
 
-export default ImagesBox;
+      <a className="images-box--text link" href="/images">
+        Meer foto's
+      </a>
+    </div>
+  );
+}
