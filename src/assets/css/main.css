@@ -1707,3 +1707,10 @@ footer a:hover {
     margin: 1px;
   }
 }
+.background--purple {
+  max-width: 25rem;
+  margin: 0 auto;
+  background-color: var(--primary-purple);
+  padding-top: 1rem;
+  border-radius: 1rem;
+}
