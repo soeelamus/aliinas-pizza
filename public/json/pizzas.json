@@ -164,7 +164,7 @@
       "name": "Nduja",
       "type": "🌶️",
       "price": 13,
-      "stock": 0,
+      "stock": 1,
       "ingredients": [
         {
           "name": "Tomatensaus"
