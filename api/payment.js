@@ -1,10 +1,15 @@
 // api/payment.js
-
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-10-16",
 });
+
+function getBaseUrl(req) {
+  const proto = req.headers["x-forwarded-proto"] || "https";
+  const host = req.headers["x-forwarded-host"] || req.headers.host;
+  return `${proto}://${host}`;
+}
 
 export default async function handler(req, res) {
   try {
@@ -12,7 +17,8 @@ export default async function handler(req, res) {
     // GET → Status check
     // =========================
     if (req.method === "GET") {
-      const { sessionId } = req.query;
+      const sessionId =
+        (req.query.sessionId || req.query.session_id || "").toString().trim();
 
       if (!sessionId) {
         return res.status(400).json({ error: "Missing sessionId" });
@@ -33,25 +39,13 @@ export default async function handler(req, res) {
 
       const { cart, customer } = req.body;
 
-      // -------------------------
-      // Validate
-      // -------------------------
-
       if (!Array.isArray(cart) || cart.length === 0) {
-        return res.status(400).json({
-          error: "Cart is empty",
-        });
+        return res.status(400).json({ error: "Cart is empty" });
       }
 
       if (!customer?.name || !customer?.pickupTime) {
-        return res.status(400).json({
-          error: "Invalid customer data",
-        });
+        return res.status(400).json({ error: "Invalid customer data" });
       }
-
-      // -------------------------
-      // Build line items
-      // -------------------------
 
       const lineItems = cart.map((item, index) => {
         if (
@@ -65,31 +59,22 @@ export default async function handler(req, res) {
         return {
           price_data: {
             currency: "eur",
-
-            product_data: {
-              name: item.product.name,
-            },
-
+            product_data: { name: item.product.name },
             unit_amount: Math.round(item.product.price * 100),
           },
-
           quantity: item.quantity,
         };
       });
 
-      // -------------------------
-      // Create session
-      // -------------------------
+      const baseUrl = getBaseUrl(req);
 
-      
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
         customer_email: customer.email,
         line_items: lineItems,
         customer_creation: "always",
-        success_url:
-          "https://aliinas.com/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "https://aliinas.com/ordering",
+        success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${baseUrl}/ordering`,
       });
 
       return res.status(200).json({
@@ -98,16 +83,9 @@ export default async function handler(req, res) {
       });
     }
 
-    // =========================
-
-    return res.status(405).json({
-      error: "Method not allowed",
-    });
+    return res.status(405).json({ error: "Method not allowed" });
   } catch (err) {
     console.error("STRIPE ERROR:", err);
-
-    return res.status(500).json({
-      error: err.message || "Server error",
-    });
+    return res.status(500).json({ error: err.message || "Server error" });
   }
 }
