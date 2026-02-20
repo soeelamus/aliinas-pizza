@@ -61,13 +61,11 @@ export default function Order({
       {/* Pizza items */}
       {pizzas.map((pizza, i) => (
         <div className="pizzas" key={i}>
-          <div className="pizzas list">
-            <div className="pizza-item">
-              <input type="checkbox" id={`pizza-${i}`} />
-              <span className="pizza-name">{pizza.name}</span>
-            </div>
-          </div>
-          <div className="pizza-qty">{pizza.quantity}x</div>
+          <label className="pizza-item">
+            <input type="checkbox" />
+            <span className="pizza-qty">{pizza.quantity}x</span>
+            <span className="pizza-name">{pizza.name}</span>
+          </label>
         </div>
       ))}
 

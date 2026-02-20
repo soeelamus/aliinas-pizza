@@ -84,14 +84,19 @@
 }
 .pizza-item {
   display: flex;
-  gap: 0.5rem;
+  gap: 1rem;
   align-items: center;
+  color: var(--primary-white);
+  font-weight: 100;
 }
-.pizza-item input:checked + .pizza-name {
-  text-decoration: line-through;
-  opacity: 0.5;
+.pizza-label {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  cursor: pointer;
 }
-.pizzas:has(input:checked) ~ .pizza-qty {
+.pizza-item input:checked ~ .pizza-name,
+.pizza-item input:checked ~ .pizza-qty {
   text-decoration: line-through;
   opacity: 0.5;
 }
