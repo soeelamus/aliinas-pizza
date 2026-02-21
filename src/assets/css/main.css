@@ -1683,6 +1683,9 @@ footer a:hover {
     max-width: 8rem;
     font-size: 0.9rem;
   }
+  .btn-purple.btn-wide {
+    max-width: 100%;
+  }
   .menu-tabs {
     gap: 0.5rem;
   }

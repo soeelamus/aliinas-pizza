@@ -22,7 +22,7 @@ const UserCart = ({ isOpen }) => {
     <aside className="cart">
       <ul>
         {cart.map((cartItem) => {
-          const stock = getStock(cartItem.product, cart);
+          const stock = getStock(cartItem.product, cart, { isKitchen });
 
           return (
             <li key={String(cartItem.product.id)} className="cart-item">
@@ -42,7 +42,7 @@ const UserCart = ({ isOpen }) => {
                   onClick={() =>
                     cartItem.quantity <= 1
                       ? removeItem(cartItem.product)
-                      : changeQuantity(cartItem.product, -1)
+                      : changeQuantity(cartItem.product, -1, { isKitchen: true })
                   }
                 >
                   -
@@ -51,7 +51,7 @@ const UserCart = ({ isOpen }) => {
                 {/* Verhoog quantity, disabled als stock bereikt */}
                 <button
                   className="btn-purple btn-small"
-                  onClick={() => changeQuantity(cartItem.product, 1)}
+                  onClick={() => changeQuantity(cartItem.product, 1, { isKitchen: true })}
                   disabled={stock <= 0}
                   title={stock <= 0 ? "Uitverkocht" : "Aantal verhogen"}
                 >

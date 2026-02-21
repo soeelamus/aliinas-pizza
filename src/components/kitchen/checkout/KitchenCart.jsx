@@ -27,7 +27,7 @@ export default function KitchenCart({ total, cart }) {
           </button>
         </div>
         <button
-          className="checkout-button btn-purple"
+          className="checkout-button btn-purple btn-wide"
           onClick={() => setShowPayconiqPopup(true)}
         >
           Payconiq

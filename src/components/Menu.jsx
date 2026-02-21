@@ -41,7 +41,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
 
         <div className="pizza-box">
           {itemsToRender.map((item) => {
-            const stock = getStock(item, cart);
+            const stock = getStock(item, cart, { isKitchen });
             const hasItemStock = stock > 0;
             const isPizza = activeTab === "Pizza";
 
@@ -80,7 +80,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                     {isOpen && hasStock && (
                       <button
                         className="btn-small btn-purple"
-                        onClick={() => addItem(item)}
+                        onClick={() => addItem(item, { isKitchen })}
                         disabled={!canAdd}
                         title={title}
                       >

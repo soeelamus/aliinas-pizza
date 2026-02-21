@@ -25,26 +25,17 @@
   padding: 8px 0;
   border-bottom: 1px solid #eee;
 }
-
 .item-details p {
   margin: 0;
   font-size: 0.9rem;
   color: #555;
 }
-
 .item-actions {
   display: flex;
-  align-items: center;
   gap: 0.5rem;
 }
-
 .item-actions button {
-  border: 1px solid var(--primary-pink);
   width: 0.5rem;
-  color: white;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
 }
 .checkout-buttons {
   display: flex;
