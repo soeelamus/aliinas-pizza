@@ -1,3 +1,4 @@
+// src/contexts/CartContext.jsx
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useEvents } from "../contexts/EventsContext";
 
@@ -73,7 +74,7 @@ export const CartProvider = ({ children }) => {
     // Dev servers geven bij 404 soms index.html terug (text/html)
     if (!ct.includes("application/json")) {
       throw new Error(
-        `[${url}] Expected JSON but got "${ct}". Snippet: ${text.slice(0, 80)}`,
+        `[${url}] Expected JSON but got "${ct}". Snippet: ${text.slice(0, 80)}`
       );
     }
 
@@ -87,7 +88,7 @@ export const CartProvider = ({ children }) => {
     // Als jouw API { ok:false } terugstuurt
     if (json && typeof json === "object" && json.ok === false) {
       throw new Error(
-        `[${url}] API returned ok:false: ${json.error || "unknown"}`,
+        `[${url}] API returned ok:false: ${json.error || "unknown"}`
       );
     }
 
@@ -111,7 +112,7 @@ export const CartProvider = ({ children }) => {
       } catch (localErr) {
         // Geef beide fouten terug (heel nuttig in console)
         throw new Error(
-          `Stock fetch failed.\nAPI error: ${apiErr.message}\nLOCAL error: ${localErr.message}`,
+          `Stock fetch failed.\nAPI error: ${apiErr.message}\nLOCAL error: ${localErr.message}`
         );
       }
     }
@@ -121,16 +122,13 @@ export const CartProvider = ({ children }) => {
     if (!isOpen) return;
 
     try {
+      // 1) version check (optioneel)
       try {
         const vRes = await fetchJsonStrict(VERSION_URL);
         const version = String(vRes?.version ?? "");
 
         if (version && version === lastStockVersion.current) {
-          console.log(
-            "📦 Stock unchanged → skip full fetch (version:",
-            version,
-            ")",
-          );
+          console.log("📦 Stock unchanged → skip full fetch (version:", version, ")");
           return;
         }
 
@@ -139,7 +137,7 @@ export const CartProvider = ({ children }) => {
       } catch (e) {
         console.warn(
           "⚠️ Stock version check failed → fallback to full fetch:",
-          e.message,
+          e.message
         );
       }
 
@@ -150,7 +148,7 @@ export const CartProvider = ({ children }) => {
       setStockSheetState(items);
 
       const dough = items.find(
-        (item) => (item.name || "").toLowerCase() === "deegballen",
+        (item) => (item.name || "").toLowerCase() === "deegballen"
       );
       const doughStock = dough ? Number(dough.stock) : 0;
 
@@ -166,25 +164,40 @@ export const CartProvider = ({ children }) => {
   // =========================
   // Stock helper
   // =========================
-  const getStock = (product, currentCart = []) => {
+  const DOUGH_RESERVE_ONLINE = 10;
+
+  /**
+   * getStock(product, currentCart, { isKitchen })
+   * - Pizza's (category leeg) gebruiken deegballen stock
+   * - Online reserveert 10 deegballen (dus online max = stock - 10)
+   * - Kitchen gebruikt volledige stock (geen reserve)
+   */
+  const getStock = (product, currentCart = [], { isKitchen = false } = {}) => {
     if (!stockSheetState.length) return 0;
 
-    if (!product.category || product.category === "") {
+    const isPizza = !product.category || product.category === "";
+
+    if (isPizza) {
       const dough = stockSheetState.find(
-        (item) => (item.name || "").toLowerCase() === "deegballen",
+        (item) => (item.name || "").toLowerCase() === "deegballen"
       );
       const totalStock = dough ? Number(dough.stock) : 0;
+
+      // ✅ reserve enkel online
+      const effectiveStock = isKitchen
+        ? totalStock
+        : Math.max(0, totalStock - DOUGH_RESERVE_ONLINE);
 
       const pizzasInCart = currentCart
         .filter((p) => !p.product.category || p.product.category === "")
         .reduce((sum, p) => sum + p.quantity, 0);
 
-      return Math.max(0, totalStock - pizzasInCart);
+      return Math.max(0, effectiveStock - pizzasInCart);
     }
 
+    // Niet-pizza items: normale stock per item id
     const itemStock =
-      stockSheetState.find((s) => String(s.id) === String(product.id))?.stock ??
-      0;
+      stockSheetState.find((s) => String(s.id) === String(product.id))?.stock ?? 0;
 
     const quantityInCart = currentCart
       .filter((p) => String(p.product.id) === String(product.id))
@@ -196,19 +209,18 @@ export const CartProvider = ({ children }) => {
   // =========================
   // Cart actions
   // =========================
-  const addItem = (product) => {
+  // Default isKitchen=false (online). Kitchen kan optioneel true meegeven.
+  const addItem = (product, { isKitchen = false } = {}) => {
     setCart((prev) => {
-      const remaining = getStock(product, prev);
+      const remaining = getStock(product, prev, { isKitchen });
       if (remaining <= 0) return prev;
 
-      const existing = prev.find(
-        (p) => String(p.product.id) === String(product.id),
-      );
+      const existing = prev.find((p) => String(p.product.id) === String(product.id));
       if (existing) {
         return prev.map((p) =>
           String(p.product.id) === String(product.id)
             ? { ...p, quantity: p.quantity + 1 }
-            : p,
+            : p
         );
       }
 
@@ -218,17 +230,17 @@ export const CartProvider = ({ children }) => {
 
   const removeItem = (product) =>
     setCart((prev) =>
-      prev.filter((p) => String(p.product.id) !== String(product.id)),
+      prev.filter((p) => String(p.product.id) !== String(product.id))
     );
 
-  const changeQuantity = (product, amount) => {
+  const changeQuantity = (product, amount, { isKitchen = false } = {}) => {
     setCart((prev) => {
       return prev
         .map((p) => {
           if (String(p.product.id) !== String(product.id)) return p;
 
           const newQty = p.quantity + amount;
-          const maxAllowed = p.quantity + getStock(p.product, prev);
+          const maxAllowed = p.quantity + getStock(p.product, prev, { isKitchen });
 
           if (newQty <= 0) return null;
           if (newQty > maxAllowed) return { ...p, quantity: maxAllowed };
@@ -251,12 +263,12 @@ export const CartProvider = ({ children }) => {
     <CartContext.Provider
       value={{
         cart,
-        addItem,
+        addItem, // addItem(product, { isKitchen:true })
         removeItem,
-        changeQuantity,
+        changeQuantity, // changeQuantity(product, +1/-1, { isKitchen:true })
         clearCart,
         totalAmount,
-        getStock,
+        getStock, // getStock(product, cart, { isKitchen:true })
         stockSheetState,
         setStockSheetState,
         refreshStock,
