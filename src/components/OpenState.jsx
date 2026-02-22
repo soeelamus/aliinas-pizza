@@ -32,7 +32,7 @@ const OpenState = ({ isOpen, events, onRoute }) => {
       ) : (
         <div className="center background--purple">
           <p className="menu-openStatus-p">❌ We zijn vandaag gesloten</p>
-          <p className="menu-openStatus-p">Online bestellen is enkel mogelijk tijdens onze openingsuren</p>
+          <p className="menu-openStatus-p">Online bestellen is enkel mogelijk op de dag van afhaal</p>
         </div>
       )}
     </div>
