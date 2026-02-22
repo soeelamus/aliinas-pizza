@@ -1,10 +1,11 @@
 import React, { useMemo } from "react";
 import "../assets/css/kitchen.css";
 import Map from "./Map";
+import Loading from "./Loading/Loading";
 
 export default function Success({ order }) {
   // Guard: order kan even null zijn tijdens laden
-  if (!order) return <p>⏳ Loading order details…</p>;
+  if (!order) return <Loading innerHTML={"Bestelling laden"} />;
 
   // Items parser (zoals je had)
   function parseItems(itemsString) {
@@ -55,6 +56,7 @@ export default function Success({ order }) {
         <br />
         Ophalen: <strong>{pickupAddress}</strong>
       </p>
+      <p>Er werd een bevestigingsmail verzonden. Controleer ook je spam folder</p>
 
       {pickupMapCoords ? (
         <div id="event-map" className="event-map">
