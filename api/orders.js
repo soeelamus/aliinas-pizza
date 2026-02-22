@@ -31,15 +31,67 @@ function orderAlreadyExists(rows, incomingSessionId) {
   });
 }
 
+// ✅ Haal "lokale dag" (Europe/Brussels) uit orderedTime (UTC timestamp met Z)
+function brusselsIsoDate(orderedTime) {
+  const v = String(orderedTime || "").trim();
+  if (!v) return "";
+
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return "";
+
+  // en-CA -> YYYY-MM-DD
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Brussels",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+}
+
 export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const response = await fetch(GAS_URL);
       const csvText = await response.text();
 
-      const { rows } = parseCsvToObjects(csvText);
+      const { headers, rows } = parseCsvToObjects(csvText);
 
-      return res.status(200).json(rows);
+      const dateQuery = req.query?.date ? String(req.query.date).trim() : "";
+      const pickupTimeQuery = req.query?.pickupTime
+        ? String(req.query.pickupTime).trim()
+        : "";
+
+      // Geen filters? -> alles terug
+      if (!dateQuery && !pickupTimeQuery) {
+        return res.status(200).json(rows);
+      }
+
+      let filtered = rows;
+
+      // Filter op "dag" via orderedTime (orderedtime) maar in Brussels timezone
+      if (dateQuery) {
+        if (!headers.includes("orderedtime")) {
+          return res.status(200).json([]);
+        }
+
+        filtered = filtered.filter((row) => {
+          const rowDate = brusselsIsoDate(row.orderedtime);
+          return rowDate && rowDate === dateQuery;
+        });
+      }
+
+      // (optioneel) filter op pickupTime (pickuptime)
+      if (pickupTimeQuery) {
+        if (!headers.includes("pickuptime")) {
+          return res.status(200).json([]);
+        }
+
+        filtered = filtered.filter(
+          (row) => String(row.pickuptime || "").trim() === pickupTimeQuery,
+        );
+      }
+
+      return res.status(200).json(filtered);
     }
 
     if (req.method === "POST") {

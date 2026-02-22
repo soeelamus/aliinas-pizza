@@ -8,9 +8,9 @@ import "./PaymentPage.css";
 import "../SuccessPage/SuccessPage.css";
 import Loading from "../../Loading/Loading";
 
-const PaymentPage = ({ isOpen, onSubmit }) => {
-  const { cart, totalAmount, getStock } = useCart(); // context cart
-  const [localCart, setLocalCart] = useState(cart); // lokale sync cart
+const PaymentPage = () => {
+  const { cart, totalAmount } = useCart();
+  const [localCart, setLocalCart] = useState(cart);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -19,16 +19,54 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
     notes: "",
     agreeTerms: false,
   });
+
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+
   const navigate = useNavigate();
-  const { events } = useEvents(); // globale events
+  const { events } = useEvents();
+
+  // ✅ 1 bestelling per kwartier
+  const MAX_PER_SLOT = 1;
+
+  // ✅ pickuptime -> aantal orders vandaag
+  const [slotCounts, setSlotCounts] = useState({});
+
+  // ✅ NEW: wacht op orders fetch
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [ordersLoaded, setOrdersLoaded] = useState(false);
+
+  const [timeSlots, setTimeSlots] = useState([]);
+
+  // --- helpers ---
+  const brusselsToday = () =>
+    new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Europe/Brussels",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(new Date()); // YYYY-MM-DD
+
+  const normalizePickupTime = (t) => {
+    const s = String(t || "").trim();
+    if (!s) return "";
+    if (s.toUpperCase() === "ASAP") return "ASAP";
+    const m = s.match(/\b([01]\d|2[0-3]):([0-5]\d)\b/);
+    return m ? `${m[1]}:${m[2]}` : s;
+  };
+
+  const roundUpToQuarter = (date) => {
+    const ms = 1000 * 60 * 15;
+    return new Date(Math.ceil(date.getTime() / ms) * ms);
+  };
+
+  const today = brusselsToday();
+  const todaysEvent = events.find(
+    (e) => e.type?.toLowerCase() !== "privaat" && e.date === today,
+  );
 
   // ⚡ Sync localCart met context cart
-  useEffect(() => {
-    setLocalCart(cart);
-  }, [cart]);
+  useEffect(() => setLocalCart(cart), [cart]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -41,10 +79,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.email.includes("@")) {
-      newErrors.email = "Ongeldig e-mail";
-    }
-
+    if (!formData.email.includes("@")) newErrors.email = "Ongeldig e-mail";
     if (!formData.agreeTerms) newErrors.agreeTerms = "Bevestig de afhaalplaats";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -54,9 +89,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
     e.preventDefault();
     if (!validate()) return;
 
-    // Opslaan klantgegevens
     localStorage.setItem("paymentData", JSON.stringify({ formData }));
-
     setLoading(true);
 
     try {
@@ -71,8 +104,6 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
       });
 
       const data = await res.json();
-
-      // 👉 Stripe redirect
       window.location.href = data.checkoutUrl;
     } catch (error) {
       console.error("Checkout error:", error);
@@ -82,46 +113,111 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
     }
   };
 
-  // --- Tijdslots ---
-  const today = new Date().toISOString().slice(0, 10);
-  const todaysEvent = events.find(
-    (e) => e.type.toLowerCase() !== "privaat" && e.date === today,
-  );
+  // ✅ 1) haal orders van vandaag op + tel per pickuptime
+  useEffect(() => {
+    let cancelled = false;
 
-  const roundUpToQuarter = (date) => {
-    const ms = 1000 * 60 * 15;
-    return new Date(Math.ceil(date.getTime() / ms) * ms);
-  };
+    const fetchTodaysOrders = async () => {
+      setOrdersLoading(true);
+      setOrdersLoaded(false);
 
-  const generateTimeSlots = () => {
-    if (!todaysEvent) return [];
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const eventStart = new Date(`${todayStr}T${todaysEvent.startTime}`);
-    const eventEnd = new Date(`${todayStr}T${todaysEvent.endTime}`);
-    const nowPlus30 = roundUpToQuarter(new Date(Date.now() + 25 * 60000));
-    const startTime = new Date(Math.max(eventStart, nowPlus30));
+      try {
+        const res = await fetch(`/api/orders?date=${today}`);
+        if (!res.ok) throw new Error("Failed to fetch /api/orders");
+        const orders = await res.json();
+
+        const counts = {};
+        for (const o of orders || []) {
+          const t = normalizePickupTime(o?.pickuptime);
+          if (!t) continue;
+          if (t === "ASAP") continue; // ASAP telt niet als kwartier-slot
+
+          const status = String(o?.status || "")
+            .trim()
+            .toLowerCase();
+          if (status === "cancelled" || status === "canceled") continue;
+
+          counts[t] = (counts[t] || 0) + 1;
+        }
+
+        if (!cancelled) {
+          setSlotCounts(counts);
+        }
+      } catch (err) {
+        console.error("fetchTodaysOrders error:", err);
+        if (!cancelled) {
+          // fallback: geen filtering (alles 0)
+          setSlotCounts({});
+        }
+      } finally {
+        if (!cancelled) {
+          setOrdersLoading(false);
+          setOrdersLoaded(true);
+        }
+      }
+    };
+
+    fetchTodaysOrders();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [today]);
+
+  // ✅ 2) maak slots PAS nadat ordersLoaded true is
+  useEffect(() => {
+    // zolang we orders nog niet hebben: toon niks
+    if (!ordersLoaded) {
+      setTimeSlots([]);
+      return;
+    }
+
+    if (!todaysEvent) {
+      setTimeSlots([]);
+      return;
+    }
+
+    const eventStart = new Date(`${today}T${todaysEvent.startTime}`);
+    const eventEnd = new Date(`${today}T${todaysEvent.endTime}`);
+
+    const nowPlus = roundUpToQuarter(new Date(Date.now() + 25 * 60000));
+    const startTime = new Date(
+      Math.max(eventStart.getTime(), nowPlus.getTime()),
+    );
 
     const slots = [];
     let current = startTime;
     while (current <= eventEnd) {
       const hh = current.getHours().toString().padStart(2, "0");
       const mm = current.getMinutes().toString().padStart(2, "0");
-      slots.push(`${hh}:${mm}`);
+      const slot = `${hh}:${mm}`;
+
+      // ✅ filter volzette slots weg
+      if ((slotCounts[slot] || 0) < MAX_PER_SLOT) {
+        slots.push(slot);
+      }
+
       current = new Date(current.getTime() + 15 * 60000);
     }
 
-    return slots;
-  };
+    setTimeSlots(slots);
+  }, [ordersLoaded, todaysEvent, today, slotCounts]);
 
-  const timeSlots = generateTimeSlots();
+  // ✅ Als gekozen pickupTime verdwijnt, reset
+  useEffect(() => {
+    if (formData.pickupTime && !timeSlots.includes(formData.pickupTime)) {
+      setFormData((prev) => ({ ...prev, pickupTime: "" }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeSlots]);
+
+  const slotsReady = ordersLoaded && !ordersLoading;
 
   return (
     <div className="payment-page-body">
       <div className="payment-page-margin">
         <form onSubmit={handleCheckout} className="payment-page">
-          {successMessage && (
-            <p className="success-message">{successMessage}</p>
-          )}
           <h2>Afrekenen</h2>
 
           <div className="payment-form">
@@ -139,33 +235,35 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
                   disabled={loading}
                   maxLength="25"
                 />
-                {errors.name && (
-                  <span className="error-message">{errors.name}</span>
-                )}
               </div>
 
               <div className="option2">
                 <label htmlFor="pickupTime">Afhaaltijd</label>
+
                 <select
                   className="form-textarea form-select"
                   id="pickupTime"
                   name="pickupTime"
                   value={formData.pickupTime}
                   onChange={handleChange}
-                  disabled={loading}
+                  disabled={loading || !slotsReady}
                 >
-                  <option value="">Kies</option>
-                  {timeSlots.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {slot}
-                    </option>
-                  ))}
+                  {!slotsReady ? (
+                    <option value="">Laden</option>
+                  ) : (
+                    <>
+                      <option value="">Kies</option>
+                      {timeSlots.map((slot) => (
+                        <option key={slot} value={slot}>
+                          {slot}
+                        </option>
+                      ))}
+                    </>
+                  )}
                 </select>
-                {errors.pickupTime && (
-                  <span className="error-message">{errors.pickupTime}</span>
-                )}
               </div>
             </div>
+
             <div className="option3">
               <label htmlFor="email">E-mail</label>
               <input
@@ -198,31 +296,37 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
             />
 
             {todaysEvent ? (
-              timeSlots.length > 0 ? (
-                <div className="checkbox-wrapper-39 form-checkbox">
-                  <label>
-                    <input
-                      type="checkbox"
-                      name="agreeTerms"
-                      checked={formData.agreeTerms}
-                      onChange={handleChange}
-                      disabled={loading}
-                    />
-                    <span className="checkbox"></span>
-                  </label>
-                  <p>
-                    Ik zal mijn bestelling vandaag ophalen in:{" "}
-                    <strong>{todaysEvent.address}</strong>
-                    {formData.pickupTime && (
-                      <>
-                        {" "}
-                        om <strong>{formData.pickupTime}</strong>
-                      </>
-                    )}
-                  </p>
-                </div>
+              slotsReady ? (
+                timeSlots.length > 0 ? (
+                  <div className="checkbox-wrapper-39 form-checkbox">
+                    <label>
+                      <input
+                        type="checkbox"
+                        name="agreeTerms"
+                        checked={formData.agreeTerms}
+                        onChange={handleChange}
+                        disabled={loading}
+                      />
+                      <span className="checkbox"></span>
+                    </label>
+                    <p>
+                      Ik zal mijn bestelling vandaag ophalen in:{" "}
+                      <strong>{todaysEvent.address}</strong>
+                      {formData.pickupTime && (
+                        <>
+                          {" "}
+                          om <strong>{formData.pickupTime}</strong>
+                        </>
+                      )}
+                    </p>
+                  </div>
+                ) : (
+                  <h3>
+                    Het is niet meer mogelijk om een bestelling te plaatsen
+                  </h3>
+                )
               ) : (
-                <h3>Het is niet meer mogelijk om een bestelling te plaatsen</h3>
+                <Loading innerHTML={"Tijdsloten laden"} />
               )
             ) : (
               <Loading innerHTML={"Wordt geladen"} />
@@ -250,6 +354,7 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
           <div className="nav-btns">
             <button
               className="btn-purple btn-small"
+              type="button"
               onClick={() => navigate("/ordering")}
             >
               &#60;
@@ -257,12 +362,13 @@ const PaymentPage = ({ isOpen, onSubmit }) => {
 
             <button
               className="btn-purple"
-              onClick={handleCheckout}
+              type="submit"
               disabled={
                 !formData?.name?.trim() ||
                 !formData?.pickupTime?.trim() ||
                 !formData?.email?.trim() ||
-                loading
+                loading ||
+                !slotsReady
               }
             >
               {loading ? "Bezig" : "Betalen"}
