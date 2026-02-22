@@ -15,7 +15,7 @@ export async function finalizeOrder({
 
   const orderObj = {
     id: Date.now().toString(),
-    paymentId: paymentMethod,
+    sessionId: paymentMethod,
     items: cart
       .map((i) => `${i.quantity}x ${i.product.name}`)
       .join(", "),
@@ -26,6 +26,9 @@ export async function finalizeOrder({
     status: "new",
   };
 
+  console.log("orderObj: ", orderObj);
+  console.log("orderObj.sessionId: ", orderObj.sessionId);
+  
   /* -------------------
      2️⃣ Push order
   -------------------- */
