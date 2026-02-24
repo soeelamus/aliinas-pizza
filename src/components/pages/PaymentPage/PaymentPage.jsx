@@ -25,17 +25,16 @@ const PaymentPage = () => {
 
   const navigate = useNavigate();
   const { events } = useEvents();
+  
+  // ✅ Minuten per slot
+  const SLOTS_INTERVAL = 10;
 
-  // ✅ 1 bestelling per kwartier
+  // ✅ 1 bestelling per SLOTS_INTERVAL
   const MAX_PER_SLOT = 1;
 
-  // ✅ pickuptime -> aantal orders vandaag
   const [slotCounts, setSlotCounts] = useState({});
-
-  // ✅ NEW: wacht op orders fetch
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [ordersLoaded, setOrdersLoaded] = useState(false);
-
   const [timeSlots, setTimeSlots] = useState([]);
 
   // --- helpers ---
@@ -56,7 +55,7 @@ const PaymentPage = () => {
   };
 
   const roundUpToQuarter = (date) => {
-    const ms = 1000 * 60 * 15;
+    const ms = 1000 * 60 * SLOTS_INTERVAL;
     return new Date(Math.ceil(date.getTime() / ms) * ms);
   };
 
@@ -198,7 +197,7 @@ const PaymentPage = () => {
         slots.push(slot);
       }
 
-      current = new Date(current.getTime() + 15 * 60000);
+      current = new Date(current.getTime() + SLOTS_INTERVAL * 60000);
     }
 
     setTimeSlots(slots);
