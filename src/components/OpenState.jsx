@@ -1,7 +1,7 @@
 import React from "react";
 
 const OpenState = ({ isOpen, events, onRoute }) => {
-  const today = new Date().toISOString().slice(0, 10); // "2026-01-09"
+  const today = new Date().toLocaleDateString("en-CA");
 
   const todayEvent = events?.find(
     (e) => e.type.toLowerCase() !== "privaat" && e.date === today,
@@ -32,7 +32,9 @@ const OpenState = ({ isOpen, events, onRoute }) => {
       ) : (
         <div className="center background--purple">
           <p className="menu-openStatus-p">❌ We zijn vandaag gesloten</p>
-          <p className="menu-openStatus-p">Online bestellen is enkel mogelijk op de dag van afhaal</p>
+          <p className="menu-openStatus-p">
+            Online bestellen is enkel mogelijk op de dag van afhaal
+          </p>
         </div>
       )}
     </div>
