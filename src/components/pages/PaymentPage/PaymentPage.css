@@ -54,10 +54,7 @@
   margin: 0;
   max-width: 20rem;
 }
-.error-message {
-  margin-top: 1rem;
-  font-size: 1rem;
-}
+
 /* CART SUMMARY LIST */
 .payment-cart {
   list-style: none;
