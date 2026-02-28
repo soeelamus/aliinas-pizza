@@ -157,7 +157,7 @@ useEffect(() => {
     if (status !== "paid") return;
     if (!order.customerEmail) return;
 
-    const mailKey = `mail_${order.sessionId}`;
+    const mailKey = `mail_${sessionId}`;
     if (localStorage.getItem(mailKey)) return;
 
     const sendMail = async () => {
