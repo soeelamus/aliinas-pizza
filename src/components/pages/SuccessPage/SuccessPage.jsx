@@ -16,15 +16,7 @@ const SuccessPage = () => {
   // 👉 Stripe session id uit URL
   const sessionId = searchParams.get("session_id");
 
-  const cart = useMemo(
-    () => JSON.parse(localStorage.getItem("cart") || "[]"),
-    [],
-  );
-
-  const paymentData = useMemo(
-    () => JSON.parse(localStorage.getItem("paymentData") || "{}"),
-    [],
-  );
+  console.log("order: ", order);
 
   // 🔹 parse items string naar array
   const parseOrderItems = (itemsStr) => {
@@ -85,55 +77,44 @@ const SuccessPage = () => {
   };
 
   // 🔹 check Stripe payment
-  useEffect(() => {
-    if (!sessionId) return;
+useEffect(() => {
+  if (!sessionId) return;
 
-    const checkPayment = async () => {
-      try {
-        const res = await fetch(`/api/payment?sessionId=${sessionId}`);
-        const data = await res.json();
+  (async () => {
+    try {
+      const res = await fetch(`/api/payment?sessionId=${sessionId}`);
+      const data = await res.json();
 
-        setStatus(data.status); // paid / unpaid / canceled
+      setStatus(data.status);
 
-        if (data.status === "paid") {
-          const orderObj = {
-            id: Date.now().toString(),
-            sessionId,
-            items: cart
-              .map((i) => `${i.quantity}x ${i.product.name}`)
-              .join(", "),
-
-            total: cart.reduce(
-              (sum, i) => sum + i.product.price * i.quantity,
-              0,
-            ),
-
-            pickupTime: paymentData.formData?.pickupTime || "",
-            orderedTime: new Date().toISOString(),
-            customerName: paymentData.formData?.name || "",
-            customerEmail: paymentData.formData?.email || "",
-            customerNotes: paymentData.formData?.notes || "",
-            status: "new",
-          };
-
-          setOrder(orderObj);
-        } else {
-          setOrder(null);
-        }
-      } catch (err) {
-        console.error(err);
-        navigate("/");
+      if (data.status === "paid") {
+        setOrder({
+          id: sessionId, // ✅ stabiel
+          sessionId,
+          items: data.itemsString || "",
+          total: Number(data.total || 0),
+          pickupTime: data.pickupTime || "",
+          orderedTime: new Date().toISOString(),
+          customerName: data.customerName || "",
+          customerEmail: data.customerEmail || "",
+          customerNotes: data.customerNotes || "",
+          status: "new",
+        });
+      } else {
+        setOrder(null);
       }
-    };
-
-    checkPayment();
-  }, [sessionId, navigate, cart, paymentData]);
+    } catch (err) {
+      console.error(err);
+      navigate("/");
+    }
+  })();
+}, [sessionId, navigate]);
 
   useEffect(() => {
     if (!order) return;
     if (status !== "paid") return;
 
-    const pushedKey = `pushed_${order.sessionId}`;
+    const pushedKey = `pushed_${sessionId}`;
     if (localStorage.getItem(pushedKey)) return;
 
     const pushOrderAndStock = async () => {

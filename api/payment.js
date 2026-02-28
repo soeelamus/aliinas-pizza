@@ -1,7 +1,7 @@
 // api/payment.js
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_TEST, {
   apiVersion: "2023-10-16",
 });
 
@@ -17,17 +17,37 @@ export default async function handler(req, res) {
     // GET → Status check
     // =========================
     if (req.method === "GET") {
-      const sessionId =
-        (req.query.sessionId || req.query.session_id || "").toString().trim();
-
-      if (!sessionId) {
+      const sessionId = (req.query.sessionId || req.query.session_id || "")
+        .toString()
+        .trim();
+      if (!sessionId)
         return res.status(400).json({ error: "Missing sessionId" });
-      }
 
-      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      const session = await stripe.checkout.sessions.retrieve(sessionId, {
+        expand: ["line_items"],
+      });
+
+      const itemsString = (session.line_items?.data || [])
+        .map(
+          (li) =>
+            `${li.quantity}x ${li.description || li.price?.product?.name || "Item"}`,
+        )
+        .join(", ");
+
+      const total = (session.amount_total || 0) / 100;
 
       return res.status(200).json({
-        status: session.payment_status,
+        status: session.payment_status, // "paid" / "unpaid"
+        sessionId: session.id,
+        itemsString,
+        total,
+        pickupTime: session.metadata?.pickupTime || "",
+        customerName:
+          session.metadata?.customerName ||
+          session.customer_details?.name ||
+          "",
+        customerEmail: session.customer_details?.email || "",
+        customerNotes: session.metadata?.customerNotes || "",
       });
     }
 
@@ -75,6 +95,11 @@ export default async function handler(req, res) {
         customer_creation: "always",
         success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${baseUrl}/ordering`,
+        metadata: {
+          pickupTime: customer.pickupTime || "",
+          customerName: customer.name || "",
+          customerNotes: customer.notes || "",
+        },
       });
 
       return res.status(200).json({

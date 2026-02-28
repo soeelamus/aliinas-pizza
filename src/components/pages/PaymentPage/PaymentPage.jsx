@@ -27,7 +27,7 @@ const PaymentPage = () => {
   const { events } = useEvents();
   
   // ✅ Minuten per slot
-  const SLOTS_INTERVAL = 10;
+  const SLOTS_INTERVAL = 15;
 
   // ✅ 1 bestelling per SLOTS_INTERVAL
   const MAX_PER_SLOT = 1;

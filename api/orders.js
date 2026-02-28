@@ -1,20 +1,54 @@
 // pages/api/orders.js
 const GAS_URL = process.env.SHEETS_ORDER;
-const SESSION_ID_HEADER = "sessionid";
+
+// Accept multiple possible header names from your sheet
+const SESSION_KEYS = ["sessionid", "session_id"];
+
+// -------------------- CSV helpers (quote-aware) --------------------
+function splitCsvLine(line) {
+  const out = [];
+  let cur = "";
+  let inQ = false;
+
+  for (let i = 0; i < (line || "").length; i++) {
+    const ch = line[i];
+
+    if (ch === '"') {
+      // handle escaped quotes ("")
+      if (inQ && line[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else {
+        inQ = !inQ;
+      }
+      continue;
+    }
+
+    if (ch === "," && !inQ) {
+      out.push(cur.trim());
+      cur = "";
+      continue;
+    }
+
+    cur += ch;
+  }
+
+  out.push(cur.trim());
+  return out;
+}
 
 function parseCsvToObjects(csvText) {
-  const lines = (csvText || "").split("\n").filter(Boolean);
+  const lines = (csvText || "").split(/\r?\n/).filter(Boolean);
   if (lines.length <= 1) return { headers: [], rows: [] };
 
-  const headers = lines[0]
-    .split(",")
+  const headers = splitCsvLine(lines[0])
     .map((h) => h.replace(/^"|"$/g, "").trim().toLowerCase());
 
   const rows = lines.slice(1).map((line) => {
-    const cols = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
+    const cols = splitCsvLine(line).map((c) => c.replace(/^"|"$/g, "").trim());
     const obj = {};
     headers.forEach((h, i) => {
-      obj[h] = cols[i] ? cols[i].replace(/^"|"$/g, "").trim() : "";
+      obj[h] = cols[i] ?? "";
     });
     return obj;
   });
@@ -22,16 +56,21 @@ function parseCsvToObjects(csvText) {
   return { headers, rows };
 }
 
-function orderAlreadyExists(rows, incomingSessionId) {
-  if (!incomingSessionId) return false;
-
-  return rows.some((row) => {
-    const existing = (row[SESSION_ID_HEADER] || "").trim();
-    return existing && existing === incomingSessionId;
-  });
+// -------------------- idempotency --------------------
+function getRowSessionId(row) {
+  for (const k of SESSION_KEYS) {
+    const v = String(row?.[k] || "").trim();
+    if (v) return v;
+  }
+  return "";
 }
 
-// ✅ Haal "lokale dag" (Europe/Brussels) uit orderedTime (UTC timestamp met Z)
+function orderAlreadyExists(rows, incomingSessionId) {
+  if (!incomingSessionId) return false;
+  return rows.some((row) => getRowSessionId(row) === incomingSessionId);
+}
+
+// ✅ Brussels date (YYYY-MM-DD) from orderedTime (ISO string with Z)
 function brusselsIsoDate(orderedTime) {
   const v = String(orderedTime || "").trim();
   if (!v) return "";
@@ -39,7 +78,6 @@ function brusselsIsoDate(orderedTime) {
   const d = new Date(v);
   if (Number.isNaN(d.getTime())) return "";
 
-  // en-CA -> YYYY-MM-DD
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "Europe/Brussels",
     year: "numeric",
@@ -48,10 +86,18 @@ function brusselsIsoDate(orderedTime) {
   }).format(d);
 }
 
+// -------------------- handler --------------------
 export default async function handler(req, res) {
   try {
+    if (!GAS_URL) {
+      return res.status(500).json({ error: "Missing SHEETS_ORDER env var" });
+    }
+
+    // =========================
+    // GET → Read CSV rows
+    // =========================
     if (req.method === "GET") {
-      const response = await fetch(GAS_URL);
+      const response = await fetch(GAS_URL, { cache: "no-store" });
       const csvText = await response.text();
 
       const { headers, rows } = parseCsvToObjects(csvText);
@@ -61,14 +107,14 @@ export default async function handler(req, res) {
         ? String(req.query.pickupTime).trim()
         : "";
 
-      // Geen filters? -> alles terug
+      // No filters? Return all
       if (!dateQuery && !pickupTimeQuery) {
         return res.status(200).json(rows);
       }
 
       let filtered = rows;
 
-      // Filter op "dag" via orderedTime (orderedtime) maar in Brussels timezone
+      // Filter by Brussels "day" derived from orderedtime column
       if (dateQuery) {
         if (!headers.includes("orderedtime")) {
           return res.status(200).json([]);
@@ -80,7 +126,7 @@ export default async function handler(req, res) {
         });
       }
 
-      // (optioneel) filter op pickupTime (pickuptime)
+      // Optional filter by pickuptime
       if (pickupTimeQuery) {
         if (!headers.includes("pickuptime")) {
           return res.status(200).json([]);
@@ -94,26 +140,29 @@ export default async function handler(req, res) {
       return res.status(200).json(filtered);
     }
 
+    // =========================
+    // POST → Insert (idempotent by sessionId)
+    // =========================
     if (req.method === "POST") {
       const incoming = req.body || {};
 
+      // normalize sessionId
       const incomingSessionId = String(
-        incoming.sessionId || incoming.id || "",
+        incoming.sessionId || incoming.session_id || incoming.id || "",
       ).trim();
 
-      const existingRes = await fetch(GAS_URL);
-      const existingCsv = await existingRes.text();
-      const { headers, rows } = parseCsvToObjects(existingCsv);
+      // If we have a sessionId, check existing sheet first (prevents duplicates)
+      if (incomingSessionId) {
+        const existingRes = await fetch(GAS_URL, { cache: "no-store" });
+        const existingCsv = await existingRes.text();
+        const { rows } = parseCsvToObjects(existingCsv);
 
-      const hasSessionIdHeader = headers.includes(SESSION_ID_HEADER);
-
-      if (hasSessionIdHeader && incomingSessionId) {
-        const exists = orderAlreadyExists(rows, incomingSessionId);
-        if (exists) {
+        if (orderAlreadyExists(rows, incomingSessionId)) {
           return res.status(200).json({ status: "already_exists" });
         }
       }
 
+      // Forward to Apps Script
       const response = await fetch(GAS_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -139,6 +188,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   } catch (err) {
     console.error("Vercel API /orders error:", err);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message || "Server error" });
   }
 }
