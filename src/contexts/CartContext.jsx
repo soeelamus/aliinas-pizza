@@ -46,6 +46,8 @@ export const CartProvider = ({ children }) => {
   // =========================
   const lastDoughStock = useRef(null);
   const lastStockVersion = useRef(null);
+  const lastFullFetchAt = useRef(0);
+  const versionCheckDisabledUntil = useRef(0);
 
   const API_URL = "/api/stock";
   const VERSION_URL = "/api/stock-version";
@@ -74,7 +76,7 @@ export const CartProvider = ({ children }) => {
     // Dev servers geven bij 404 soms index.html terug (text/html)
     if (!ct.includes("application/json")) {
       throw new Error(
-        `[${url}] Expected JSON but got "${ct}". Snippet: ${text.slice(0, 80)}`
+        `[${url}] Expected JSON but got "${ct}". Snippet: ${text.slice(0, 80)}`,
       );
     }
 
@@ -88,7 +90,7 @@ export const CartProvider = ({ children }) => {
     // Als jouw API { ok:false } terugstuurt
     if (json && typeof json === "object" && json.ok === false) {
       throw new Error(
-        `[${url}] API returned ok:false: ${json.error || "unknown"}`
+        `[${url}] API returned ok:false: ${json.error || "unknown"}`,
       );
     }
 
@@ -112,7 +114,7 @@ export const CartProvider = ({ children }) => {
       } catch (localErr) {
         // Geef beide fouten terug (heel nuttig in console)
         throw new Error(
-          `Stock fetch failed.\nAPI error: ${apiErr.message}\nLOCAL error: ${localErr.message}`
+          `Stock fetch failed.\nAPI error: ${apiErr.message}\nLOCAL error: ${localErr.message}`,
         );
       }
     }
@@ -121,34 +123,57 @@ export const CartProvider = ({ children }) => {
   const refreshStock = async () => {
     if (!isOpen) return;
 
+    const nowMs = Date.now();
+
+    // ✅ throttle full fetch: max 1x per 20s (pas aan indien nodig)
+    const MIN_FETCH_INTERVAL_MS = 20_000;
+    if (nowMs - lastFullFetchAt.current < MIN_FETCH_INTERVAL_MS) {
+      return;
+    }
+
     try {
-      // 1) version check (optioneel)
-      try {
-        const vRes = await fetchJsonStrict(VERSION_URL);
-        const version = String(vRes?.version ?? "");
+      // 1) version check (optioneel) — met cooldown als endpoint stuk is
+      if (nowMs >= versionCheckDisabledUntil.current) {
+        try {
+          const vRes = await fetchJsonStrict(VERSION_URL);
+          const version = String(vRes?.version ?? "");
 
-        if (version && version === lastStockVersion.current) {
-          console.log("📦 Stock unchanged → skip full fetch (version:", version, ")");
-          return;
+          if (version && version === lastStockVersion.current) {
+            console.log(
+              "📦 Stock unchanged → skip full fetch (version:",
+              version,
+              ")",
+            );
+            return;
+          }
+
+          console.log(
+            "📦 Stock changed",
+            lastStockVersion.current,
+            "→",
+            version,
+          );
+          lastStockVersion.current = version;
+        } catch (e) {
+          console.warn(
+            "⚠️ Stock version check failed → disabling version-check 60s:",
+            e.message,
+          );
+          // ✅ 60s geen version-check meer proberen (voorkomt spam loop)
+          versionCheckDisabledUntil.current = nowMs + 60_000;
         }
-
-        console.log("📦 Stock changed", lastStockVersion.current, "→", version);
-        lastStockVersion.current = version;
-      } catch (e) {
-        console.warn(
-          "⚠️ Stock version check failed → fallback to full fetch:",
-          e.message
-        );
       }
 
-      // 2) full stock fetch
+      // 2) full stock fetch (throttled)
+      lastFullFetchAt.current = nowMs;
+
       const { source, items } = await fetchStockWithFallback();
       console.log(`📦 Full stock fetch (${source}) → items:`, items.length);
 
       setStockSheetState(items);
 
       const dough = items.find(
-        (item) => (item.name || "").toLowerCase() === "deegballen"
+        (item) => (item.name || "").toLowerCase() === "deegballen",
       );
       const doughStock = dough ? Number(dough.stock) : 0;
 
@@ -179,7 +204,7 @@ export const CartProvider = ({ children }) => {
 
     if (isPizza) {
       const dough = stockSheetState.find(
-        (item) => (item.name || "").toLowerCase() === "deegballen"
+        (item) => (item.name || "").toLowerCase() === "deegballen",
       );
       const totalStock = dough ? Number(dough.stock) : 0;
 
@@ -197,7 +222,8 @@ export const CartProvider = ({ children }) => {
 
     // Niet-pizza items: normale stock per item id
     const itemStock =
-      stockSheetState.find((s) => String(s.id) === String(product.id))?.stock ?? 0;
+      stockSheetState.find((s) => String(s.id) === String(product.id))?.stock ??
+      0;
 
     const quantityInCart = currentCart
       .filter((p) => String(p.product.id) === String(product.id))
@@ -215,12 +241,14 @@ export const CartProvider = ({ children }) => {
       const remaining = getStock(product, prev, { isKitchen });
       if (remaining <= 0) return prev;
 
-      const existing = prev.find((p) => String(p.product.id) === String(product.id));
+      const existing = prev.find(
+        (p) => String(p.product.id) === String(product.id),
+      );
       if (existing) {
         return prev.map((p) =>
           String(p.product.id) === String(product.id)
             ? { ...p, quantity: p.quantity + 1 }
-            : p
+            : p,
         );
       }
 
@@ -230,7 +258,7 @@ export const CartProvider = ({ children }) => {
 
   const removeItem = (product) =>
     setCart((prev) =>
-      prev.filter((p) => String(p.product.id) !== String(product.id))
+      prev.filter((p) => String(p.product.id) !== String(product.id)),
     );
 
   const changeQuantity = (product, amount, { isKitchen = false } = {}) => {
@@ -240,7 +268,8 @@ export const CartProvider = ({ children }) => {
           if (String(p.product.id) !== String(product.id)) return p;
 
           const newQty = p.quantity + amount;
-          const maxAllowed = p.quantity + getStock(p.product, prev, { isKitchen });
+          const maxAllowed =
+            p.quantity + getStock(p.product, prev, { isKitchen });
 
           if (newQty <= 0) return null;
           if (newQty > maxAllowed) return { ...p, quantity: maxAllowed };

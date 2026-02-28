@@ -1,11 +1,9 @@
+import { useState } from "react";
 import { PickupCountdown } from "./PickupCountdown";
 
-export default function Order({
-  order,
-  onStatusChange,
-  updatingId,
-  currentTime,
-}) {
+export default function Order({ order, onStatusChange, updatingId, currentTime }) {
+  const [isCollapsed, setIsCollapsed] = useState(true); // ✅ default open (zet op false als je default dicht wil)
+
   // ✅ PickupCountdown met fallback
   const countdown = PickupCountdown(order.pickuptime) || {
     hours: 0,
@@ -22,13 +20,13 @@ export default function Order({
       .map((item) => item.trim())
       .map((item) => {
         const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
-        return match
-          ? { quantity: Number(match[1]), name: match[2].trim() }
-          : null;
+        return match ? { quantity: Number(match[1]), name: match[2].trim() } : null;
       })
       .filter(Boolean) || [];
 
   const handleClick = (newStatus) => onStatusChange(order.id, newStatus);
+
+  const toggle = () => setIsCollapsed((v) => !v);
 
   return (
     <li
@@ -39,8 +37,8 @@ export default function Order({
         ${countdown.isOrange && order.status === "new" ? "urgent-orange" : ""}
       `}
     >
-      {/* Heading */}
-      <div className="heading-box">
+      {/* Heading (click to toggle details) */}
+      <div className="heading-box" onClick={toggle} style={{ cursor: "pointer" }}>
         <ul className="heading">
           <li>{order.customername?.toUpperCase() || "Onbekend"}</li>
           <li>
@@ -58,42 +56,55 @@ export default function Order({
         </ul>
       </div>
 
-      {/* Pizza items */}
-      {pizzas.map((pizza, i) => (
-        <div className="pizzas" key={i}>
-          <label className="pizza-item">
-            <input type="checkbox" />
-            <span className="pizza-qty">{pizza.quantity}x</span>
-            <span className="pizza-name">{pizza.name}</span>
-          </label>
-        </div>
-      ))}
+      {/* Details */}
+      <div
+        className="orders--info"
+        style={{ display: isCollapsed ? "block" : "none" }}
+        onClick={(e) => e.stopPropagation()} // ✅ klikken in info togglet niet
+      >
+        {/* Pizza items */}
+        {pizzas.map((pizza, i) => (
+          <div className="pizzas" key={i}>
+            <label className="pizza-item">
+              <input type="checkbox" onClick={(e) => e.stopPropagation()} />
+              <span className="pizza-qty">{pizza.quantity}x</span>
+              <span className="pizza-name">{pizza.name}</span>
+            </label>
+          </div>
+        ))}
 
-      {/* Customer notes */}
-      {order.customernotes && (
-        <span className="pizzas list">Notes: {order.customernotes}</span>
-      )}
+        {/* Customer notes */}
+        {order.customernotes && (
+          <span className="pizzas list">Notes: {order.customernotes}</span>
+        )}
 
-      {/* Action buttons */}
-      {order.status === "new" && (
-        <button
-          className="btn-purple"
-          onClick={() => handleClick("done")}
-          disabled={updatingId === order.id}
-        >
-          {updatingId === order.id ? "Updating..." : "Done"}
-        </button>
-      )}
+        {/* Action buttons */}
+        {order.status === "new" && (
+          <button
+            className="btn-purple"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick("done");
+            }}
+            disabled={updatingId === order.id}
+          >
+            {updatingId === order.id ? "Updating..." : "Done"}
+          </button>
+        )}
 
-      {order.status === "done" && (
-        <button
-          className="btn-purple"
-          onClick={() => handleClick("pickedup")}
-          disabled={updatingId === order.id}
-        >
-          {updatingId === order.id ? "Updating..." : "Pick-up"}
-        </button>
-      )}
+        {order.status === "done" && (
+          <button
+            className="btn-purple"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick("pickedup");
+            }}
+            disabled={updatingId === order.id}
+          >
+            {updatingId === order.id ? "Updating..." : "Pick-up"}
+          </button>
+        )}
+      </div>
     </li>
   );
 }

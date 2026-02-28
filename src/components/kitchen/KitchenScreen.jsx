@@ -55,8 +55,19 @@ function KitchenActive({ onBackToSetup }) {
   const intervalRef = useRef(null);
   const audioAllowed = useRef(true);
 
-  // ✅ nieuw: version tracking
+  // ✅ version tracking
   const lastOrdersVersion = useRef(null);
+
+  // ✅ MOCK order (stable ref) for debugging when server is offline
+  const mockOrderRef = useRef({
+    id: "mock-1",
+    customername: "DEBUG ORDER",
+    pickuptime: "ASAP",
+    items: "1 x Margherita, 2 x Pepperoni",
+    customernotes: "Mock order (server offline)",
+    status: "new",
+    orderedtime: new Date().toISOString(),
+  });
 
   useEffect(() => {
     const audio = new Audio("/sound/sound-effect.mp3");
@@ -110,9 +121,28 @@ function KitchenActive({ onBackToSetup }) {
   useEffect(() => {
     let isMounted = true;
 
+    const useMockOrder = (reason) => {
+      if (!isMounted) return;
+      console.warn("⚠️ Using MOCK order:", reason);
+
+      // keep it "today"
+      mockOrderRef.current = {
+        ...mockOrderRef.current,
+        orderedtime: new Date().toISOString(),
+        status: mockOrderRef.current.status || "new",
+      };
+
+      setOrders([mockOrderRef.current]);
+      setLoading(false);
+    };
+
     const fetchOrders = async () => {
       try {
         const res = await fetch("/api/orders", { cache: "no-store" });
+
+        // server down / 500 / etc.
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
         const data = await res.json();
         if (!isMounted) return;
 
@@ -138,12 +168,12 @@ function KitchenActive({ onBackToSetup }) {
             ? { ...order, status: pendingUpdates[order.id] }
             : order,
         );
-        
+
+        // 🔔 sound for new orders (not for cashier)
         if (!firstFetch.current) {
           const prevIds = new Set(prevOrders.current.map((o) => o.id));
           const newOrders = merged
             .filter((o) => !prevIds.has(o.id))
-            // ❌ geen geluid voor terminal orders
             .filter(
               (o) =>
                 String(o.customername ?? "")
@@ -164,42 +194,39 @@ function KitchenActive({ onBackToSetup }) {
 
         prevOrders.current = merged;
         firstFetch.current = false;
+
         setOrders(merged);
         setLoading(false);
 
         console.log("🍳 Orders fetched:", merged.length);
       } catch (err) {
         console.error("🍳 fetchOrders error:", err);
+        useMockOrder(err?.message || err);
       }
     };
 
     const checkVersionAndFetch = async () => {
       try {
         const vRes = await fetch("/api/orders-version", { cache: "no-store" });
+        if (!vRes.ok) throw new Error(`orders-version HTTP ${vRes.status}`);
+
         const vJson = await vRes.json();
         const version = String(vJson?.version ?? "");
 
         if (version && version === lastOrdersVersion.current) {
-          console.log(
-            "🍳 Orders unchanged → skip fetch (version:",
-            version,
-            ")",
-          );
+          console.log("🍳 Orders unchanged → skip fetch (version:", version, ")");
+          // still ensure we are not stuck loading on first run
+          if (firstFetch.current && isMounted) setLoading(false);
           return;
         }
 
-        console.log(
-          "🍳 Orders changed",
-          lastOrdersVersion.current,
-          "→",
-          version,
-        );
+        console.log("🍳 Orders changed", lastOrdersVersion.current, "→", version);
         lastOrdersVersion.current = version;
 
         await fetchOrders();
       } catch (e) {
         console.warn("🍳 orders-version failed → fallback to full fetch:", e);
-        await fetchOrders();
+        await fetchOrders(); // fetchOrders will fallback to mock if needed
       }
     };
 
@@ -209,8 +236,8 @@ function KitchenActive({ onBackToSetup }) {
     };
 
     const start = () => {
-      stop(); // ✅ belangrijk: voorkomt dubbele intervals
-      checkVersionAndFetch(); // meteen 1x
+      stop(); // prevent double intervals
+      checkVersionAndFetch(); // run immediately
       intervalRef.current = setInterval(checkVersionAndFetch, 20000);
     };
 
@@ -220,16 +247,27 @@ function KitchenActive({ onBackToSetup }) {
     };
 
     document.addEventListener("visibilitychange", onVis);
-    onVis(); // init
+    onVis();
 
     return () => {
       isMounted = false;
       stop();
       document.removeEventListener("visibilitychange", onVis);
     };
-  }, [pendingUpdates]);
+  }, [pendingUpdates]); // ✅ IMPORTANT: do NOT add currentTime here
 
   const handleStatusChange = async (id, newStatus = "done") => {
+    // ✅ mock order: local only, no server call
+    if (String(id) === "mock-1") {
+      mockOrderRef.current = { ...mockOrderRef.current, status: newStatus };
+      setOrders((prev) =>
+        prev.map((o) =>
+          String(o.id) === String(id) ? { ...o, status: newStatus } : o,
+        ),
+      );
+      return;
+    }
+
     try {
       setUpdatingId(id);
       setPendingUpdates((prev) => ({ ...prev, [id]: newStatus }));
