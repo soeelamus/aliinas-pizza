@@ -145,6 +145,7 @@
 /* BLACK: order picked up */
 .kitchen-order.pickedup {
   border: 2px solid black;
+  margin-bottom: 1rem;
 }
 .kitchen-order.pickedup .heading {
   background-color: black;
