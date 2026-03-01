@@ -366,7 +366,7 @@ function KitchenActive({ onBackToSetup }) {
       {pickedUpOrders.length > 0 && (
         <>
           <div className="center">
-            <h2 className="monoton-regular white">✅ Picked-up</h2>
+            <h2 className="monoton-regular white margin-5">✅ picked-up</h2>
           </div>
 
           <ul className="pickedup">
