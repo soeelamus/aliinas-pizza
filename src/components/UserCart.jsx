@@ -31,7 +31,7 @@ const UserCart = ({ isOpen }) => {
                   <span className="quant">
                     {cartItem.quantity}x {cartItem.product.name}
                   </span>
-                  <p>€{cartItem.product.price}</p>
+                  <p>€{cartItem.product.price.toFixed(2)}</p>
                 </div>
               </div>
 
@@ -65,7 +65,7 @@ const UserCart = ({ isOpen }) => {
 
       <div className="checkout-section">
         <div className="checkout-total">
-          <p className="total">Totaal: €{totalAmount()}</p>
+          <p className="total">Totaal: €{totalAmount().toFixed(2)}</p>
         </div>
 
         {isKitchen ? (
