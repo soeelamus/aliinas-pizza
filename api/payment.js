@@ -1,7 +1,7 @@
 // api/payment.js
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_TEST, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2023-10-16",
 });
 
@@ -90,15 +90,22 @@ export default async function handler(req, res) {
 
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-        customer_email: customer.email,
         line_items: lineItems,
-        customer_creation: "always",
         success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${baseUrl}/ordering`,
+        customer_email: customer.email,
+        customer_creation: "always",
         metadata: {
-          pickupTime: customer.pickupTime || "",
-          customerName: customer.name || "",
-          customerNotes: customer.notes || "",
+            pickupTime: customer.pickupTime || "",
+            customerName: customer.name || "",
+            customerNotes: customer.notes || "",
+          },
+        payment_intent_data: {
+          metadata: {
+            pickupTime: customer.pickupTime || "",
+            customerName: customer.name || "",
+            customerNotes: customer.notes || "",
+          },
         },
       });
 
