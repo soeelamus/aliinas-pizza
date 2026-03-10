@@ -1,5 +1,4 @@
-// SuccessPage.jsx
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import "./SuccessPage.css";
@@ -7,25 +6,23 @@ import Success from "../../SuccessCard";
 import Loading from "../../Loading/Loading";
 
 const SuccessPage = () => {
-  const [status, setStatus] = useState("loading"); // loading | paid | unpaid | canceled
+  const [status, setStatus] = useState("loading");
   const [order, setOrder] = useState(null);
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // 👉 Stripe session id uit URL
   const sessionId = searchParams.get("session_id");
 
-  console.log("order: ", order);
-
-  // 🔹 parse items string naar array
   const parseOrderItems = (itemsStr) => {
     if (!itemsStr) return [];
+
     return itemsStr
       .split(",")
       .map((item) => {
         const match = item.trim().match(/^(\d+)x\s+(.+)$/);
         if (!match) return null;
+
         return {
           quantity: parseInt(match[1], 10),
           name: match[2].trim(),
@@ -34,7 +31,6 @@ const SuccessPage = () => {
       .filter(Boolean);
   };
 
-  // 🔹 push stock update
   const pushStock = async (orderItems, currentStock) => {
     if (!orderItems || orderItems.length === 0) return;
 
@@ -43,10 +39,7 @@ const SuccessPage = () => {
     orderItems.forEach((item) => {
       let stockItem = currentStock.find((s) => s.name === item.name);
 
-      // fallback (zoals je had)
-      if (!stockItem) {
-        stockItem = currentStock[0];
-      }
+      if (!stockItem) stockItem = currentStock[0];
 
       const existing = grouped.find((g) => g.id === stockItem.id);
 
@@ -66,92 +59,111 @@ const SuccessPage = () => {
     }));
 
     try {
-      await fetch("/api/stock", {
+      const res = await fetch("/api/stock", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateData),
       });
+
+      if (!res.ok) throw new Error("Stock update failed");
     } catch (err) {
       console.error("❌ Stock update failed:", err);
     }
   };
 
-  // 🔹 check Stripe payment
-useEffect(() => {
-  if (!sessionId) return;
+  // Stripe payment check
+  useEffect(() => {
+    if (!sessionId) return;
 
-  (async () => {
-    try {
-      const res = await fetch(`/api/payment?sessionId=${sessionId}`);
-      const data = await res.json();
+    (async () => {
+      try {
+        const res = await fetch(`/api/payment?sessionId=${sessionId}`);
 
-      setStatus(data.status);
+        if (!res.ok) throw new Error("Payment check failed");
 
-      if (data.status === "paid") {
-        setOrder({
-          id: sessionId, // ✅ stabiel
-          sessionId,
-          items: data.itemsString || "",
-          total: Number(data.total || 0),
-          pickupTime: data.pickupTime || "",
-          orderedTime: new Date().toISOString(),
-          customerName: data.customerName || "",
-          customerEmail: data.customerEmail || "",
-          customerNotes: data.customerNotes || "",
-          status: "new",
-        });
-      } else {
-        setOrder(null);
+        const data = await res.json();
+
+        setStatus(data.status);
+
+        if (data.status === "paid") {
+          setOrder({
+            id: sessionId,
+            sessionId,
+            items: data.itemsString || "",
+            total: Number(data.total || 0),
+            pickupTime: data.pickupTime || "",
+            orderedTime: new Date().toISOString(),
+            customerName: data.customerName || "",
+            customerEmail: data.customerEmail || "",
+            customerNotes: data.customerNotes || "",
+            status: "new",
+          });
+        } else {
+          setOrder(null);
+        }
+      } catch (err) {
+        console.error(err);
+        navigate("/");
       }
-    } catch (err) {
-      console.error(err);
-      navigate("/");
-    }
-  })();
-}, [sessionId, navigate]);
+    })();
+  }, [sessionId, navigate]);
 
+  // Push order + stock (met retry)
   useEffect(() => {
     if (!order) return;
     if (status !== "paid") return;
 
+    if (!order.items) return;
+    if (!order.customerEmail) return;
+
     const pushedKey = `pushed_${sessionId}`;
     if (localStorage.getItem(pushedKey)) return;
 
-    const pushOrderAndStock = async () => {
+    const pushOrderAndStock = async (retry = 0) => {
       try {
-        // push order
         const res = await fetch("/api/orders", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(order),
         });
 
+        if (!res.ok) throw new Error("Order API error");
+
         const result = await res.json();
 
         if (result.status !== "ok" && result.status !== "already_exists") {
-          return;
+          throw new Error("Order push failed");
         }
 
-        // fetch stock
         const stockRes = await fetch("/api/stock");
+        if (!stockRes.ok) throw new Error("Stock fetch failed");
+
         const stockData = await stockRes.json();
 
-        // parse
         const parsedItems = parseOrderItems(order.items);
 
-        // update
         await pushStock(parsedItems, stockData);
 
-        // ✅ guard opslaan (overleeft refresh)
         localStorage.setItem(pushedKey, "1");
+
+        console.log("✅ Order pushed");
       } catch (err) {
-        console.error("❌ Push failed:", err);
+        if (retry < 3) {
+          console.log("Retry order push...", retry + 1);
+
+          setTimeout(() => {
+            pushOrderAndStock(retry + 1);
+          }, 1500);
+        } else {
+          console.error("❌ Order definitief mislukt:", err);
+        }
       }
     };
 
     pushOrderAndStock();
-  }, [order, status]);
+  }, [order, status, sessionId]);
 
+  // Mail sturen
   useEffect(() => {
     if (!order) return;
     if (status !== "paid") return;
@@ -162,13 +174,16 @@ useEffect(() => {
 
     const sendMail = async () => {
       try {
-        await fetch("/api/send-mail", {
+        const res = await fetch("/api/send-mail", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(order),
         });
 
+        if (!res.ok) throw new Error("Mail API error");
+
         localStorage.setItem(mailKey, "1");
+
         console.log("✅ Email sent");
       } catch (err) {
         console.error("❌ Email failed", err);
@@ -176,9 +191,8 @@ useEffect(() => {
     };
 
     sendMail();
-  }, [status, order]);
+  }, [status, order, sessionId]);
 
-  // 🔹 UI
   const renderContent = () => {
     switch (status) {
       case "paid":
@@ -216,10 +230,12 @@ useEffect(() => {
             onClick={() => {
               localStorage.removeItem("cart");
               localStorage.removeItem("paymentData");
+
               if (sessionId) {
                 localStorage.removeItem(`pushed_${sessionId}`);
                 localStorage.removeItem(`mail_${sessionId}`);
               }
+
               navigate("/");
               window.location.reload();
             }}
