@@ -74,7 +74,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
 
                   <div className="price-box">
                     <h3 className={`pizza-price ${dashed}`}>
-                      {item.price ?? ""}
+                      {item.price % 1 === 0 ? `${item.price}` : `${item.price.toFixed(2)}`}
                     </h3>
 
                     {isOpen && hasStock && (
@@ -92,6 +92,9 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
 
                 {description && (
                   <p className="pizza-ingredients">{description}</p>
+                )}
+                {item.size !== 0 && (
+                  <p className="pizza-ingredients">{item.size}</p>
                 )}
               </div>
             );

@@ -60,6 +60,7 @@ export const CartProvider = ({ children }) => {
       .map((x) => ({
         id: String(x.id ?? x.name ?? ""),
         name: x.name ?? "",
+        size: x.size ?? "",
         stock: Number(x.stock ?? 0),
         category: (x.category ?? "").toString().trim(),
         price: Number(x.price ?? x.Price ?? 0),
