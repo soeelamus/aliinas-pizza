@@ -40,6 +40,30 @@
       ]
     },
     {
+      "id": 4535,
+      "name": "Nieuw: Formagii",
+      "price": 13,
+      "type": "🥬",
+      "stock": 0,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Pecorino"
+        },
+        {
+          "name": "Gorgonzola"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
       "id": 3498,
       "name": "Vegii",
       "type": "🥬",
@@ -67,10 +91,34 @@
       ]
     },
     {
+      "id": 2357,
+      "name": "Nieuw: Hawaii",
+      "price": 13,
+      "type": "",
+      "stock": 1,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Ananas"
+        },
+        {
+          "name": "Gekookte ham"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
+    {
       "id": 9445,
       "name": "Pepperonii",
       "type": "",
-      "price": 12,
+      "price": 12.50,
       "stock": 1,
       "ingredients": [
         {
@@ -101,7 +149,7 @@
           "name": "Champignons"
         },
         {
-          "name": "Gerookte ham"
+          "name": "Gekookte ham"
         },
         {
           "name": "Olijfolie"
@@ -136,7 +184,7 @@
       "id": 7565,
       "name": "Diiavola",
       "type": "🌶️",
-      "price": 13,
+      "price": 13.50,
       "stock": 1,
       "ingredients": [
         {
@@ -176,13 +224,46 @@
           "name": "Rode ui"
         },
         {
+          "name": "Paprika"
+        },
+        {
           "name": "Jalapeno"
         },
         {
           "name": "Nduja"
         },
         {
-          "name": "Chili honing"
+          "name": "Honing"
+        }
+      ]
+    },
+    {
+      "id": 8123,
+      "name": "Nieuw: Spicy Chiicken",
+      "type": "🌶️",
+      "price": 13.50,
+      "stock": 1,
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Rode ui"
+        },
+        {
+          "name": "Paprika"
+        },
+        {
+          "name": "Jalapeno"
+        },
+        {
+          "name": "Gegrilde kip"
+        },
+        {
+          "name": "Honing"
         }
       ]
     }
