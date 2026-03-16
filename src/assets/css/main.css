@@ -1569,6 +1569,11 @@ textarea.error {
   gap: 1rem;
   align-items: center;
 }
+.decimals {
+  font-size: 50%;
+  margin-left: 0.2rem;
+  vertical-align: super;
+}
 .btn-small {
   width: 3rem;
 }
