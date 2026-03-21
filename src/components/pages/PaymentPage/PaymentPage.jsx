@@ -286,7 +286,7 @@ const PaymentPage = () => {
               className="form-textarea"
               id="notes"
               name="notes"
-              placeholder="Opmerking"
+              placeholder="Graag de Margheriita vegan maken"
               value={formData.notes}
               onChange={handleChange}
               rows={1}
