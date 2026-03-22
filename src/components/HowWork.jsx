@@ -31,7 +31,7 @@ const HowWork = () => (
               <br />
               <ul>
                 <li>15x Margheriita (165)</li>
-                <li>15x Pepperonii (180)</li>
+                <li>15x Fungii (180)</li>
                 <li>10x Sweet Chiicken (130)</li>
                 <li>Transport & Opstart (100)</li>
                 <li>Totaal - <strong>€575 incl. BTW</strong></li>
