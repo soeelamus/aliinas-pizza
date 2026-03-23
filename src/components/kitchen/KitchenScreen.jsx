@@ -238,7 +238,7 @@ function KitchenActive({ onBackToSetup }) {
     const start = () => {
       stop(); // prevent double intervals
       checkVersionAndFetch(); // run immediately
-      intervalRef.current = setInterval(checkVersionAndFetch, 20000);
+      intervalRef.current = setInterval(checkVersionAndFetch, 15000);
     };
 
     const onVis = () => {
