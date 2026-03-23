@@ -15,7 +15,7 @@ export async function finalizeOrder({
 
   const orderObj = {
     id: Date.now().toString(),
-    sessionId: paymentMethod,
+    sessionId: `${paymentMethod}-${Date.now()}`,
     items: cart
       .map((i) => `${i.quantity}x ${i.product.name}`)
       .join(", "),

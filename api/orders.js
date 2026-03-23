@@ -140,50 +140,60 @@ export default async function handler(req, res) {
       return res.status(200).json(filtered);
     }
 
-    // =========================
-    // POST → Insert (idempotent by sessionId)
-    // =========================
-    if (req.method === "POST") {
-      const incoming = req.body || {};
+if (req.method === "POST") {
+  const incoming = req.body || {};
 
-      // normalize sessionId
-      const incomingSessionId = String(
-        incoming.sessionId || incoming.session_id || incoming.id || "",
-      ).trim();
+  // 🔹 Genereer sessionId uit data
+  const incomingSessionId = String(
+    incoming.sessionId || incoming.session_id || incoming.id || ""
+  ).trim();
 
-      // If we have a sessionId, check existing sheet first (prevents duplicates)
-      if (incomingSessionId) {
-        const existingRes = await fetch(GAS_URL, { cache: "no-store" });
-        const existingCsv = await existingRes.text();
-        const { rows } = parseCsvToObjects(existingCsv);
+  let isNewOrder = true;
 
-        if (orderAlreadyExists(rows, incomingSessionId)) {
-          return res.status(200).json({ status: "already_exists" });
-        }
-      }
+  if (incomingSessionId) {
+    const existingRes = await fetch(GAS_URL, { cache: "no-store" });
+    const existingCsv = await existingRes.text();
+    const { rows } = parseCsvToObjects(existingCsv);
 
-      // Forward to Apps Script
-      const response = await fetch(GAS_URL, {
+    if (orderAlreadyExists(rows, incomingSessionId)) {
+      isNewOrder = false; // order bestaat al
+    }
+  }
+
+  const response = await fetch(GAS_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(incoming),
+  });
+
+  const text = await response.text();
+
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (err) {
+    return res.status(500).json({ error: "Invalid JSON from GAS" });
+  }
+
+  // 🔹 Mail sturen als:
+  // 1) nieuwe order (status ok) OF
+  // 2) test payment (development of test sessionId)
+  const sendMail = isNewOrder || process.env.NODE_ENV === "development";
+
+  if (sendMail) {
+    try {
+      await fetch(`${process.env.BASE_URL}/api/send-mail`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(incoming),
       });
-
-      const text = await response.text();
-
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (err) {
-        console.error("Apps Script returned invalid JSON:", text);
-        return res.status(500).json({
-          error: "Apps Script did not return valid JSON",
-          raw: text,
-        });
-      }
-
-      return res.status(200).json(data);
+    } catch (err) {
+      console.error("Mail failed:", err);
     }
+  }
+
+  return res.status(200).json(data);
+}
 
     return res.status(405).json({ error: "Method not allowed" });
   } catch (err) {

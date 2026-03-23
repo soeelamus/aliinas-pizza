@@ -1,4 +1,3 @@
-// api/payment.js
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -13,9 +12,6 @@ function getBaseUrl(req) {
 
 export default async function handler(req, res) {
   try {
-    // =========================
-    // GET → Status check
-    // =========================
     if (req.method === "GET") {
       const sessionId = (req.query.sessionId || req.query.session_id || "")
         .toString()
@@ -30,14 +26,14 @@ export default async function handler(req, res) {
       const itemsString = (session.line_items?.data || [])
         .map(
           (li) =>
-            `${li.quantity}x ${li.description || li.price?.product?.name || "Item"}`,
+            `${li.quantity}x ${li.description || li.price?.product?.name || "Item"}`
         )
         .join(", ");
 
       const total = (session.amount_total || 0) / 100;
 
       return res.status(200).json({
-        status: session.payment_status, // "paid" / "unpaid"
+        status: session.payment_status,
         sessionId: session.id,
         itemsString,
         total,
@@ -48,12 +44,12 @@ export default async function handler(req, res) {
           "",
         customerEmail: session.customer_details?.email || "",
         customerNotes: session.metadata?.customerNotes || "",
+
+        // ✅ FIX: timestamp toegevoegd
+        created: session.created,
       });
     }
 
-    // =========================
-    // POST → Create payment
-    // =========================
     if (req.method === "POST") {
       console.log("PAYMENT BODY:", req.body);
 
@@ -96,10 +92,10 @@ export default async function handler(req, res) {
         customer_email: customer.email,
         customer_creation: "always",
         metadata: {
-            pickupTime: customer.pickupTime || "",
-            customerName: customer.name || "",
-            customerNotes: customer.notes || "",
-          },
+          pickupTime: customer.pickupTime || "",
+          customerName: customer.name || "",
+          customerNotes: customer.notes || "",
+        },
         payment_intent_data: {
           metadata: {
             pickupTime: customer.pickupTime || "",
