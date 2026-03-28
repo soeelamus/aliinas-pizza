@@ -41,7 +41,7 @@
     },
     {
       "id": 4535,
-      "name": "Nieuw: Formagii",
+      "name": "Formagii",
       "price": 13,
       "type": "🥬",
       "stock": 1,
@@ -110,7 +110,7 @@
     },
     {
       "id": 2357,
-      "name": "Nieuw: Hawaii",
+      "name": "Hawaii",
       "price": 13,
       "type": "",
       "stock": 1,
@@ -182,7 +182,7 @@
     },
     {
       "id": 8123,
-      "name": "Nieuw: Spicy Chiicken",
+      "name": "Spicy Chiicken",
       "type": "🌶️",
       "price": 13,
       "stock": 1,
@@ -198,36 +198,6 @@
         },
         {
           "name": "Gegrilde kip"
-        },
-        {
-          "name": "Honing"
-        }
-      ]
-    },
-    {
-      "id": 1564,
-      "name": "Nduja",
-      "type": "🌶️",
-      "price": 13,
-      "stock": 1,
-      "ingredients": [
-        {
-          "name": "Tomatensaus"
-        },
-        {
-          "name": "Mozzarella"
-        },
-        {
-          "name": "Paprika"
-        },
-        {
-          "name": "Rode ui"
-        },
-        {
-          "name": "Jalapeno"
-        },
-        {
-          "name": "Nduja"
         },
         {
           "name": "Honing"
