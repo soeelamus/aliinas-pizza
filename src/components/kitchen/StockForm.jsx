@@ -161,11 +161,16 @@ export default function StockForm() {
     );
   }
 
+  // Filter ID's that start with 9 (All extra Items)
+  const excludedExtraStockItems = stockItems.filter(
+    (item) => !item.id.toString().startsWith("9"),
+  );
+
   return (
     <div className="kitchen-section form">
       <h1 className="monoton-regular white">Voorraad</h1>
       <form onSubmit={handleSubmit}>
-        {stockItems.map((item) => (
+        {excludedExtraStockItems.map((item) => (
           <div key={item.id}>
             <label className="form-text">
               {item.name}:{" "}
