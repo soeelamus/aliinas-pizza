@@ -1658,6 +1658,7 @@ footer {
   background-repeat: repeat;
   background-attachment: fixed;
   color: var(--primary-white);
+  position: relative;
 }
 footer .copyright {
   display: flex;
@@ -1670,6 +1671,14 @@ footer .copyright {
 }
 footer a:hover {
   color: var(--primary-pink);
+}
+.footer--version {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  display: flex;
+  gap: 2rem;
+  font-size: 1rem;
 }
 .outside-month {
   color: #6b6b6b !important;
