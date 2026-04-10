@@ -163,36 +163,6 @@ const SuccessPage = () => {
     pushOrderAndStock();
   }, [order, status, sessionId]);
 
-  // Mail sturen
-  useEffect(() => {
-    if (!order) return;
-    if (status !== "paid") return;
-    if (!order.customerEmail) return;
-
-    const mailKey = `mail_${sessionId}`;
-    if (localStorage.getItem(mailKey)) return;
-
-    const sendMail = async () => {
-      try {
-        const res = await fetch("/api/send-mail", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(order),
-        });
-
-        if (!res.ok) throw new Error("Mail API error");
-
-        localStorage.setItem(mailKey, "1");
-
-        console.log("✅ Email sent");
-      } catch (err) {
-        console.error("❌ Email failed", err);
-      }
-    };
-
-    sendMail();
-  }, [status, order, sessionId]);
-
   const renderContent = () => {
     switch (status) {
       case "paid":

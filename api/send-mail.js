@@ -95,6 +95,7 @@ export default async function handler(req, res) {
         <h2>Bedankt ${order.customerName}!</h2>
         <p>Je bestelling kan straks worden afgehaald, om <strong>${order.pickupTime}.</strong></p>
         <p>Het afhaaladres vind je terug op onze kalender. 🍕</p>
+        <p>Er worden soms meerdere bevestigingsmails verzonden. Je betaling werd slechts 1 keer doorgevoerd.</p>
         <br />
         <div class="order-details">
           <p><strong>Bestelling:</strong><br/>
