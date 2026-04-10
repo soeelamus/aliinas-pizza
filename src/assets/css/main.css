@@ -1540,6 +1540,12 @@ textarea.error {
 .pizza {
   width: 25rem;
 }
+.pizza-special {
+  width: 100rem;
+}
+.pizza-special * {
+  color: yellow !important;
+}
 .kitchen-cashier .pizza {
   width: 20rem;
 }

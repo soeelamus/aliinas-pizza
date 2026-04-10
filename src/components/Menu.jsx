@@ -63,7 +63,10 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                 : "Toevoegen aan bestelling";
 
             return (
-              <div key={item.id} className="pizza">
+              <div
+                key={item.id}
+                className={`pizza ${item.special && "pizza-special"}`}
+              >
                 <div className="pizza-text">
                   <h3 className={`pizza-name ${dashed}`}>
                     {item.name}
@@ -99,6 +102,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                   </div>
                 </div>
 
+                {item.info && <p className="pizza-ingredients">{item.info}</p>}
                 {description && (
                   <p className="pizza-ingredients">{description}</p>
                 )}
