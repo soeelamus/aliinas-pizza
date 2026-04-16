@@ -49,16 +49,26 @@ const PizzaShop = () => {
     }
   }, [isOrderingRoute, ensureStockLoaded]);
 
-  // Wacht tot basisdata (events + pizzas) geladen is
-  if (loading || pizzas.length === 0) {
-    return <Loading innerHTML={" Menu wordt geladen"} />;
+  const isLoading =
+    loading ||
+    pizzas.length === 0 ||
+    (isOrderingRoute && stockLoading && !stockSheetState?.length);
+
+  if (isLoading) {
+    return (
+      <>
+        <Loading innerHTML="Bestelfunctie wordt geladen" />
+        <Menu
+          pizzas={pizzas}
+          stockSheet={stockSheetState}
+          events={events}
+          isOpen={isOpen}
+        />
+      </>
+    );
   }
 
-  if (isOrderingRoute && stockLoading && !stockSheetState?.length) {
-    return <Loading innerHTML={" Menu wordt geladen"} />;
-  }
-
-  console.log("Pizzashop is open: ", isOpen);
+  console.log("Pizzashop is open:", isOpen);
 
   return (
     <>
