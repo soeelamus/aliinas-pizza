@@ -1,7 +1,8 @@
 // pages/api/orders.js
-const GAS_URL = process.env.SHEETS_ORDER;
+import { Resend } from "resend";
 
-// Accept multiple possible header names from your sheet
+const resend = new Resend(process.env.RESEND_KEY);
+const GAS_URL = process.env.SHEETS_ORDER;
 const SESSION_KEYS = ["sessionid", "session_id"];
 
 // -------------------- CSV helpers (quote-aware) --------------------
@@ -41,8 +42,9 @@ function parseCsvToObjects(csvText) {
   const lines = (csvText || "").split(/\r?\n/).filter(Boolean);
   if (lines.length <= 1) return { headers: [], rows: [] };
 
-  const headers = splitCsvLine(lines[0])
-    .map((h) => h.replace(/^"|"$/g, "").trim().toLowerCase());
+  const headers = splitCsvLine(lines[0]).map((h) =>
+    h.replace(/^"|"$/g, "").trim().toLowerCase(),
+  );
 
   const rows = lines.slice(1).map((line) => {
     const cols = splitCsvLine(line).map((c) => c.replace(/^"|"$/g, "").trim());
@@ -54,6 +56,119 @@ function parseCsvToObjects(csvText) {
   });
 
   return { headers, rows };
+}
+
+async function sendMail(order) {
+  if (!order.customerEmail) {
+    throw new Error("No email");
+  }
+
+  const firstPizza =
+    (order.items || "")
+      .split(",")[0]
+      ?.replace(/^\s*\d+\s*x\s*/i, "")
+      ?.trim() || "je pizza";
+
+  return resend.emails.send({
+    from: "Aliina's Pizza <orders@aliinas.com>",
+    replyTo: "aliinas.pizza@hotmail.com",
+    to: order.customerEmail,
+    bcc: "aliinas.pizza@hotmail.com",
+    subject: `Je bestelling kan worden opgehaald om ${order.pickupTime} 🍕`,
+
+    html: `
+ <!DOCTYPE html>
+  <html lang="nl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        font-family: 'Helvetica', Arial, sans-serif;
+        background-color: #fefaf4;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #fefaf4;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border-top: 6px solid #6237c8;
+      }
+      .header {
+        background-color: #6237c8;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .content {
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .content h2 {
+        color: #6237c8;
+      }
+      .order-details {
+        margin: 20px 0;
+        border-top: 1px solid #fefaf4;
+        border-bottom: 1px solid #fefaf4;
+        padding: 10px 0;
+      }
+      .order-details p {
+        margin: 5px 0;
+      }
+      .footer {
+        text-align: center;
+        font-size: 12px;
+        color: #888;
+        padding: 15px;
+      }
+      @media(max-width: 640px) {
+        .container { width: 90%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">Aliina's Pizza</div>
+      <div class="content">
+<h2>
+  Psst… ik ben het, je pizza ${firstPizza}! 😄<br/>
+  </h2>        
+  <p>Ik word graag opgehaald om <strong>${order.pickupTime}</strong></p>
+<p>Tot straks, ${order.customerName}!</p>
+<br />
+<p>Het afhaaladres vind je terug op onze kalender.</p>
+        <br />
+        <div class="order-details">
+          <p><strong>Bestelling:</strong><br/>
+          ${order.items.replace(/,/g, "<br/>")}</p>
+
+          <p><strong>Totaal:</strong> €${Number(order.total || 0).toFixed(2)}</p>
+          
+          ${order.customerNotes ? `<p><strong>Opmerking:</strong> ${order.customerNotes}</p>` : ""}
+          </div>
+          <br />
+          <a href="https://aliinas.com/" 
+            style="display:inline-block; background:#6237c8; color:#fff; padding:10px 20px; border-radius:5px; text-decoration:none;">
+            Website
+          </a>        
+          </div>
+        <div class="footer">
+        Een vraag? Je kan ze stellen door op deze mail te antwoorden<br/>
+        <a href="mailto:aliinas.pizza@hotmail.com" style="color:#888;">aliinas.pizza@hotmail.com</a>
+      </div>
+    </div>
+  </body>
+  </html>
+  `,
+  });
 }
 
 // -------------------- idempotency --------------------
@@ -140,60 +255,53 @@ export default async function handler(req, res) {
       return res.status(200).json(filtered);
     }
 
-if (req.method === "POST") {
-  const incoming = req.body || {};
+    if (req.method === "POST") {
+      const incoming = req.body || {};
 
-  // 🔹 Genereer sessionId uit data
-  const incomingSessionId = String(
-    incoming.sessionId || incoming.session_id || incoming.id || ""
-  ).trim();
+      // 🔹 Genereer sessionId uit data
+      const incomingSessionId = String(
+        incoming.sessionId || incoming.session_id || incoming.id || "",
+      ).trim();
 
-  let isNewOrder = true;
+      let isNewOrder = true;
 
-  if (incomingSessionId) {
-    const existingRes = await fetch(GAS_URL, { cache: "no-store" });
-    const existingCsv = await existingRes.text();
-    const { rows } = parseCsvToObjects(existingCsv);
+      if (incomingSessionId) {
+        const existingRes = await fetch(GAS_URL, { cache: "no-store" });
+        const existingCsv = await existingRes.text();
+        const { rows } = parseCsvToObjects(existingCsv);
 
-    if (orderAlreadyExists(rows, incomingSessionId)) {
-      isNewOrder = false; // order bestaat al
-    }
-  }
+        if (orderAlreadyExists(rows, incomingSessionId)) {
+          isNewOrder = false; // order bestaat al
+        }
+      }
 
-  const response = await fetch(GAS_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(incoming),
-  });
-
-  const text = await response.text();
-
-  let data;
-  try {
-    data = JSON.parse(text);
-  } catch (err) {
-    return res.status(500).json({ error: "Invalid JSON from GAS" });
-  }
-
-  // 🔹 Mail sturen als:
-  // 1) nieuwe order (status ok) OF
-  // 2) test payment (development of test sessionId)
-  const sendMail = isNewOrder || process.env.NODE_ENV === "development";
-
-  if (sendMail) {
-    try {
-      await fetch(`${process.env.BASE_URL}/api/send-mail`, {
+      const response = await fetch(GAS_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(incoming),
       });
-    } catch (err) {
-      console.error("Mail failed:", err);
-    }
-  }
 
-  return res.status(200).json(data);
-}
+      const text = await response.text();
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        return res.status(500).json({ error: "Invalid JSON from GAS" });
+      }
+
+      // 🔹 Mail sturen:
+      if (isNewOrder) {
+        try {
+          await sendMail(incoming);
+          console.log("✅ Mail sent (backend)");
+        } catch (err) {
+          console.error("❌ Mail failed:", err);
+        }
+      }
+
+      return res.status(200).json(data);
+    }
 
     return res.status(405).json({ error: "Method not allowed" });
   } catch (err) {
