@@ -1,6 +1,6 @@
 import "../components/pages/ImagesPage/ImagesPage.css";
 
-const images = ["Mood.png", "foodtruck.jpg", "mood-pizza.jpg"];
+const images = ["21.08.54.2.jpeg", "mood-pizza.jpg", "11.30.06.jpeg"];
 
 export default function ImagesBox() {
   return (
