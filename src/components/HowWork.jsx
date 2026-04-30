@@ -32,9 +32,10 @@ const HowWork = () => (
               <ul>
                 <li>15x Margheriita (165)</li>
                 <li>15x Fungii (180)</li>
-                <li>10x Sweet Chiicken (130)</li>
+                <li>10x Pepperoni (125)</li>
+                <li>5x Sweet Chiicken (65)</li>
                 <li>Transport & Opstart (100)</li>
-                <li>Totaal - <strong>€575 incl. BTW</strong></li>
+                <li>Totaal - <strong>€635 incl. BTW</strong></li>
               </ul>
               <p>Dat is het. Simpel, toch?</p>
             </div>

@@ -53,7 +53,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
               isOpen && hasStock && isItemAvailable && hasItemStock;
 
             const description = isPizza
-              ? item.ingredients?.map((i) => i.name).join(" • ")
+              ? item.ingredients?.map((i) => i.name.toLowerCase()).join(" • ")
               : "";
 
             const title = !hasStock

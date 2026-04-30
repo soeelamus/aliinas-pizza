@@ -1,5 +1,34 @@
 {
   "Pizzas": [
+        {
+      "id": 1945,
+      "name": "Europadag",
+      "type": "⚜️",
+      "price": 13.05,
+      "special": true,
+      "stock": 1,
+      "info": "Deze speciale pizza symboliseert de samenwerking tussen Europa, de Verenigde Staten en de Sovjet-Unie bij de bevrijding in mei 1945, als eerbetoon aan Europadag en de Dag van de Overwinning",
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Appel"
+        },
+        {
+          "name": "Gorgonzola"
+        },
+        {
+          "name": "Gekookte ham"
+        },
+        {
+          "name": "Olijfolie"
+        }
+      ]
+    },
     {
       "id": 1489,
       "name": "Margheriita",
