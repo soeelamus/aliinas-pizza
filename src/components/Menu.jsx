@@ -69,6 +69,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
               >
                 <div className="pizza-text">
                   <h3 className={`pizza-name ${dashed}`}>
+                    {item.special && <span className="pizza-special--tag">special</span>}
                     {item.name}
                     {isPizza && (
                       <span className="pizza-symbol">{item.type}</span>

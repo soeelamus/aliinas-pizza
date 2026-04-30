@@ -1543,8 +1543,14 @@ textarea.error {
 .pizza-special {
   width: 100rem;
 }
-.pizza-special * {
+.pizza-special h3 {
   color: yellow !important;
+}
+.pizza-special--tag {
+  border: 2px solid yellow;
+  border-radius: 0.5rem;
+  margin-right: 1rem;
+  padding: 0 0.5rem;
 }
 .kitchen-cashier .pizza {
   width: 20rem;
