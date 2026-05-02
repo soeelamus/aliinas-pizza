@@ -1,11 +1,11 @@
-// pages/api/orders.js
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_KEY);
 const GAS_URL = process.env.SHEETS_ORDER;
+const resend = new Resend(process.env.RESEND_KEY);
+
 const SESSION_KEYS = ["sessionid", "session_id"];
 
-// -------------------- CSV helpers (quote-aware) --------------------
+// -------------------- CSV helpers --------------------
 function splitCsvLine(line) {
   const out = [];
   let cur = "";
@@ -15,7 +15,6 @@ function splitCsvLine(line) {
     const ch = line[i];
 
     if (ch === '"') {
-      // handle escaped quotes ("")
       if (inQ && line[i + 1] === '"') {
         cur += '"';
         i++;
@@ -48,35 +47,117 @@ function parseCsvToObjects(csvText) {
 
   const rows = lines.slice(1).map((line) => {
     const cols = splitCsvLine(line).map((c) => c.replace(/^"|"$/g, "").trim());
+
     const obj = {};
     headers.forEach((h, i) => {
       obj[h] = cols[i] ?? "";
     });
+
     return obj;
   });
 
   return { headers, rows };
 }
 
-async function sendMail(order) {
-  if (!order.customerEmail) {
-    throw new Error("No email");
+// -------------------- idempotency --------------------
+function getRowSessionId(row) {
+  for (const k of SESSION_KEYS) {
+    const v = String(row?.[k] || "").trim();
+    if (v) return v;
   }
+  return "";
+}
 
-  const firstPizza =
-    (order.items || "")
-      .split(",")[0]
-      ?.replace(/^\s*\d+\s*x\s*/i, "")
-      ?.trim() || "je pizza";
+function orderAlreadyExists(rows, incomingSessionId) {
+  if (!incomingSessionId) return false;
+  return rows.some((row) => getRowSessionId(row) === incomingSessionId);
+}
 
-  return resend.emails.send({
-    from: "Aliina's Pizza <orders@aliinas.com>",
-    replyTo: "aliinas.pizza@hotmail.com",
-    to: order.customerEmail,
-    bcc: "aliinas.pizza@hotmail.com",
-    subject: `Je bestelling kan worden opgehaald om ${order.pickupTime} 🍕`,
+// -------------------- handler --------------------
+export default async function handler(req, res) {
+  try {
+    if (!GAS_URL) {
+      return res.status(500).json({ error: "Missing SHEETS_ORDER env var" });
+    }
 
-    html: `
+    // =========================
+    // GET ORDERS
+    // =========================
+    if (req.method === "GET") {
+      const response = await fetch(GAS_URL, { cache: "no-store" });
+      const csvText = await response.text();
+
+      const { rows } = parseCsvToObjects(csvText);
+      return res.status(200).json(rows);
+    }
+
+    // =========================
+    // CREATE ORDER
+    // =========================
+    if (req.method === "POST") {
+      const incoming = req.body || {};
+
+      const incomingSessionId = String(
+        incoming.sessionId || incoming.session_id || incoming.id || "",
+      ).trim();
+
+      if (!incomingSessionId) {
+        return res.status(400).json({ error: "Missing sessionId" });
+      }
+
+      // ---------------------
+      // 1. Check duplicate
+      // ---------------------
+      const existingRes = await fetch(GAS_URL, { cache: "no-store" });
+      const existingCsv = await existingRes.text();
+      const { rows } = parseCsvToObjects(existingCsv);
+
+      const isNewOrder = !orderAlreadyExists(rows, incomingSessionId);
+
+      if (!isNewOrder) {
+        return res.status(200).json({ status: "already_exists" });
+      }
+
+      // ---------------------
+      // 2. Save order (GAS)
+      // ---------------------
+      const response = await fetch(GAS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(incoming),
+      });
+
+      const text = await response.text();
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        return res.status(500).json({ error: "Invalid JSON from GAS" });
+      }
+
+      // ---------------------
+      // 3. Send mail (SERVER-SIDE)
+      // ---------------------
+      try {
+        const firstPizza =
+          (incoming.items || "")
+            .split(",")[0]
+            ?.replace(/^\s*\d+\s*x\s*/i, "")
+            ?.trim() || "je pizza";
+
+        const getRandomEmoji = () => {
+          const emojis = ["🍕", "😄", "😋", "🔥", "👀", "🤤", "🎉"];
+          return emojis[Math.floor(Math.random() * emojis.length)];
+        };
+        if (incoming.customerEmail) {
+          await resend.emails.send({
+            from: "Aliina's Pizza <orders@aliinas.com>",
+            replyTo: "aliinas.pizza@hotmail.com",
+            to: incoming.customerEmail,
+            bcc: "aliinas.pizza@hotmail.com",
+            subject: `Je bestelling kan worden opgehaald om ${incoming.pickupTime} 🍕`,
+            html: `
  <!DOCTYPE html>
   <html lang="nl">
   <head>
@@ -133,26 +214,26 @@ async function sendMail(order) {
         .container { width: 90%; }
       }
     </style>
-  </head>
-  <body>
+    </head>
+    <body>
     <div class="container">
       <div class="header">Aliina's Pizza</div>
       <div class="content">
-<h2>
-  Psst… ik ben het, je pizza ${firstPizza}! 😄<br/>
-  </h2>        
-  <p>Ik word graag opgehaald om <strong>${order.pickupTime}</strong></p>
-<p>Tot straks, ${order.customerName}!</p>
-<br />
-<p>Het afhaaladres vind je terug op onze kalender.</p>
+        <h2>
+          Psst… ik ben het, je pizza ${firstPizza}! ${getRandomEmoji()}<br/>
+          </h2>        
+          <p>Ik word graag opgehaald om <strong>${incoming.pickupTime}</strong></p>
+        <p>Tot straks, ${incoming.customerName}!</p>
+        <br />
+        <p>Het afhaaladres vind je terug op onze kalender.</p>
         <br />
         <div class="order-details">
           <p><strong>Bestelling:</strong><br/>
-          ${order.items.replace(/,/g, "<br/>")}</p>
+          ${incoming.items.replace(/,/g, "<br/>")}</p>
 
-          <p><strong>Totaal:</strong> €${Number(order.total || 0).toFixed(2)}</p>
+          <p><strong>Totaal:</strong> €${Number(incoming.total || 0).toFixed(2)}</p>
           
-          ${order.customerNotes ? `<p><strong>Opmerking:</strong> ${order.customerNotes}</p>` : ""}
+          ${incoming.customerNotes ? `<p><strong>Opmerking:</strong> ${incoming.customerNotes}</p>` : ""}
           </div>
           <br />
           <a href="https://aliinas.com/" 
@@ -166,141 +247,21 @@ async function sendMail(order) {
       </div>
     </div>
   </body>
-  </html>
-  `,
-  });
-}
-
-// -------------------- idempotency --------------------
-function getRowSessionId(row) {
-  for (const k of SESSION_KEYS) {
-    const v = String(row?.[k] || "").trim();
-    if (v) return v;
-  }
-  return "";
-}
-
-function orderAlreadyExists(rows, incomingSessionId) {
-  if (!incomingSessionId) return false;
-  return rows.some((row) => getRowSessionId(row) === incomingSessionId);
-}
-
-// ✅ Brussels date (YYYY-MM-DD) from orderedTime (ISO string with Z)
-function brusselsIsoDate(orderedTime) {
-  const v = String(orderedTime || "").trim();
-  if (!v) return "";
-
-  const d = new Date(v);
-  if (Number.isNaN(d.getTime())) return "";
-
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Europe/Brussels",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(d);
-}
-
-// -------------------- handler --------------------
-export default async function handler(req, res) {
-  try {
-    if (!GAS_URL) {
-      return res.status(500).json({ error: "Missing SHEETS_ORDER env var" });
-    }
-
-    // =========================
-    // GET → Read CSV rows
-    // =========================
-    if (req.method === "GET") {
-      const response = await fetch(GAS_URL, { cache: "no-store" });
-      const csvText = await response.text();
-
-      const { headers, rows } = parseCsvToObjects(csvText);
-
-      const dateQuery = req.query?.date ? String(req.query.date).trim() : "";
-      const pickupTimeQuery = req.query?.pickupTime
-        ? String(req.query.pickupTime).trim()
-        : "";
-
-      // No filters? Return all
-      if (!dateQuery && !pickupTimeQuery) {
-        return res.status(200).json(rows);
-      }
-
-      let filtered = rows;
-
-      // Filter by Brussels "day" derived from orderedtime column
-      if (dateQuery) {
-        if (!headers.includes("orderedtime")) {
-          return res.status(200).json([]);
+  </html>`,
+          });
         }
-
-        filtered = filtered.filter((row) => {
-          const rowDate = brusselsIsoDate(row.orderedtime);
-          return rowDate && rowDate === dateQuery;
-        });
+        console.log("📧 Mail sent");
+      } catch (mailErr) {
+        console.error("❌ Mail failed:", mailErr);
       }
 
-      // Optional filter by pickuptime
-      if (pickupTimeQuery) {
-        if (!headers.includes("pickuptime")) {
-          return res.status(200).json([]);
-        }
-
-        filtered = filtered.filter(
-          (row) => String(row.pickuptime || "").trim() === pickupTimeQuery,
-        );
-      }
-
-      return res.status(200).json(filtered);
-    }
-
-    if (req.method === "POST") {
-      const incoming = req.body || {};
-
-      // 🔹 Genereer sessionId uit data
-      const incomingSessionId = String(
-        incoming.sessionId || incoming.session_id || incoming.id || "",
-      ).trim();
-
-      let isNewOrder = true;
-
-      if (incomingSessionId) {
-        const existingRes = await fetch(GAS_URL, { cache: "no-store" });
-        const existingCsv = await existingRes.text();
-        const { rows } = parseCsvToObjects(existingCsv);
-
-        if (orderAlreadyExists(rows, incomingSessionId)) {
-          isNewOrder = false; // order bestaat al
-        }
-      }
-
-      const response = await fetch(GAS_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(incoming),
+      // ---------------------
+      // 4. Response
+      // ---------------------
+      return res.status(200).json({
+        status: "ok",
+        order: data,
       });
-
-      const text = await response.text();
-
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (err) {
-        return res.status(500).json({ error: "Invalid JSON from GAS" });
-      }
-
-      // 🔹 Mail sturen:
-      if (isNewOrder) {
-        try {
-          await sendMail(incoming);
-          console.log("✅ Mail sent (backend)");
-        } catch (err) {
-          console.error("❌ Mail failed:", err);
-        }
-      }
-
-      return res.status(200).json(data);
     }
 
     return res.status(405).json({ error: "Method not allowed" });

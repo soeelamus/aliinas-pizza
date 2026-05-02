@@ -5,6 +5,30 @@ import "./SuccessPage.css";
 import Success from "../../SuccessCard";
 import Loading from "../../Loading/Loading";
 
+import { finalizeOrder } from "../../../utils/finalizeOrder";
+
+/* -------------------
+   Helper: string → cart
+-------------------- */
+const itemsStringToCart = (itemsString) => {
+  if (!itemsString) return [];
+
+  return itemsString
+    .split(",")
+    .map((item) => {
+      const match = item.trim().match(/^(\d+)x\s+(.+)$/);
+      if (!match) return null;
+
+      return {
+        quantity: parseInt(match[1], 10),
+        product: {
+          name: match[2].trim(),
+        },
+      };
+    })
+    .filter(Boolean);
+};
+
 const SuccessPage = () => {
   const [status, setStatus] = useState("loading");
   const [order, setOrder] = useState(null);
@@ -14,64 +38,9 @@ const SuccessPage = () => {
 
   const sessionId = searchParams.get("session_id");
 
-  const parseOrderItems = (itemsStr) => {
-    if (!itemsStr) return [];
-
-    return itemsStr
-      .split(",")
-      .map((item) => {
-        const match = item.trim().match(/^(\d+)x\s+(.+)$/);
-        if (!match) return null;
-
-        return {
-          quantity: parseInt(match[1], 10),
-          name: match[2].trim(),
-        };
-      })
-      .filter(Boolean);
-  };
-
-  const pushStock = async (orderItems, currentStock) => {
-    if (!orderItems || orderItems.length === 0) return;
-
-    const grouped = [];
-
-    orderItems.forEach((item) => {
-      let stockItem = currentStock.find((s) => s.name === item.name);
-
-      if (!stockItem) stockItem = currentStock[0];
-
-      const existing = grouped.find((g) => g.id === stockItem.id);
-
-      if (existing) {
-        existing.stock -= item.quantity;
-      } else {
-        grouped.push({
-          id: stockItem.id,
-          stock: stockItem.stock - item.quantity,
-        });
-      }
-    });
-
-    const updateData = grouped.map((g) => ({
-      id: g.id,
-      stock: Math.max(0, g.stock),
-    }));
-
-    try {
-      const res = await fetch("/api/stock", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updateData),
-      });
-
-      if (!res.ok) throw new Error("Stock update failed");
-    } catch (err) {
-      console.error("❌ Stock update failed:", err);
-    }
-  };
-
-  // Stripe payment check
+  /* -------------------
+     1️⃣ Check payment
+  -------------------- */
   useEffect(() => {
     if (!sessionId) return;
 
@@ -91,7 +60,7 @@ const SuccessPage = () => {
             sessionId,
             items: data.itemsString || "",
             total: Number(data.total || 0),
-            pickupTime: data.pickupTime || "",
+            pickupTime: data.pickupTime || "ASAP",
             orderedTime: new Date().toISOString(),
             customerName: data.customerName || "",
             customerEmail: data.customerEmail || "",
@@ -108,61 +77,47 @@ const SuccessPage = () => {
     })();
   }, [sessionId, navigate]);
 
-  // Push order + stock (met retry)
+  /* -------------------
+     2️⃣ Finalize order (via centrale functie)
+  -------------------- */
   useEffect(() => {
     if (!order) return;
     if (status !== "paid") return;
 
-    if (!order.items) return;
-    if (!order.customerEmail) return;
-
     const pushedKey = `pushed_${sessionId}`;
-    if (localStorage.getItem(pushedKey)) return;
+    const mailKey = `mail_${sessionId}`;
 
-    const pushOrderAndStock = async (retry = 0) => {
+    const run = async () => {
       try {
-        const res = await fetch("/api/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(order),
-        });
+        const cart = itemsStringToCart(order.items);
 
-        if (!res.ok) throw new Error("Order API error");
+        // 🔹 Order enkel 1x
+        if (!localStorage.getItem(pushedKey)) {
+          await finalizeOrder({
+            cart,
+            total: order.total,
+            paymentMethod: "online",
+            customerName: order.customerName,
+            customerEmail: order.customerEmail,
+            pickupTime: order.pickupTime,
+            sessionId: order.sessionId
+          });
 
-        const result = await res.json();
-
-        if (result.status !== "ok" && result.status !== "already_exists") {
-          throw new Error("Order push failed");
+          localStorage.setItem(pushedKey, "1");
+          console.log("✅ Order verwerkt");
         }
 
-        const stockRes = await fetch("/api/stock");
-        if (!stockRes.ok) throw new Error("Stock fetch failed");
-
-        const stockData = await stockRes.json();
-
-        const parsedItems = parseOrderItems(order.items);
-
-        await pushStock(parsedItems, stockData);
-
-        localStorage.setItem(pushedKey, "1");
-
-        console.log("✅ Order pushed");
       } catch (err) {
-        if (retry < 3) {
-          console.log("Retry order push...", retry + 1);
-
-          setTimeout(() => {
-            pushOrderAndStock(retry + 1);
-          }, 1500);
-        } else {
-          console.error("❌ Order definitief mislukt:", err);
-        }
+        console.error("❌ finalizeOrder failed:", err);
       }
     };
 
-    pushOrderAndStock();
+    run();
   }, [order, status, sessionId]);
 
+  /* -------------------
+     UI rendering
+  -------------------- */
   const renderContent = () => {
     switch (status) {
       case "paid":

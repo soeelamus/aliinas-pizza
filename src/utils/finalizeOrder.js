@@ -3,7 +3,9 @@ export async function finalizeOrder({
   total,
   paymentMethod, // "cash" | "card"
   customerName = "",
+  customerEmail = null, // 👈 ADD THIS
   pickupTime = "ASAP",
+  sessionId,
 }) {
   if (!Array.isArray(cart) || cart.length === 0) {
     throw new Error("Cart is leeg");
@@ -14,21 +16,19 @@ export async function finalizeOrder({
   -------------------- */
 
   const orderObj = {
-    id: Date.now().toString(),
-    sessionId: `${paymentMethod}-${Date.now()}`,
-    items: cart
-      .map((i) => `${i.quantity}x ${i.product.name}`)
-      .join(", "),
+    id: sessionId,
+    sessionId: `${paymentMethod}-${sessionId}`,
+    items: cart.map((i) => `${i.quantity}x ${i.product.name}`).join(", "),
     total,
     pickupTime,
     orderedTime: new Date().toISOString(),
     customerName,
+    customerEmail,
     status: "new",
   };
 
   console.log("orderObj: ", orderObj);
-  console.log("orderObj.sessionId: ", orderObj.sessionId);
-  
+
   /* -------------------
      2️⃣ Push order
   -------------------- */
@@ -61,18 +61,14 @@ export async function finalizeOrder({
   const grouped = [];
 
   cart.forEach((item) => {
-    let stockItem = stockData.find(
-      (s) => s.name === item.product.name,
-    );
+    let stockItem = stockData.find((s) => s.name === item.product.name);
 
     // fallback → deegballen
     if (!stockItem) {
       stockItem = stockData[0];
     }
 
-    const existing = grouped.find(
-      (g) => g.id === stockItem.id,
-    );
+    const existing = grouped.find((g) => g.id === stockItem.id);
 
     if (existing) {
       existing.stock -= item.quantity;
