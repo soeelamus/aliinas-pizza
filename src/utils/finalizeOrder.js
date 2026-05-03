@@ -1,9 +1,9 @@
 export async function finalizeOrder({
   cart,
   total,
-  paymentMethod, // "cash" | "card"
+  paymentMethod, // "cash" | "card" | "online" | "payconiq"
   customerName = "",
-  customerEmail = null, // 👈 ADD THIS
+  customerEmail = null,
   pickupTime = "ASAP",
   sessionId,
 }) {
@@ -11,13 +11,15 @@ export async function finalizeOrder({
     throw new Error("Cart is leeg");
   }
 
+  const orderId = sessionId ?? Date.now().toString()
+
   /* -------------------
      1️⃣ Build order
   -------------------- */
 
   const orderObj = {
-    id: sessionId,
-    sessionId: `${paymentMethod}-${sessionId}`,
+    id: orderId,
+    sessionId: `${paymentMethod}-${orderId}`,
     items: cart.map((i) => `${i.quantity}x ${i.product.name}`).join(", "),
     total,
     pickupTime,
