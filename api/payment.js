@@ -20,14 +20,22 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: "Missing sessionId" });
 
       const session = await stripe.checkout.sessions.retrieve(sessionId, {
-        expand: ["line_items"],
+        expand: ["line_items", "line_items.data.price.product"],
       });
 
       const itemsString = (session.line_items?.data || [])
-        .map(
-          (li) =>
-            `${li.quantity}x ${li.description || li.price?.product?.name || "Item"}`
-        )
+        .map((li) => {
+          const product = li.price?.product;
+
+          const drink = product?.metadata?.drink;
+          const dessert = product?.metadata?.dessert;
+
+          if (drink || dessert) {
+            return `${li.quantity}x ${product?.name} (🥤 ${drink || "-"} - 🍰 ${dessert || "-"})`;
+          }
+
+          return `${li.quantity}x ${product?.name}`;
+        })
         .join(", ");
 
       const total = (session.amount_total || 0) / 100;
@@ -75,7 +83,15 @@ export default async function handler(req, res) {
         return {
           price_data: {
             currency: "eur",
-            product_data: { name: item.product.name },
+            product_data: {
+              name: item.product.name,
+
+              metadata: {
+                type: item.type || "product",
+                drink: item.menu?.drink?.name || "",
+                dessert: item.menu?.dessert?.name || "",
+              },
+            },
             unit_amount: Math.round(item.product.price * 100),
           },
           quantity: item.quantity,

@@ -100,13 +100,12 @@ const SuccessPage = () => {
             customerName: order.customerName,
             customerEmail: order.customerEmail,
             pickupTime: order.pickupTime,
-            sessionId: order.sessionId
+            sessionId: order.sessionId,
           });
 
           localStorage.setItem(pushedKey, "1");
           console.log("✅ Order verwerkt");
         }
-
       } catch (err) {
         console.error("❌ finalizeOrder failed:", err);
       }
@@ -114,6 +113,20 @@ const SuccessPage = () => {
 
     run();
   }, [order, status, sessionId]);
+
+  useEffect(() => {
+    const isOrderSuccess = localStorage.getItem("order_success");
+
+    if (!isOrderSuccess) return;
+
+    const timer = setTimeout(() => {
+      localStorage.removeItem("cart");
+      localStorage.removeItem("paymentData");
+      localStorage.removeItem("order_success");
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   /* -------------------
      UI rendering

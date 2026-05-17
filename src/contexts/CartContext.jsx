@@ -8,34 +8,43 @@ export const CartProvider = ({ children }) => {
   const [stockSheetState, setStockSheetState] = useState([]);
   const { isOpen } = useEvents();
 
-  const [cart, setCart] = useState(() => {
-    try {
-      const saved = localStorage.getItem("cart");
-      if (!saved) return [];
+const [cart, setCart] = useState(() => {
+  try {
+    const saved = localStorage.getItem("cart");
+    if (!saved) return [];
 
-      const parsed = JSON.parse(saved);
-      if (!parsed || !Array.isArray(parsed)) return [];
+    const parsed = JSON.parse(saved);
 
-      return parsed
-        .filter((item) => item && item.product)
-        .map((item) => ({
-          quantity: item.quantity || 0,
-          product: {
-            id: String(item.product.id ?? ""),
-            name: item.product.name ?? "",
-            price: item.product.price ?? 0,
-            type: item.product.type ?? "",
-            ingredients: Array.isArray(item.product.ingredients)
-              ? item.product.ingredients
-              : [],
-            category: item.product.category ?? "",
-          },
-        }));
-    } catch (e) {
-      console.error("Failed to parse cart from localStorage:", e);
-      return [];
-    }
-  });
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .filter((item) => item && item.product)
+      .map((item) => ({
+        quantity: item.quantity || 0,
+        type: item.type || null,
+
+        product: {
+          id: String(item.product.id ?? ""),
+          name: item.product.name ?? "",
+          price: item.product.price ?? 0,
+          type: item.product.type ?? "",
+          category: item.product.category ?? "",
+        },
+
+        // 🔥 BELANGRIJK: menu behouden
+        menu: item.menu
+          ? {
+              pizza: item.menu.pizza || null,
+              drink: item.menu.drink || null,
+              dessert: item.menu.dessert || null,
+            }
+          : null,
+      }));
+  } catch (e) {
+    console.error("Failed to parse cart:", e);
+    return [];
+  }
+});
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -214,9 +223,19 @@ export const CartProvider = ({ children }) => {
         ? totalStock
         : Math.max(0, totalStock - DOUGH_RESERVE_ONLINE);
 
-      const pizzasInCart = currentCart
-        .filter((p) => !p.product.category || p.product.category === "")
-        .reduce((sum, p) => sum + p.quantity, 0);
+      const pizzasInCart = currentCart.reduce((sum, p) => {
+  // gewone pizza
+  if (!p.type && (!p.product.category || p.product.category === "")) {
+    return sum + p.quantity;
+  }
+
+  // menu pizza
+  if (p.type === "menu") {
+    return sum + p.quantity;
+  }
+
+  return sum;
+}, 0);
 
       return Math.max(0, effectiveStock - pizzasInCart);
     }
@@ -257,29 +276,145 @@ export const CartProvider = ({ children }) => {
     });
   };
 
+  const addMenu = (
+  pizza,
+  drink,
+  dessert,
+  menuPrice,
+  { isKitchen = false } = {},
+) => {
+  setCart((prev) => {
+    // stock checks
+    const pizzaStock = getStock(pizza, prev, { isKitchen });
+    const drinkStock = getStock(drink, prev, { isKitchen });
+    const dessertStock = getStock(dessert, prev, { isKitchen });
+
+    if (
+      pizzaStock <= 0 ||
+      drinkStock <= 0 ||
+      dessertStock <= 0
+    ) {
+      return prev;
+    }
+
+    const menuId = `menu-${pizza.id}-${drink.id}-${dessert.id}`;
+
+    const existing = prev.find(
+      (p) => p.type === "menu" && p.product.id === menuId,
+    );
+
+    if (existing) {
+      return prev.map((p) =>
+        p.product.id === menuId
+          ? { ...p, quantity: p.quantity + 1 }
+          : p,
+      );
+    }
+
+    return [
+      ...prev,
+      {
+        type: "menu",
+        quantity: 1,
+
+        product: {
+          id: menuId,
+          name: pizza.name,
+          price: menuPrice,
+        },
+
+        menu: {
+          pizza,
+          drink,
+          dessert,
+        },
+      },
+    ];
+  });
+};
+
   const removeItem = (product) =>
     setCart((prev) =>
       prev.filter((p) => String(p.product.id) !== String(product.id)),
     );
 
-  const changeQuantity = (product, amount, { isKitchen = false } = {}) => {
-    setCart((prev) => {
-      return prev
-        .map((p) => {
-          if (String(p.product.id) !== String(product.id)) return p;
+ const changeQuantity = (
+  product,
+  amount,
+  { isKitchen = false } = {},
+) => {
+  setCart((prev) => {
+    return prev
+      .map((p) => {
+        if (String(p.product.id) !== String(product.id)) {
+          return p;
+        }
 
-          const newQty = p.quantity + amount;
-          const maxAllowed =
-            p.quantity + getStock(p.product, prev, { isKitchen });
+        const newQty = p.quantity + amount;
 
-          if (newQty <= 0) return null;
-          if (newQty > maxAllowed) return { ...p, quantity: maxAllowed };
+        if (newQty <= 0) return null;
 
-          return { ...p, quantity: newQty };
-        })
-        .filter(Boolean);
-    });
-  };
+        // MENU
+        if (p.type === "menu") {
+          const pizzaStock = getStock(
+            p.menu.pizza,
+            prev,
+            { isKitchen },
+          );
+
+          const drinkStock = getStock(
+            p.menu.drink,
+            prev,
+            { isKitchen },
+          );
+
+          const dessertStock = getStock(
+            p.menu.dessert,
+            prev,
+            { isKitchen },
+          );
+
+          const remaining = Math.min(
+            pizzaStock,
+            drinkStock,
+            dessertStock,
+          );
+
+          const maxAllowed = p.quantity + remaining;
+
+          if (newQty > maxAllowed) {
+            return {
+              ...p,
+              quantity: maxAllowed,
+            };
+          }
+
+          return {
+            ...p,
+            quantity: newQty,
+          };
+        }
+
+        // NORMAL ITEM
+        const maxAllowed =
+          p.quantity +
+          getStock(p.product, prev, { isKitchen });
+
+        if (newQty > maxAllowed) {
+          return {
+            ...p,
+            quantity: maxAllowed,
+          };
+        }
+
+        return {
+          ...p,
+          quantity: newQty,
+        };
+      })
+      .filter(Boolean);
+  });
+};
 
   const clearCart = () => {
     setCart([]);
@@ -294,6 +429,7 @@ export const CartProvider = ({ children }) => {
       value={{
         cart,
         addItem, // addItem(product, { isKitchen:true })
+        addMenu,
         removeItem,
         changeQuantity, // changeQuantity(product, +1/-1, { isKitchen:true })
         clearCart,

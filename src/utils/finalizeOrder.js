@@ -20,8 +20,15 @@ export async function finalizeOrder({
   const orderObj = {
     id: orderId,
     sessionId: `${paymentMethod}-${orderId}`,
-    items: cart.map((i) => `${i.quantity}x ${i.product.name}`).join(", "),
-    total,
+items: cart
+  .map((i) => {
+    if (i.type === "menu" && i.menu) {
+      return `${i.quantity}x ${i.product.name} (${i.menu.drink.name}- ${i.menu.dessert.name})`;
+    }
+
+    return `${i.quantity}x ${i.product.name}`;
+  })
+  .join(", "),    total,
     pickupTime,
     orderedTime: new Date().toISOString(),
     customerName,
@@ -105,6 +112,7 @@ export async function finalizeOrder({
      6️⃣ Clear local
   -------------------- */
 
+  localStorage.setItem("order_success", "1");
   localStorage.removeItem("cart");
 
   return {

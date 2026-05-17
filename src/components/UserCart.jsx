@@ -22,45 +22,77 @@ const UserCart = ({ isOpen }) => {
     <aside className="cart">
       <ul>
         {cart.map((cartItem) => {
-          const stock = getStock(cartItem.product, cart, { isKitchen });
+  const isMenu = cartItem.type === "menu";
 
-          return (
-            <li key={String(cartItem.product.id)} className="cart-item">
-              <div className="item-info">
-                <div className="item-details">
-                  <span className="quant">
-                    {cartItem.quantity}x {cartItem.product.name}
-                  </span>
-                  <p>€{cartItem.product.price.toFixed(2)}</p>
-                </div>
-              </div>
+  const stock = isMenu
+    ? Math.min(
+        getStock(cartItem.menu?.pizza, cart, { isKitchen }),
+        getStock(cartItem.menu?.drink, cart, { isKitchen }),
+        getStock(cartItem.menu?.dessert, cart, { isKitchen })
+      )
+    : getStock(cartItem.product, cart, { isKitchen });
 
-              <div className="item-actions">
-                {/* Verlaag quantity */}
-                <button
-                  className="btn-purple btn-small"
-                  onClick={() =>
-                    cartItem.quantity <= 1
-                      ? removeItem(cartItem.product)
-                      : changeQuantity(cartItem.product, -1, { isKitchen: true })
-                  }
-                >
-                  -
-                </button>
+  return (
+    <li key={String(cartItem.product.id)} className="cart-item">
+      <div className="item-info">
+        <div className="item-details">
 
-                {/* Verhoog quantity, disabled als stock bereikt */}
-                <button
-                  className="btn-purple btn-small"
-                  onClick={() => changeQuantity(cartItem.product, 1, { isKitchen: true })}
-                  disabled={stock <= 0}
-                  title={stock <= 0 ? "Uitverkocht" : "Aantal verhogen"}
-                >
-                  +
-                </button>
-              </div>
-            </li>
-          );
-        })}
+          {/* ===== DISPLAY ===== */}
+          {isMenu ? (
+            <div>
+              <span className="quant">
+                {cartItem.quantity}x {cartItem.product.name}
+              </span>
+
+              <p className="cart-subitems">
+                {cartItem.menu?.drink?.name || "-"}
+              </p>
+
+              <p className="cart-subitems">
+                {cartItem.menu?.dessert?.name || "-"}
+              </p>
+            </div>
+          ) : (
+            <span className="quant">
+              {cartItem.quantity}x {cartItem.product.name}
+            </span>
+          )}
+
+          <p>
+            €{(cartItem.product.price * cartItem.quantity).toFixed(2)}
+          </p>
+
+        </div>
+      </div>
+
+      {/* ===== ACTIONS ===== */}
+      <div className="item-actions">
+
+        <button
+          className="btn-purple btn-small"
+          onClick={() =>
+            cartItem.quantity <= 1
+              ? removeItem(cartItem.product)
+              : changeQuantity(cartItem.product, -1, { isKitchen: true })
+          }
+        >
+          -
+        </button>
+
+        <button
+          className="btn-purple btn-small"
+          onClick={() =>
+            changeQuantity(cartItem.product, 1, { isKitchen: true })
+          }
+          disabled={stock <= 0}
+        >
+          +
+        </button>
+
+      </div>
+    </li>
+  );
+})}
       </ul>
 
       <div className="checkout-section">

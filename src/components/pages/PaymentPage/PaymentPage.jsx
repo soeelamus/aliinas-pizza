@@ -25,7 +25,7 @@ const PaymentPage = () => {
 
   const navigate = useNavigate();
   const { events } = useEvents();
-  
+
   // ✅ Minuten per slot
   const SLOTS_INTERVAL = 20;
 
@@ -339,9 +339,22 @@ const PaymentPage = () => {
           <h3>Bestelling</h3>
           <ul className="payment-cart">
             {localCart.map((item) => (
-              <li key={item.product.id}>
-                {item.quantity}x {item.product.name} — €
-                {(item.product.price * item.quantity).toFixed(2)}
+              <li
+                key={`${item.type}-${item.product.id}-${item.menu?.drink?.id || ""}-${item.menu?.dessert?.id || ""}`}
+              >
+                {" "}
+                <div>
+                  <strong>
+                    {item.quantity}x {item.product.name}
+                  </strong>
+
+                  {item.type === "menu" && item.menu && (
+                    <div className="payment-menu-sub">
+                      <span>{item.menu.drink?.name || "-"} • {item.menu.dessert?.name || "-"}</span>
+                    </div>
+                  )}
+                </div>
+                <div>€{(item.product.price * item.quantity).toFixed(2)}</div>
               </li>
             ))}
           </ul>

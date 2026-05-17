@@ -3,13 +3,26 @@ import React, { useState } from "react";
 import { useCart } from "../contexts/CartContext";
 
 const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
-  const { addItem, getStock, cart } = useCart();
+  const { addItem, addMenu, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState("Pizza");
+  const [menuBuilder, setMenuBuilder] = useState({
+    open: false,
+    pizza: null,
+    drink: null,
+    dessert: null,
+  });
 
   const hasStock = stockSheet.length > 0;
+  const pizzaItems = pizzas;
+  const menuItems = pizzas.map((p) => ({
+    ...p,
+    name: `${p.name} Menu`,
+    price: p.menuPrice,
+  }));
 
   const categories = [
     "Pizza",
+    "Menu",
     ...Array.from(
       new Set(stockSheet.map((item) => item.category).filter(Boolean)),
     ),
@@ -17,8 +30,14 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
 
   const itemsToRender =
     activeTab === "Pizza"
-      ? pizzas
-      : stockSheet.filter((item) => item.category === activeTab);
+      ? pizzaItems
+      : activeTab === "Menu"
+        ? menuItems
+        : stockSheet.filter((item) => item.category === activeTab);
+
+  const drinks = stockSheet.filter((item) => item.category === "Drank");
+
+  const desserts = stockSheet.filter((item) => item.category === "Dessert");
 
   return (
     <div className="menu">
@@ -43,8 +62,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
           {itemsToRender.map((item) => {
             const stock = getStock(item, cart, { isKitchen });
             const hasItemStock = stock > 0;
-            const isPizza = activeTab === "Pizza";
-
+            const isPizza = activeTab === "Pizza" || activeTab === "Menu";
             const isItemAvailable =
               typeof item.stock === "number" ? item.stock : hasItemStock;
 
@@ -69,7 +87,9 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
               >
                 <div className="pizza-text">
                   <h3 className={`pizza-name ${dashed}`}>
-                    {item.special && <span className="pizza-special--tag">special</span>}
+                    {item.special && (
+                      <span className="pizza-special--tag">special</span>
+                    )}
                     {item.name}
                     {isPizza && (
                       <span className="pizza-symbol">{item.type}</span>
@@ -93,7 +113,20 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                     {isOpen && hasStock && (
                       <button
                         className="btn-small btn-purple"
-                        onClick={() => addItem(item, { isKitchen })}
+                        onClick={() => {
+                          if (activeTab === "Menu") {
+                            setMenuBuilder({
+                              open: true,
+                              pizza: item,
+                              drink: null,
+                              dessert: null,
+                            });
+
+                            return;
+                          }
+
+                          addItem(item, { isKitchen });
+                        }}
                         disabled={!canAdd}
                         title={title}
                       >
@@ -103,6 +136,9 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                   </div>
                 </div>
 
+                {activeTab === "Menu" && (
+                  <p className="pizza-ingredients">Pizza + Drankje + Dessert</p>
+                )}
                 {item.info && <p className="pizza-ingredients">{item.info}</p>}
                 {description && (
                   <p className="pizza-ingredients">{description}</p>
@@ -115,6 +151,105 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
           })}
         </div>
       </div>
+      {menuBuilder.open && (
+        <div className="checkout-popup-overlay">
+          <div className="checkout-popup">
+            {!menuBuilder.drink && (
+              <>
+                <h2>Kies een drankje</h2>
+
+                <div className="menu-options">
+                  {drinks.map((drink) => (
+                    <button
+                      key={drink.id}
+                      className="btn-purple"
+                      onClick={() =>
+                        setMenuBuilder((prev) => ({
+                          ...prev,
+                          drink,
+                        }))
+                      }
+                    >
+                      {drink.name}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {menuBuilder.drink && !menuBuilder.dessert && (
+              <>
+                <h2>Kies een dessert</h2>
+
+                <div className="menu-options">
+                  {desserts.map((dessert) => (
+                    <button
+                      key={dessert.id}
+                      className="btn-purple"
+                      onClick={() =>
+                        setMenuBuilder((prev) => ({
+                          ...prev,
+                          dessert,
+                        }))
+                      }
+                    >
+                      {dessert.name}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {menuBuilder.drink && menuBuilder.dessert && (
+              <>
+                <h2>Bevestigen</h2>
+
+                <div className="menu-summary">
+                  <p>{menuBuilder.pizza.name}</p>
+                  <p>{menuBuilder.drink.name}</p>
+                  <p>{menuBuilder.dessert.name}</p>
+                </div>
+
+                <button
+                  className="btn-purple"
+                  onClick={() => {
+                    addMenu(
+                      menuBuilder.pizza,
+                      menuBuilder.drink,
+                      menuBuilder.dessert,
+                      menuBuilder.pizza.menuPrice,
+                      { isKitchen },
+                    );
+
+                    setMenuBuilder({
+                      open: false,
+                      pizza: null,
+                      drink: null,
+                      dessert: null,
+                    });
+                  }}
+                >
+                  Toevoegen
+                </button>
+              </>
+            )}
+
+            <button
+              className="btn-purple"
+              onClick={() =>
+                setMenuBuilder({
+                  open: false,
+                  pizza: null,
+                  drink: null,
+                  dessert: null,
+                })
+              }
+            >
+              Sluiten
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
