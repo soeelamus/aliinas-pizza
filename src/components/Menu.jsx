@@ -74,9 +74,28 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
             const canAdd =
               isOpen && hasStock && isItemAvailable && hasItemStock;
 
-            const description = isPizza
-              ? item.ingredients?.map((i) => i.name.toLowerCase()).join(" • ")
-              : "";
+            const description =
+              isPizza &&
+              item.ingredients?.map((i) => (
+                <span key={i.name} className="ingredient-chip">
+                  {i.name}
+                </span>
+              ));
+
+            const allergens =
+              isPizza &&
+              item.allergens?.map((i) => (
+                <div
+                  key={i.id || i.name}
+                  className="allergen-icon"
+                  style={{
+                    backgroundImage: `url(/images/allergens/${formatName(i.name)}.svg)`,
+                  }}
+                  title={i.name}
+                >
+                  <div className="tooltip">{i.name}</div>
+                </div>
+              ));
 
             const title = !hasStock
               ? "Stock laden"
@@ -139,15 +158,17 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                     )}
                   </div>
                 </div>
-
+                {allergens && (
+                  <span className="allergen-icons">{allergens}</span>
+                )}
                 {activeTab === "Menu" && (
                   <p className="pizza-ingredients">Pizza + Drankje + Dessert</p>
                 )}
-                {item.info && <p className="pizza-ingredients">{item.info}</p>}
                 {description && (
                   <p className="pizza-ingredients">{description}</p>
                 )}
-                {item.size !== 0 && (
+                {item.info && <p className="pizza-info">{item.info}</p>}
+                {item.size && item.size !== 0 && (
                   <p className="pizza-ingredients">{item.size}</p>
                 )}
               </div>

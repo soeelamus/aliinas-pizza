@@ -1,11 +1,11 @@
 {
   "Pizzas": [
-        {
+    {
       "id": 1945,
       "name": "Europadag",
       "type": "⚜️",
       "price": 13.05,
-      "menuPrice": 16.90,
+      "menuPrice": 16.9,
       "special": true,
       "stock": 1,
       "info": "Deze speciale pizza symboliseert de samenwerking tussen Europa, de Verenigde Staten en de Sovjet-Unie bij de bevrijding in mei 1945, als eerbetoon aan Europadag en de Dag van de Overwinning",
@@ -28,6 +28,11 @@
         {
           "name": "Olijfolie"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" }
       ]
     },
     {
@@ -35,7 +40,7 @@
       "name": "Margheriita",
       "type": "🥬",
       "price": 11,
-      "menuPrice": 14.90,
+      "menuPrice": 14.9,
       "stock": 1,
       "ingredients": [
         {
@@ -47,13 +52,18 @@
         {
           "name": "Olijfolie"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" }
       ]
     },
     {
       "id": 2652,
       "name": "Fungii",
       "price": 12,
-      "menuPrice": 15.90,
+      "menuPrice": 15.9,
       "type": "🥬",
       "stock": 1,
       "ingredients": [
@@ -69,13 +79,18 @@
         {
           "name": "Olijfolie"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" }
       ]
     },
     {
       "id": 4535,
       "name": "Formagii",
       "price": 13,
-      "menuPrice": 16.90,
+      "menuPrice": 16.9,
       "type": "🥬",
       "stock": 1,
       "ingredients": [
@@ -94,6 +109,11 @@
         {
           "name": "Olijfolie"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" }
       ]
     },
     {
@@ -101,7 +121,7 @@
       "name": "Vegii",
       "type": "🥬",
       "price": 13,
-      "menuPrice": 16.90,
+      "menuPrice": 16.9,
       "stock": 1,
       "ingredients": [
         {
@@ -122,14 +142,21 @@
         {
           "name": "Olijfolie"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" },
+        { "name": "Eieren" },
+        { "name": "Noten" }
       ]
     },
     {
       "id": 9445,
       "name": "Pepperonii",
       "type": "",
-      "price": 12.50,
-      "menuPrice": 16.40,
+      "price": 12.5,
+      "menuPrice": 16.4,
       "stock": 1,
       "ingredients": [
         {
@@ -141,13 +168,18 @@
         {
           "name": "Pepperoni"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" }
       ]
     },
     {
       "id": 2357,
       "name": "Hawaii",
       "price": 13,
-      "menuPrice": 16.90,
+      "menuPrice": 16.9,
       "type": "",
       "stock": 1,
       "ingredients": [
@@ -166,6 +198,11 @@
         {
           "name": "Olijfolie"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" }
       ]
     },
     {
@@ -173,7 +210,7 @@
       "name": "Jaeger",
       "type": "",
       "price": 13,
-      "menuPrice": 16.90,
+      "menuPrice": 16.9,
       "stock": 1,
       "ingredients": [
         {
@@ -191,6 +228,11 @@
         {
           "name": "Olijfolie"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" }
       ]
     },
     {
@@ -198,7 +240,7 @@
       "name": "Sweet Chiicken",
       "type": "",
       "price": 13,
-      "menuPrice": 16.90,
+      "menuPrice": 16.9,
       "stock": 1,
       "ingredients": [
         {
@@ -216,6 +258,12 @@
         {
           "name": "Honing"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" },
+        { "name": "Halal" }
       ]
     },
     {
@@ -223,7 +271,7 @@
       "name": "Spicy Chiicken",
       "type": "🌶️",
       "price": 13,
-      "menuPrice": 16.90,
+      "menuPrice": 16.9,
       "stock": 1,
       "ingredients": [
         {
@@ -241,14 +289,20 @@
         {
           "name": "Honing"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" },
+        { "name": "Halal" }
       ]
     },
     {
       "id": 7565,
       "name": "Diiavola",
       "type": "🌶️",
-      "price": 13.50,
-      "menuPrice": 17.40,
+      "price": 13.5,
+      "menuPrice": 17.4,
       "stock": 1,
       "ingredients": [
         {
@@ -269,6 +323,11 @@
         {
           "name": "Pepperoni"
         }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" }
       ]
     }
   ]

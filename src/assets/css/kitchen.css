@@ -12,6 +12,24 @@
   max-height: 100vh;
   overflow-y: scroll;
 }
+.kitchen-cashier .pizza {
+  width: 30rem;
+  margin-bottom: 2rem;
+}
+.kitchen-cashier .pizza .pizza-ingredients,
+.kitchen-cashier .pizza .pizza-info,
+.kitchen-cashier .pizza .allergen-icons {
+  display: none;
+}
+.kitchen-cashier .pizza.pizza-special .pizza-ingredients {
+  display: inline-block;
+}
+.kitchen-cashier .pizza.pizza-special .allergen-icons {
+  display: flex;
+}
+.kitchen-cashier h2 {
+  display: none;
+}
 .kitchen-screen {
   width: 30%;
   padding: 0 0.5rem;
