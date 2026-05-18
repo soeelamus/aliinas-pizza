@@ -17,7 +17,7 @@ const Navbar = ({ onMain = true }) => (
             Contact
           </a>
           <a href="#kalender" className="btn-purple scrolly">
-            Afhaal
+            Kalender
           </a>
         </>
       )}

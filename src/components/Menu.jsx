@@ -1,16 +1,28 @@
 // Menu.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 
 const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   const { addItem, addMenu, getStock, cart } = useCart();
-  const [activeTab, setActiveTab] = useState("Pizza");
+  const [activeTab, setActiveTab] = useState("Menu");
   const [menuBuilder, setMenuBuilder] = useState({
     open: false,
     pizza: null,
     drink: null,
     dessert: null,
   });
+
+  useEffect(() => {
+  if (menuBuilder.open) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+
+  return () => {
+    document.body.style.overflow = "";
+  };
+}, [menuBuilder.open]);
 
   const hasStock = stockSheet.length > 0;
   const pizzaItems = pizzas;
@@ -21,8 +33,8 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   }));
 
   const categories = [
-    "Pizza",
     "Menu",
+    "Pizza",
     ...Array.from(
       new Set(stockSheet.map((item) => item.category).filter(Boolean)),
     ),
@@ -41,8 +53,8 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   const formatName = (name) =>
     name
       .toLowerCase()
-      .replace(/\s+/g, "") // spaties weg
-      .replace(/[^a-z0-9]/g, ""); // speciale tekens weg
+      .replace(/\s+/g, "")
+      .replace(/[^a-z0-9]/g, "");
   return (
     <div className="menu">
       <div className="menu-box">
@@ -50,7 +62,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
 
         <nav className="menu-tabs">
           {categories
-            .filter((cat) => hasStock && (isKitchen || cat !== "Extra"))
+            .filter((cat) => isKitchen || cat !== "Extra")
             .map((cat) => (
               <button
                 key={cat}
@@ -181,7 +193,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
           <div className="checkout-popup">
             {!menuBuilder.drink && (
               <>
-                <p>Kies een drankje</p>
+                <p className="monoton-regular white menu-options--title"> drankje</p>
 
                 <div className="menu-options">
                   {drinks.map((drink) => (
@@ -202,13 +214,13 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                       <span className="menu-options--name"> {drink.name}</span>
                     </div>
                   ))}
-                </div>
+                  </div>
               </>
             )}
 
             {menuBuilder.drink && !menuBuilder.dessert && (
               <>
-                <p>Kies een dessert</p>
+                <p className="monoton-regular white menu-options--title">dessert</p>
 
                 <div className="menu-options">
                   {desserts.map((dessert) => (
