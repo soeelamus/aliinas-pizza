@@ -700,7 +700,7 @@ ul.icons {
   cursor: default;
   list-style: none;
   display: flex;
-  
+
   gap: 1rem;
 }
 ul.icons li * {
@@ -1743,112 +1743,25 @@ footer a:hover {
   border-radius: 1rem;
 }
 
-.checkout-popup.menu-builder {
-  max-width: 520px;
-  padding: 24px;
-}
-
-.menu-builder-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.menu-builder-step {
-  font-size: 13px;
-  opacity: 0.7;
-  margin-top: 4px;
-}
-
-.menu-step {
-  margin-top: 10px;
-}
-
-.menu-subtitle {
-  font-size: 14px;
-  opacity: 0.8;
-  margin-bottom: 12px;
-  text-align: center;
-}
-
-.menu-options.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.menu-option-card {
-  background: #fff;
-  border: 1px solid #e6e6e6;
-  padding: 12px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.2s ease;
-  font-weight: 500;
-}
-
-.menu-option-card:hover {
-  transform: translateY(-2px);
-  border-color: #6237c8;
-}
-
-.menu-summary-card {
-  background: #f7f5ff;
-  border: 1px solid #e5dbff;
-  padding: 16px;
-  border-radius: 14px;
-  margin: 15px 0;
-}
-
-.menu-summary-item {
+.menu-options {
   display: flex;
-  gap: 8px;
-  margin-bottom: 8px;
-  font-size: 14px;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
 }
-
-.menu-price {
-  margin-top: 10px;
-  font-weight: bold;
-  font-size: 18px;
-  color: #6237c8;
-  text-align: right;
+.menu-option {
+  display: flex;
+  flex-direction: column;
 }
-
-.btn-full {
-  width: 100%;
-  padding: 14px;
+.menu-options--item {
+  width: 8rem;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 8rem;
+  border: 2px solid var(--primary-white);
 }
-
-.menu-close {
-  margin-top: 12px;
-  width: 100%;
-  opacity: 0.7;
-}
-.menu-card {
-  background: #111;
-  border: 1px solid #2a2a2a;
-  border-radius: 16px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: 0.2s ease;
-  text-align: left;
-  padding: 0;
-}
-
-.menu-card:hover {
-  transform: translateY(-4px);
-  border-color: #6237c8;
-}
-
-.menu-card-image {
-  height: 90px;
-  background: #000;
-  border-bottom: 1px solid #2a2a2a;
-}
-
-.menu-card-title {
-  padding: 12px;
-  font-weight: 600;
-  font-size: 14px;
-  color: white;
+.menu-options--item:hover {
+  border: 2px solid var(--primary-pink);
 }

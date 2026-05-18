@@ -38,7 +38,11 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   const drinks = stockSheet.filter((item) => item.category === "Drank");
 
   const desserts = stockSheet.filter((item) => item.category === "Dessert");
-
+  const formatName = (name) =>
+    name
+      .toLowerCase()
+      .replace(/\s+/g, "") // spaties weg
+      .replace(/[^a-z0-9]/g, ""); // speciale tekens weg
   return (
     <div className="menu">
       <div className="menu-box">
@@ -156,22 +160,26 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
           <div className="checkout-popup">
             {!menuBuilder.drink && (
               <>
-                <h2>Kies een drankje</h2>
+                <p>Kies een drankje</p>
 
                 <div className="menu-options">
                   {drinks.map((drink) => (
-                    <button
-                      key={drink.id}
-                      className="btn-purple"
-                      onClick={() =>
-                        setMenuBuilder((prev) => ({
-                          ...prev,
-                          drink,
-                        }))
-                      }
-                    >
-                      {drink.name}
-                    </button>
+                    <div className="menu-option">
+                      <button
+                        key={drink.id}
+                        className="menu-options--item"
+                        style={{
+                          backgroundImage: `url(/images/products/${formatName(drink.name)}.jpg)`,
+                        }}
+                        onClick={() =>
+                          setMenuBuilder((prev) => ({
+                            ...prev,
+                            drink,
+                          }))
+                        }
+                      ></button>
+                      <span className="menu-options--name"> {drink.name}</span>
+                    </div>
                   ))}
                 </div>
               </>
@@ -179,58 +187,46 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
 
             {menuBuilder.drink && !menuBuilder.dessert && (
               <>
-                <h2>Kies een dessert</h2>
+                <p>Kies een dessert</p>
 
                 <div className="menu-options">
                   {desserts.map((dessert) => (
-                    <button
-                      key={dessert.id}
-                      className="btn-purple"
-                      onClick={() =>
-                        setMenuBuilder((prev) => ({
-                          ...prev,
-                          dessert,
-                        }))
-                      }
-                    >
-                      {dessert.name}
-                    </button>
+                    <div className="menu-option">
+                      <button
+                        key={dessert.id}
+                        className="menu-options--item"
+                        style={{
+                          backgroundImage: `url(/images/products/${formatName(dessert.name)}.jpg)`,
+                        }}
+                        onClick={() => {
+                          setMenuBuilder((prev) => ({
+                            ...prev,
+                            dessert,
+                          }));
+
+                          addMenu(
+                            menuBuilder.pizza,
+                            menuBuilder.drink,
+                            dessert,
+                            menuBuilder.pizza.menuPrice,
+                            { isKitchen },
+                          );
+
+                          setMenuBuilder({
+                            open: false,
+                            pizza: null,
+                            drink: null,
+                            dessert: null,
+                          });
+                        }}
+                      ></button>
+                      <span className="menu-options--name">
+                        {" "}
+                        {dessert.name}
+                      </span>
+                    </div>
                   ))}
                 </div>
-              </>
-            )}
-
-            {menuBuilder.drink && menuBuilder.dessert && (
-              <>
-                <h2>Bevestigen</h2>
-
-                <div className="menu-summary">
-                  <p>{menuBuilder.pizza.name}</p>
-                  <p>{menuBuilder.drink.name}</p>
-                  <p>{menuBuilder.dessert.name}</p>
-                </div>
-
-                <button
-                  className="btn-purple"
-                  onClick={() => {
-                    addMenu(
-                      menuBuilder.pizza,
-                      menuBuilder.drink,
-                      menuBuilder.dessert,
-                      menuBuilder.pizza.menuPrice,
-                      { isKitchen },
-                    );
-
-                    setMenuBuilder({
-                      open: false,
-                      pizza: null,
-                      drink: null,
-                      dessert: null,
-                    });
-                  }}
-                >
-                  Toevoegen
-                </button>
               </>
             )}
 
