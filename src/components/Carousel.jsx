@@ -2,8 +2,7 @@ import React from "react";
 
 const Carousel = () => (
   <>
-    <br id="next" />
-    <section className="container-carousel">
+    <section id="next" className="container-carousel">
       <div className="container-carousel-header">
         <header className="major">
           <h2>Aliina's Pizza - Versgebakken pizza’s voor jouw feestje!</h2>

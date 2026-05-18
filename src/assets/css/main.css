@@ -1,4 +1,9 @@
-@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300italic,400,400italic);
+@font-face {
+  font-family: 'Flame Sans';
+  src: url('/src/assets/fonts/FlameSans.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
 :root {
   --primary-pink: #ffa9c8;
   --primary-purple: #6237c8;
@@ -59,11 +64,12 @@ html {
 :before {
   box-sizing: inherit;
 }
+button,
 body,
 input,
 textarea {
   color: var(--primary-purple);
-  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-family: "Flame Sans", Helvetica, sans-serif;
   font-size: 16pt;
   font-weight: 300;
   line-height: 1.65em;
@@ -636,9 +642,6 @@ section.special {
 .icon:before {
   line-height: inherit;
 }
-.icon.brands:before {
-  font-family: "Font Awesome 5 Brands";
-}
 .image {
   border: 0;
   display: inline-block;
@@ -904,19 +907,6 @@ body {
   bottom: -2rem;
   max-height: 40rem;
 }
-.scroll-dwn {
-  position: absolute;
-  transform: rotate(-90deg);
-  top: calc(50% - 5rem);
-  width: 10rem;
-  right: -3.5rem;
-  color: var(--primary-white);
-  text-transform: uppercase;
-  font-size: 1.5rem;
-}
-.left {
-  left: -3.5rem;
-}
 @keyframes scale {
   0% {
     transform: scale(1);
@@ -1173,7 +1163,8 @@ textarea.error {
   justify-content: center;
   flex-wrap: wrap;
   gap: 7rem;
-  margin: 10rem 0 2rem;
+  margin: 5rem 1rem 10rem 1rem;
+  padding-top: 5rem;
 }
 .container-carousel-header {
   max-width: 30rem;
@@ -1768,8 +1759,8 @@ footer a:hover {
   flex-direction: column;
 }
 .menu-options--item {
-  width: 8rem;
-  height: 8rem;
+  width: 12rem;
+  height: 12rem;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -1782,6 +1773,12 @@ footer a:hover {
   font-size: 2.5rem !important;
   line-height: 3rem;
   margin-bottom: 1rem;
+}
+@media screen and (max-width: 780px) {
+  .menu-options--item {
+    width: 9rem;
+    height: 9rem;
+  }
 }
 @media screen and (max-width: 480px) {
   .menu-options--item {

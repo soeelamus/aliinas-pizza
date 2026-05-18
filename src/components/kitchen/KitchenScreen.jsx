@@ -22,12 +22,12 @@ export default function KitchenScreen({ onStartKitchen }) {
     return (
       <div className="checkout-popup-overlay">
         <div className="checkout-popup form-popup">
-          <StockForm />
-
           <div className="kitchen-section form">
-            <p>Verbind de terminal</p>
+            <button className="btn-purple btn-margin" onClick={handleStart}>
+              Start
+            </button>
             <ConnectTerminalButton />
-            <p>Daarna kan je de keuken starten.</p>
+            <StockForm />
 
             <button className="btn-purple btn-margin" onClick={handleStart}>
               Start
@@ -214,13 +214,22 @@ function KitchenActive({ onBackToSetup }) {
         const version = String(vJson?.version ?? "");
 
         if (version && version === lastOrdersVersion.current) {
-          console.log("🍳 Orders unchanged → skip fetch (version:", version, ")");
+          console.log(
+            "🍳 Orders unchanged → skip fetch (version:",
+            version,
+            ")",
+          );
           // still ensure we are not stuck loading on first run
           if (firstFetch.current && isMounted) setLoading(false);
           return;
         }
 
-        console.log("🍳 Orders changed", lastOrdersVersion.current, "→", version);
+        console.log(
+          "🍳 Orders changed",
+          lastOrdersVersion.current,
+          "→",
+          version,
+        );
         lastOrdersVersion.current = version;
 
         await fetchOrders();

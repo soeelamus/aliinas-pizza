@@ -15,8 +15,6 @@ const Header = () => (
         <img src="/images/Image-3.png" alt="People" className="people" />
       </a>
     </header>
-    <p className="scroll-dwn left">scroll down</p>
-    <p className="scroll-dwn">scroll down</p>
   </>
 );
 

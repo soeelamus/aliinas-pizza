@@ -204,9 +204,8 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
           <div className="checkout-popup">
             {!menuBuilder.drink && (
               <>
-                <p className="monoton-regular white menu-options--title">
-                  {" "}
-                  drankje
+                <p className="menu-options--title">
+                  Welk drankje?
                 </p>
 
                 <div className="menu-options">
@@ -234,8 +233,8 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
 
             {menuBuilder.drink && !menuBuilder.dessert && (
               <>
-                <p className="monoton-regular white menu-options--title">
-                  dessert
+                <p className="menu-options--title">
+                  Welk dessert?
                 </p>
 
                 <div className="menu-options">
