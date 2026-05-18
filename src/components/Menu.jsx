@@ -3,8 +3,9 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 
 const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
+  const ComboMenu = "Combo";
   const { addItem, addMenu, getStock, cart } = useCart();
-  const [activeTab, setActiveTab] = useState("Menu");
+  const [activeTab, setActiveTab] = useState(ComboMenu);
   const [menuBuilder, setMenuBuilder] = useState({
     open: false,
     pizza: null,
@@ -13,27 +14,27 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   });
 
   useEffect(() => {
-  if (menuBuilder.open) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
-  }
+    if (menuBuilder.open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
 
-  return () => {
-    document.body.style.overflow = "";
-  };
-}, [menuBuilder.open]);
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuBuilder.open]);
 
   const hasStock = stockSheet.length > 0;
   const pizzaItems = pizzas;
   const menuItems = pizzas.map((p) => ({
     ...p,
-    name: `${p.name} Menu`,
+    name: p.name,
     price: p.menuPrice,
   }));
 
   const categories = [
-    "Menu",
+    ComboMenu,
     "Pizza",
     ...Array.from(
       new Set(stockSheet.map((item) => item.category).filter(Boolean)),
@@ -43,7 +44,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   const itemsToRender =
     activeTab === "Pizza"
       ? pizzaItems
-      : activeTab === "Menu"
+      : activeTab === ComboMenu
         ? menuItems
         : stockSheet.filter((item) => item.category === activeTab);
 
@@ -78,7 +79,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
           {itemsToRender.map((item) => {
             const stock = getStock(item, cart, { isKitchen });
             const hasItemStock = stock > 0;
-            const isPizza = activeTab === "Pizza" || activeTab === "Menu";
+            const isPizza = activeTab === "Pizza" || activeTab === ComboMenu;
             const isItemAvailable =
               typeof item.stock === "number" ? item.stock : hasItemStock;
 
@@ -125,7 +126,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                     {item.special && (
                       <span className="pizza-special--tag">special</span>
                     )}
-                    {item.name}
+                    {activeTab === ComboMenu ? `${item.name} Menu` : item.name}{" "}
                     {isPizza && (
                       <span className="pizza-symbol">{item.type}</span>
                     )}
@@ -149,7 +150,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                       <button
                         className="btn-small btn-purple"
                         onClick={() => {
-                          if (activeTab === "Menu") {
+                          if (activeTab === ComboMenu) {
                             setMenuBuilder({
                               open: true,
                               pizza: item,
@@ -173,15 +174,25 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                 {allergens && (
                   <span className="allergen-icons">{allergens}</span>
                 )}
-                {activeTab === "Menu" && (
-                  <p className="pizza-ingredients">Pizza + Drankje + Dessert</p>
+                {activeTab === ComboMenu && (
+                  <p className="pizza-ingredients">
+                    <span className="ingredient-chip">Pizza {item.name}</span>
+                    <span className="ingredient-chip">Drankje</span>
+                    <span className="ingredient-chip">Dessert</span>
+                  </p>
                 )}
-                {description && (
+                {activeTab !== ComboMenu && description && (
                   <p className="pizza-ingredients">{description}</p>
                 )}
                 {item.info && <p className="pizza-info">{item.info}</p>}
                 {item.size && item.size !== 0 && (
-                  <p className="pizza-ingredients">{item.size}</p>
+                  <p className="pizza-ingredients">
+                    {item.size.split(",").map((ingredient, index) => (
+                      <span key={index} className="ingredient-chip">
+                        {ingredient.trim()}
+                      </span>
+                    ))}
+                  </p>
                 )}
               </div>
             );
@@ -193,7 +204,10 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
           <div className="checkout-popup">
             {!menuBuilder.drink && (
               <>
-                <p className="monoton-regular white menu-options--title"> drankje</p>
+                <p className="monoton-regular white menu-options--title">
+                  {" "}
+                  drankje
+                </p>
 
                 <div className="menu-options">
                   {drinks.map((drink) => (
@@ -214,13 +228,15 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                       <span className="menu-options--name"> {drink.name}</span>
                     </div>
                   ))}
-                  </div>
+                </div>
               </>
             )}
 
             {menuBuilder.drink && !menuBuilder.dessert && (
               <>
-                <p className="monoton-regular white menu-options--title">dessert</p>
+                <p className="monoton-regular white menu-options--title">
+                  dessert
+                </p>
 
                 <div className="menu-options">
                   {desserts.map((dessert) => (
