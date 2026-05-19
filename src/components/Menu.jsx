@@ -121,6 +121,27 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                 key={item.id}
                 className={`pizza ${item.special && "pizza-special"}`}
               >
+                {/*  */}
+                {activeTab !== ComboMenu &&
+                  activeTab !== "Pizza" &&
+                  activeTab !== "Combo" && (
+                    <div className="menu-option">
+                      <button
+                        onClick={() => {
+                          addItem(item, { isKitchen });
+                        }}
+                        disabled={!canAdd}
+                        title={title}
+                        key={item.id}
+                        className="menu-options--item"
+                        style={{
+                          backgroundImage: `url(/images/products/${formatName(item.name)}.jpg)`,
+                        }}
+                      ></button>
+                    </div>
+                  )}
+                {/*  */}
+
                 <div className="pizza-text">
                   <h3 className={`pizza-name ${dashed}`}>
                     {item.special && (
@@ -204,9 +225,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
           <div className="checkout-popup">
             {!menuBuilder.drink && (
               <>
-                <p className="menu-options--title">
-                  Welk drankje?
-                </p>
+                <p className="menu-options--title">Welk drankje?</p>
 
                 <div className="menu-options">
                   {drinks.map((drink) => (
@@ -233,9 +252,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
 
             {menuBuilder.drink && !menuBuilder.dessert && (
               <>
-                <p className="menu-options--title">
-                  Welk dessert?
-                </p>
+                <p className="menu-options--title">Welk dessert?</p>
 
                 <div className="menu-options">
                   {desserts.map((dessert) => (
