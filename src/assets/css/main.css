@@ -1,6 +1,6 @@
 @font-face {
-  font-family: 'Flame Sans';
-  src: url('/src/assets/fonts/FlameSans.otf') format('opentype');
+  font-family: "Flame Sans";
+  src: url("/src/assets/fonts/FlameSans.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
 }
@@ -1573,7 +1573,6 @@ textarea.error {
 }
 .pizza-ingredients {
   margin-bottom: 0.5rem;
-
 }
 .price-box {
   display: flex;
@@ -1850,4 +1849,22 @@ footer a:hover {
 .checkout-popup {
   max-height: 90vh;
   overflow-y: auto;
+}
+.adbox {
+  display: flex;
+  justify-content: center;
+}
+.adbox--img-box {
+  max-width: 100%;
+  background: var(--primary-purple);
+  border: 0.3rem solid var(--primary-pink);
+  border-radius: 2rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+.adbox--img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 2rem;
 }

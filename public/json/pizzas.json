@@ -1,46 +1,11 @@
 {
   "Pizzas": [
     {
-      "id": 1945,
-      "name": "Europadag",
-      "type": "⚜️",
-      "price": 13.05,
-      "menuPrice": 16.9,
-      "special": true,
-      "stock": 1,
-      "info": "Deze speciale pizza symboliseert de samenwerking tussen Europa, de Verenigde Staten en de Sovjet-Unie bij de bevrijding in mei 1945, als eerbetoon aan Europadag en de Dag van de Overwinning",
-      "ingredients": [
-        {
-          "name": "Tomatensaus"
-        },
-        {
-          "name": "Mozzarella"
-        },
-        {
-          "name": "Appel"
-        },
-        {
-          "name": "Gorgonzola"
-        },
-        {
-          "name": "Gekookte ham"
-        },
-        {
-          "name": "Olijfolie"
-        }
-      ],
-      "allergens": [
-        { "name": "Gluten" },
-        { "name": "Soja" },
-        { "name": "Lactose" }
-      ]
-    },
-    {
       "id": 1489,
       "name": "Margheriita",
       "type": "🥬",
       "price": 11,
-      "menuPrice": 14.9,
+      "menuPrice": 14.5,
       "stock": 1,
       "ingredients": [
         {
@@ -63,7 +28,7 @@
       "id": 2652,
       "name": "Fungii",
       "price": 12,
-      "menuPrice": 15.9,
+      "menuPrice": 15.5,
       "type": "🥬",
       "stock": 1,
       "ingredients": [
@@ -90,7 +55,7 @@
       "id": 4535,
       "name": "Formagii",
       "price": 13,
-      "menuPrice": 16.9,
+      "menuPrice": 16.5,
       "type": "🥬",
       "stock": 1,
       "ingredients": [
@@ -121,7 +86,7 @@
       "name": "Vegii",
       "type": "🥬",
       "price": 13,
-      "menuPrice": 16.9,
+      "menuPrice": 16.5,
       "stock": 1,
       "ingredients": [
         {
@@ -156,7 +121,7 @@
       "name": "Pepperonii",
       "type": "",
       "price": 12.5,
-      "menuPrice": 16.4,
+      "menuPrice": 16,
       "stock": 1,
       "ingredients": [
         {
@@ -179,7 +144,7 @@
       "id": 2357,
       "name": "Hawaii",
       "price": 13,
-      "menuPrice": 16.9,
+      "menuPrice": 16.5,
       "type": "",
       "stock": 1,
       "ingredients": [
@@ -210,7 +175,7 @@
       "name": "Jaeger",
       "type": "",
       "price": 13,
-      "menuPrice": 16.9,
+      "menuPrice": 16.5,
       "stock": 1,
       "ingredients": [
         {
@@ -240,7 +205,7 @@
       "name": "Sweet Chiicken",
       "type": "",
       "price": 13,
-      "menuPrice": 16.9,
+      "menuPrice": 16.5,
       "stock": 1,
       "ingredients": [
         {
@@ -271,7 +236,7 @@
       "name": "Spicy Chiicken",
       "type": "🌶️",
       "price": 13,
-      "menuPrice": 16.9,
+      "menuPrice": 16.5,
       "stock": 1,
       "ingredients": [
         {
@@ -302,7 +267,7 @@
       "name": "Diiavola",
       "type": "🌶️",
       "price": 13.5,
-      "menuPrice": 17.4,
+      "menuPrice": 17,
       "stock": 1,
       "ingredients": [
         {

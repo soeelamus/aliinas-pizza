@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import Cart from "./Cart";
 import Menu from "./Menu";
+import AdBox from "./AdBox"
 import OpenState from "./OpenState";
 import { useEvents } from "../contexts/EventsContext";
 import { useCart } from "../contexts/CartContext";
@@ -77,13 +78,16 @@ const PizzaShop = () => {
         <OpenState isOpen={isOpen} events={events} onRoute={isOrderingRoute} />
         <br id="menu" />
         <Cart isOpen={isOpen} />
+        <AdBox />
         {isOrderingRoute ? (
+          <>
           <Menu
             pizzas={pizzas}
             stockSheet={stockSheetState}
             events={events}
             isOpen={isOpen}
           />
+          </>
         ) : (
           <Menu pizzas={pizzas} events={events} isOpen={false} />
         )}

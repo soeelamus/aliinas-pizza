@@ -49,8 +49,8 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
         : stockSheet.filter((item) => item.category === activeTab);
 
   const drinks = stockSheet.filter((item) => item.category === "Drank");
-
   const desserts = stockSheet.filter((item) => item.category === "Dessert");
+
   const formatName = (name) =>
     name
       .toLowerCase()
@@ -59,7 +59,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   return (
     <div className="menu">
       <div className="menu-box">
-        <h2 className="monoton-regular">Menu</h2>
+        <h2 id="ad" className="monoton-regular">Menu</h2>
 
         <nav className="menu-tabs">
           {categories
@@ -124,7 +124,8 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                 {/*  */}
                 {activeTab !== ComboMenu &&
                   activeTab !== "Pizza" &&
-                  activeTab !== "Combo" && (
+                  activeTab !== "Combo" &&
+                  activeTab !== "Extra" && (
                     <div className="menu-option">
                       <button
                         onClick={() => {
