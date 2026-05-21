@@ -1,6 +1,6 @@
 import React from "react";
 
-const OpenState = ({ isOpen, events, onRoute }) => {
+const OpenState = ({ isOpen, events }) => {
   const today = new Date().toLocaleDateString("en-CA");
 
   const todayEvent = events?.find(
@@ -16,16 +16,9 @@ const OpenState = ({ isOpen, events, onRoute }) => {
             We zijn vandaag geopend van {todayEvent.startTime} tot{" "}
             {todayEvent.endTime}
           </h3>
-          {!onRoute && (
-            <>
-              <a href="/ordering" className="btn-purple btn-order">
-                ✅ Bestellen
-              </a>
-              <a href="/ordering" className="btn-purple cta-btn">
-                ✅ Bestellen
-              </a>
-            </>
-          )}
+          <a href="#menu" className="btn-purple btn-order">
+            ✅ Bestellen
+          </a>
           <br />
           <p className="menu-openStatus-p">Ophalen: {todayEvent.address}</p>
         </div>

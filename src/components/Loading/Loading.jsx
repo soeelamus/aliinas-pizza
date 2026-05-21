@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Loading.css";
 
-const Loading = ({ innerHTML, margin = "" }) => {
+const Loading = ({ innerHTML, margin = "", white = "" }) => {
   const [dots, setDots] = useState("");
 
   useEffect(() => {
@@ -17,7 +17,7 @@ const Loading = ({ innerHTML, margin = "" }) => {
   return (
     <div className={`center ${margin ? `margin-${margin}` : "margin"}`}>
       <p className="loader"></p>
-      <p>
+      <p className={white}>
         <span className="invisible">{dots}</span>
         {innerHTML}
         <span>{dots}</span>
