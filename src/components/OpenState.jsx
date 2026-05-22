@@ -16,7 +16,7 @@ const OpenState = ({ isOpen, events }) => {
             We zijn vandaag geopend van {todayEvent.startTime} tot{" "}
             {todayEvent.endTime}
           </h3>
-          <a href="#menu" className="btn-purple btn-order">
+          <a href="#ad" className="btn-purple btn-order">
             ✅ Bestellen
           </a>
           <br />

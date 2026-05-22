@@ -84,10 +84,9 @@ export default async function handler(req, res) {
           price_data: {
             currency: "eur",
             product_data: {
-              name: item.product.name,
-
+              name: `${item.product.name} ${(item.type || "").toUpperCase()}`,
+              description: `${item.menu?.drink?.name || ""} • ${item.menu?.dessert?.name || ""}`,
               metadata: {
-                type: item.type || "product",
                 drink: item.menu?.drink?.name || "",
                 dessert: item.menu?.dessert?.name || "",
               },
