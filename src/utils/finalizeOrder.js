@@ -112,7 +112,6 @@ items: cart
      6️⃣ Clear local
   -------------------- */
 
-  localStorage.setItem("order_success", "1");
   localStorage.removeItem("cart");
 
   return {

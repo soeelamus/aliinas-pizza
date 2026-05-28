@@ -5,30 +5,6 @@ import "./SuccessPage.css";
 import Success from "../../SuccessCard";
 import Loading from "../../Loading/Loading";
 
-import { finalizeOrder } from "../../../utils/finalizeOrder";
-
-/* -------------------
-   Helper: string → cart
--------------------- */
-const itemsStringToCart = (itemsString) => {
-  if (!itemsString) return [];
-
-  return itemsString
-    .split(",")
-    .map((item) => {
-      const match = item.trim().match(/^(\d+)x\s+(.+)$/);
-      if (!match) return null;
-
-      return {
-        quantity: parseInt(match[1], 10),
-        product: {
-          name: match[2].trim(),
-        },
-      };
-    })
-    .filter(Boolean);
-};
-
 const SuccessPage = () => {
   const [status, setStatus] = useState("loading");
   const [order, setOrder] = useState(null);
@@ -77,56 +53,16 @@ const SuccessPage = () => {
     })();
   }, [sessionId, navigate]);
 
-  /* -------------------
-     2️⃣ Finalize order (via centrale functie)
-  -------------------- */
   useEffect(() => {
-    if (!order) return;
     if (status !== "paid") return;
-
-    const pushedKey = `pushed_${sessionId}`;
-    const mailKey = `mail_${sessionId}`;
-
-    const run = async () => {
-      try {
-        const cart = itemsStringToCart(order.items);
-
-        // 🔹 Order enkel 1x
-        if (!localStorage.getItem(pushedKey)) {
-          await finalizeOrder({
-            cart,
-            total: order.total,
-            paymentMethod: "online",
-            customerName: order.customerName,
-            customerEmail: order.customerEmail,
-            pickupTime: order.pickupTime,
-            sessionId: order.sessionId,
-          });
-
-          localStorage.setItem(pushedKey, "1");
-          console.log("✅ Order verwerkt");
-        }
-      } catch (err) {
-        console.error("❌ finalizeOrder failed:", err);
-      }
-    };
-
-    run();
-  }, [order, status, sessionId]);
-
-  useEffect(() => {
-    const isOrderSuccess = localStorage.getItem("order_success");
-
-    if (!isOrderSuccess) return;
 
     const timer = setTimeout(() => {
       localStorage.removeItem("cart");
       localStorage.removeItem("paymentData");
-      localStorage.removeItem("order_success");
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [status]);
 
   /* -------------------
      UI rendering
@@ -168,12 +104,6 @@ const SuccessPage = () => {
             onClick={() => {
               localStorage.removeItem("cart");
               localStorage.removeItem("paymentData");
-
-              if (sessionId) {
-                localStorage.removeItem(`pushed_${sessionId}`);
-                localStorage.removeItem(`mail_${sessionId}`);
-              }
-
               navigate("/");
               window.location.reload();
             }}

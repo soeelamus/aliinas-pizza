@@ -84,33 +84,49 @@ const PaymentPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleCheckout = async (e) => {
-    e.preventDefault();
-    if (!validate()) return;
+const handleCheckout = async (e) => {
+  e.preventDefault();
+  if (!validate()) return;
 
-    localStorage.setItem("paymentData", JSON.stringify({ formData }));
-    setLoading(true);
+  localStorage.setItem("paymentData", JSON.stringify({ formData }));
+  setLoading(true);
 
+  try {
+    const res = await fetch("/api/payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        total: totalAmount(),
+        customer: formData,
+        cart: localCart,
+      }),
+    });
+
+    const text = await res.text();
+
+    let data;
     try {
-      const res = await fetch("/api/payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          total: totalAmount(),
-          customer: formData,
-          cart: localCart,
-        }),
-      });
-
-      const data = await res.json();
-      window.location.href = data.checkoutUrl;
-    } catch (error) {
-      console.error("Checkout error:", error);
-      alert("Betaling kon niet gestart worden.");
-    } finally {
-      setLoading(false);
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(text || "Server gaf geen geldige JSON terug");
     }
-  };
+
+    if (!res.ok) {
+      throw new Error(data.error || "Payment request failed");
+    }
+
+    if (!data.checkoutUrl) {
+      throw new Error("Geen checkoutUrl ontvangen");
+    }
+
+    window.location.href = data.checkoutUrl;
+  } catch (error) {
+    console.error("Checkout error:", error);
+    alert(`Betaling kon niet gestart worden. ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ✅ 1) haal orders van vandaag op + tel per pickuptime
   useEffect(() => {
