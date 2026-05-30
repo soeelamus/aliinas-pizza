@@ -1479,6 +1479,9 @@ textarea.error {
   color: var(--primary-white) !important;
   font-size: 2.5rem !important;
 }
+.pink {
+  color: var(--primary-pink) !important;
+}
 .add-event-btn:hover::after {
   opacity: 1;
 }

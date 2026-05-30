@@ -9,13 +9,13 @@ export default function handler(req, res) {
 
     const { pin } = req.body || {};
 
-    const realPin = process.env.KITCHEN_PIN;
+    const realPin = process.env.EMPLOYEES_PIN;
     const apiToken = process.env.API_TOKEN;
 
     if (!realPin) {
       return res.status(500).json({
         success: false,
-        error: "KITCHEN_PIN not set",
+        error: "EMPLOYEES_PIN not set",
       });
     }
 
@@ -29,7 +29,7 @@ export default function handler(req, res) {
     if (String(pin) === String(realPin)) {
       res.setHeader(
         "Set-Cookie",
-        `kitchenAuth=${apiToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=86400`
+        `employeesAuth=${apiToken}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=86400`
       );
 
       return res.status(200).json({
@@ -42,7 +42,7 @@ export default function handler(req, res) {
       error: "Invalid pin",
     });
   } catch (err) {
-    console.error("[kitchen-login]", err);
+    console.error("[employees-login]", err);
 
     return res.status(500).json({
       success: false,

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "shift_1",
+    "employeeId": "1",
+    "date": "2026-06-05",
+    "startTime": "17:00",
+    "endTime": "22:00",
+    "breakMinutes": 0,
+    "location": "Desteldonkdorp",
+    "status": "scheduled",
+    "createdAt": "2026-05-31T00:00:00.000Z",
+    "updatedAt": "2026-05-31T00:00:00.000Z"
+  },
+  {
+    "id": "shift_2",
+    "employeeId": "2",
+    "date": "2026-06-05",
+    "startTime": "17:00",
+    "endTime": "22:00",
+    "breakMinutes": 15,
+    "location": "Desteldonkdorp",
+    "status": "scheduled",
+    "createdAt": "2026-05-31T00:00:00.000Z",
+    "updatedAt": "2026-05-31T00:00:00.000Z"
+  },
+  {
+    "id": "shift_3",
+    "employeeId": "3",
+    "date": "2026-06-05",
+    "startTime": "18:00",
+    "endTime": "22:00",
+    "breakMinutes": 0,
+    "location": "Desteldonkdorp",
+    "status": "scheduled",
+    "createdAt": "2026-05-31T00:00:00.000Z",
+    "updatedAt": "2026-05-31T00:00:00.000Z"
+  }
+]

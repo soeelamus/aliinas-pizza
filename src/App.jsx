@@ -16,16 +16,24 @@ import ContactForm from "./components/ContactForm";
 import ImagesBox from "./components/ImagesBox";
 import PizzaShop from "./components/PizzaShop";
 import Footer from "./components/Footer";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Pages
 import PaymentPage from "./components/pages/PaymentPage/PaymentPage";
 import SuccessPage from "./components/pages/SuccessPage/SuccessPage";
 import ImagesPage from "./components/pages/ImagesPage/ImagesPage";
 
+// Employees
+import EmployeesLogin from "./components/employees/EmployeesLogin";
+import EmployeesDashboard from "./components/employees/EmployeesDashboard";
+import EmployeeDetailPage from "./components/employees/EmployeeDetailPage";
+import EmployeeCreatePage from "./components/employees/EmployeeCreatePage";
+import EmployeePersonalLogin from "./components/employees/EmployeePersonalLogin";
+import EmployeeProtectedRoute from "./components/employees/EmployeeProtectedRoute";
+
 // Kitchen components
 import KitchenLogin from "./components/kitchen/KitchenLogin";
 import KitchenDashboard from "./components/kitchen/KitchenDashboard";
-import ProtectedRoute from "./components/kitchen/ProtectedRoute";
 
 // Layouts
 import MainLayout from "./layouts/MainLayout";
@@ -78,7 +86,46 @@ function App() {
               </>
             }
           />
+          <Route path="/employees/login" element={<EmployeesLogin />} />
+
+          <Route
+            path="/employees"
+            element={
+              <ProtectedRoute
+                storageKey="employeesAuth"
+                redirectTo="/employees/login"
+              >
+                <EmployeesDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/employees/new"
+            element={
+              <ProtectedRoute
+                storageKey="employeesAuth"
+                redirectTo="/employees/login"
+              >
+                <EmployeeCreatePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/employees/:employeeId/login"
+            element={<EmployeePersonalLogin />}
+          />
+          <Route
+            path="/employees/:employeeId"
+            element={
+              <EmployeeProtectedRoute>
+                <EmployeeDetailPage />
+              </EmployeeProtectedRoute>
+            }
+          />
         </Route>
+
         <Route element={<RedirectLayout />}>
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/success" element={<SuccessPage />} />

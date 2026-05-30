@@ -1,0 +1,44 @@
+[
+  {
+    "id": "1",
+    "name": "Michiel",
+    "email": "michiel@example.com",
+    "phone": "+32400000000",
+    "role": "Owner",
+    "hourlyWage": 25,
+    "iban": "",
+    "status": "active",
+    "nextPayout": "2026-06-01",
+    "recordStatus": "active",
+    "createdAt": "2026-05-31T00:00:00.000Z",
+    "updatedAt": "2026-05-31T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "name": "Jan",
+    "email": "jan@example.com",
+    "phone": "+32400000001",
+    "role": "Pizzaiolo",
+    "hourlyWage": 16,
+    "iban": "",
+    "status": "active",
+    "nextPayout": "2026-06-01",
+    "recordStatus": "active",
+    "createdAt": "2026-05-31T00:00:00.000Z",
+    "updatedAt": "2026-05-31T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "name": "Sarah",
+    "email": "sarah@example.com",
+    "phone": "+32400000002",
+    "role": "Babysitter",
+    "hourlyWage": 14,
+    "iban": "",
+    "status": "active",
+    "nextPayout": "2026-06-01",
+    "recordStatus": "active",
+    "createdAt": "2026-05-31T00:00:00.000Z",
+    "updatedAt": "2026-05-31T00:00:00.000Z"
+  }
+]

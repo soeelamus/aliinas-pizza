@@ -73,26 +73,46 @@ function orderAlreadyExists(rows, incomingSessionId) {
   return rows.some((row) => getRowSessionId(row) === incomingSessionId);
 }
 
+function hasKitchenAccess(req) {
+  const cookies = req.headers.cookie || "";
+
+  return cookies.includes(`kitchenAuth=${process.env.API_TOKEN}`);
+}
+
 // -------------------- handler --------------------
 export default async function handler(req, res) {
   try {
     if (!GAS_URL) {
-      return res.status(500).json({ error: "Missing SHEETS_ORDER env var" });
+      return res.status(500).json({
+        ok: false,
+        error: "Missing SHEETS_ORDER env var",
+      });
     }
 
     // =========================
-    // GET ORDERS
+    // GET ORDERS - KITCHEN ONLY
     // =========================
     if (req.method === "GET") {
-      const response = await fetch(GAS_URL, { cache: "no-store" });
+      if (!hasKitchenAccess(req)) {
+        return res.status(401).json({
+          ok: false,
+          error: "Unauthorized",
+        });
+      }
+
+      const response = await fetch(GAS_URL, {
+        cache: "no-store",
+      });
+
       const csvText = await response.text();
 
       const { rows } = parseCsvToObjects(csvText);
+
       return res.status(200).json(rows);
     }
 
     // =========================
-    // CREATE ORDER
+    // CREATE ORDER - PUBLIC FLOW
     // =========================
     if (req.method === "POST") {
       const incoming = req.body || {};
@@ -102,28 +122,37 @@ export default async function handler(req, res) {
       ).trim();
 
       if (!incomingSessionId) {
-        return res.status(400).json({ error: "Missing sessionId" });
+        return res.status(400).json({
+          error: "Missing sessionId",
+        });
       }
 
       // ---------------------
       // 1. Check duplicate
       // ---------------------
-      const existingRes = await fetch(GAS_URL, { cache: "no-store" });
+      const existingRes = await fetch(GAS_URL, {
+        cache: "no-store",
+      });
+
       const existingCsv = await existingRes.text();
       const { rows } = parseCsvToObjects(existingCsv);
 
       const isNewOrder = !orderAlreadyExists(rows, incomingSessionId);
 
       if (!isNewOrder) {
-        return res.status(200).json({ status: "already_exists" });
+        return res.status(200).json({
+          status: "already_exists",
+        });
       }
 
       // ---------------------
-      // 2. Save order (GAS)
+      // 2. Save order via GAS
       // ---------------------
       const response = await fetch(GAS_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(incoming),
       });
 
@@ -133,11 +162,14 @@ export default async function handler(req, res) {
       try {
         data = JSON.parse(text);
       } catch {
-        return res.status(500).json({ error: "Invalid JSON from GAS" });
+        return res.status(500).json({
+          error: "Invalid JSON from GAS",
+          raw: text.slice(0, 200),
+        });
       }
 
       // ---------------------
-      // 3. Send mail (SERVER-SIDE)
+      // 3. Send customer email
       // ---------------------
       try {
         const firstPizza =
@@ -150,6 +182,7 @@ export default async function handler(req, res) {
           const emojis = ["🍕", "😄", "😋", "🔥", "👀", "🤤", "🎉"];
           return emojis[Math.floor(Math.random() * emojis.length)];
         };
+
         if (incoming.customerEmail) {
           await resend.emails.send({
             from: "Aliina's Pizza <orders@aliinas.com>",
@@ -158,96 +191,97 @@ export default async function handler(req, res) {
             bcc: "aliinas.pizza@hotmail.com",
             subject: `Je bestelling kan worden opgehaald om ${incoming.pickupTime} 🍕`,
             html: `
- <!DOCTYPE html>
-  <html lang="nl">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-      body {
-        font-family: 'Helvetica', Arial, sans-serif;
-        background-color: #fefaf4;
-        color: #333;
-        margin: 0;
-        padding: 0;
-      }
-      .container {
-        max-width: 600px;
-        margin: 20px auto;
-        background: #fefaf4;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        overflow: hidden;
-        border-top: 6px solid #6237c8;
-      }
-      .header {
-        background-color: #6237c8;
-        color: white;
-        text-align: center;
-        padding: 20px;
-        font-size: 24px;
-        font-weight: bold;
-      }
-      .content {
-        padding: 20px;
-        line-height: 1.6;
-      }
-      .content h2 {
-        color: #6237c8;
-      }
-      .order-details {
-        margin: 20px 0;
-        border-top: 1px solid #fefaf4;
-        border-bottom: 1px solid #fefaf4;
-        padding: 10px 0;
-      }
-      .order-details p {
-        margin: 5px 0;
-      }
-      .footer {
-        text-align: center;
-        font-size: 12px;
-        color: #888;
-        padding: 15px;
-      }
-      @media(max-width: 640px) {
-        .container { width: 90%; }
-      }
-    </style>
-    </head>
-    <body>
-    <div class="container">
-      <div class="header">Aliina's Pizza</div>
-      <div class="content">
-        <h2>
-          Psst… ik ben het, je pizza ${firstPizza}! ${getRandomEmoji()}<br/>
-          </h2>        
-          <p>Ik word graag opgehaald om <strong>${incoming.pickupTime}</strong></p>
-        <p>Tot straks, ${incoming.customerName}!</p>
-        <br />
-        <p>Het afhaaladres vind je terug op onze kalender.</p>
-        <br />
-        <div class="order-details">
-          <p><strong>Bestelling:</strong><br/>
-          ${incoming.items.replace(/,/g, "<br/>")}</p>
+              <!DOCTYPE html>
+              <html lang="nl">
+              <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <style>
+                  body {
+                    font-family: Helvetica, Arial, sans-serif;
+                    background-color: #fefaf4;
+                    color: #333;
+                    margin: 0;
+                    padding: 0;
+                  }
 
-          <p><strong>Totaal:</strong> €${Number(incoming.total || 0).toFixed(2)}</p>
-          
-          ${incoming.customerNotes ? `<p><strong>Opmerking:</strong> ${incoming.customerNotes}</p>` : ""}
-          </div>
-          <br />
-          <a href="https://aliinas.com/" 
-            style="display:inline-block; background:#6237c8; color:#fff; padding:10px 20px; border-radius:5px; text-decoration:none;">
-            Website
-          </a>        
-          </div>
-        <div class="footer">
-        Een vraag? Je kan ze stellen door op deze mail te antwoorden<br/>
-        <a href="mailto:aliinas.pizza@hotmail.com" style="color:#888;">aliinas.pizza@hotmail.com</a>
-      </div>
-    </div>
-  </body>
-  </html>`,
+                  .container {
+                    max-width: 600px;
+                    margin: 20px auto;
+                    background: #fefaf4;
+                    border-radius: 10px;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    overflow: hidden;
+                    border-top: 6px solid #6237c8;
+                  }
+                  .header {
+                    background-color: #6237c8;
+                    color: white;
+                    text-align: center;
+                    padding: 20px;
+                    font-size: 24px;
+                    font-weight: bold;
+                  }
+                  .content {
+                    padding: 20px;
+                    line-height: 1.6;
+                  }
+                  .content h2 {
+                    color: #6237c8;
+                  }
+                  .order-details {
+                    margin: 20px 0;
+                    border-top: 1px solid #fefaf4;
+                    border-bottom: 1px solid #fefaf4;
+                    padding: 10px 0;
+                  }
+                  .order-details p {
+                    margin: 5px 0;
+                  }
+                  .footer {
+                    text-align: center;
+                    font-size: 12px;
+                    color: #888;
+                    padding: 15px;
+                  }
+                  @media(max-width: 640px) {
+                    .container { width: 90%; }
+                  }
+                </style>
+                </head>
+                <body>
+                <div class="container">
+                  <div class="header">Aliina's Pizza</div>
+                  <div class="content">
+                    <h2>
+                      Psst… ik ben het, je pizza ${firstPizza}! ${getRandomEmoji()}<br/>
+                      </h2>        
+                      <p>Ik word graag opgehaald om <strong>${incoming.pickupTime}</strong></p>
+                    <p>Tot straks, ${incoming.customerName}!</p>
+                    <br />
+                    <p>Het afhaaladres vind je terug op onze kalender.</p>
+                    <br />
+                    <div class="order-details">
+                      <p><strong>Bestelling:</strong><br/>
+                      ${incoming.items.replace(/,/g, "<br/>")}</p>
+
+                      <p><strong>Totaal:</strong> €${Number(incoming.total || 0).toFixed(2)}</p>
+
+                      ${incoming.customerNotes ? `<p><strong>Opmerking:</strong> ${incoming.customerNotes}</p>` : ""}
+                      </div>
+                      <br />
+                      <a href="https://aliinas.com/" 
+                        style="display:inline-block; background:#6237c8; color:#fff; padding:10px 20px; border-radius:5px; text-decoration:none;">
+                        Website
+                      </a>        
+                      </div>
+                    <div class="footer">
+                    Een vraag? Je kan ze stellen door op deze mail te antwoorden<br/>
+                    <a href="mailto:aliinas.pizza@hotmail.com" style="color:#888;">aliinas.pizza@hotmail.com</a>
+                  </div>
+                </div>
+              </body>
+              </html>`,
           });
         }
         console.log("📧 Mail sent");

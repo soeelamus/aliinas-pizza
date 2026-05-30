@@ -1,0 +1,38 @@
+[
+  {
+    "id": "payroll_1",
+    "employeeId": "1",
+    "period": "2026-05",
+    "hoursWorked": 18,
+    "hourlyWage": 25,
+    "grossPay": 450,
+    "paid": true,
+    "payoutDate": "2026-06-01",
+    "createdAt": "2026-05-31T00:00:00.000Z",
+    "updatedAt": "2026-05-31T00:00:00.000Z"
+  },
+  {
+    "id": "payroll_2",
+    "employeeId": "2",
+    "period": "2026-05",
+    "hoursWorked": 22,
+    "hourlyWage": 16,
+    "grossPay": 352,
+    "paid": false,
+    "payoutDate": "2026-06-01",
+    "createdAt": "2026-05-31T00:00:00.000Z",
+    "updatedAt": "2026-05-31T00:00:00.000Z"
+  },
+  {
+    "id": "payroll_3",
+    "employeeId": "3",
+    "period": "2026-05",
+    "hoursWorked": 12,
+    "hourlyWage": 14,
+    "grossPay": 168,
+    "paid": false,
+    "payoutDate": "2026-06-01",
+    "createdAt": "2026-05-31T00:00:00.000Z",
+    "updatedAt": "2026-05-31T00:00:00.000Z"
+  }
+]
