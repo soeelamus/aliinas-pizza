@@ -75,8 +75,12 @@ function orderAlreadyExists(rows, incomingSessionId) {
 
 function hasKitchenAccess(req) {
   const cookies = req.headers.cookie || "";
+  const headerToken = req.headers["x-kitchen-token"];
 
-  return cookies.includes(`kitchenAuth=${process.env.API_TOKEN}`);
+  return (
+    cookies.includes(`kitchenAuth=${process.env.API_TOKEN}`) ||
+    headerToken === process.env.API_TOKEN
+  );
 }
 
 // -------------------- handler --------------------

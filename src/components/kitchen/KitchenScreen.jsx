@@ -43,6 +43,9 @@ export default function KitchenScreen({ onStartKitchen }) {
 
 /* ---------------- KitchenActive ---------------- */
 function KitchenActive({ onBackToSetup }) {
+  const getKitchenHeaders = () => ({
+    "x-kitchen-token": localStorage.getItem("kitchenAuth"),
+  });
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
@@ -138,8 +141,10 @@ function KitchenActive({ onBackToSetup }) {
 
     const fetchOrders = async () => {
       try {
-        const res = await fetch("/api/orders", { cache: "no-store" });
-
+        const res = await fetch("/api/orders", {
+          cache: "no-store",
+          headers: getKitchenHeaders(),
+        });
         // server down / 500 / etc.
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
@@ -207,7 +212,10 @@ function KitchenActive({ onBackToSetup }) {
 
     const checkVersionAndFetch = async () => {
       try {
-        const vRes = await fetch("/api/orders-version", { cache: "no-store" });
+        const vRes = await fetch("/api/orders-version", {
+          cache: "no-store",
+          headers: getKitchenHeaders(),
+        });
         if (!vRes.ok) throw new Error(`orders-version HTTP ${vRes.status}`);
 
         const vJson = await vRes.json();
@@ -288,7 +296,10 @@ function KitchenActive({ onBackToSetup }) {
 
       const res = await fetch("/api/orders", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...getKitchenHeaders(),
+        },
         body: JSON.stringify({ id: String(id), status: newStatus }),
       });
 
