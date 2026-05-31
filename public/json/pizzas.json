@@ -1,5 +1,36 @@
 {
-  "Pizzas": [
+  "Pizzas": [    {
+      "id": 1945,
+      "name": "Midsommar BBQ",
+      "type": "",
+      "price": 13.50,
+      "menuPrice": 17,
+      "special": true,
+      "stock": 1,
+      "info": "Deze speciale pizza viert Midsommar, wanneer Avond en Zonsopgang volgens de legende elkaar ontmoeten tijdens de kortste nacht van het jaar.",
+      "ingredients": [
+        {
+          "name": "Tomatensaus"
+        },
+        {
+          "name": "Mozzarella"
+        },
+        {
+          "name": "Rode ui"
+        },
+        {
+          "name": "Gegrilde kip"
+        },
+        {
+          "name": "BBQ drizzle"
+        }
+      ],
+      "allergens": [
+        { "name": "Gluten" },
+        { "name": "Soja" },
+        { "name": "Lactose" }
+      ]
+    },
     {
       "id": 1489,
       "name": "Margheriita",

@@ -59,7 +59,9 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   return (
     <div className="menu">
       <div className="menu-box">
-        <h2 id="ad" className="monoton-regular">Menu</h2>
+        <h2 id="ad" className="monoton-regular">
+          Menu
+        </h2>
 
         <nav className="menu-tabs">
           {categories
@@ -136,7 +138,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                         key={item.id}
                         className="menu-options--item"
                         style={{
-                          backgroundImage: `url(/images/products/${formatName(item.name)}.jpg)`,
+                          backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
                         }}
                       ></button>
                     </div>
@@ -202,11 +204,38 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                     <span className="ingredient-chip">Drankje</span>
                     <span className="ingredient-chip">Dessert</span>
                   </p>
+                  
                 )}
                 {activeTab !== ComboMenu && description && (
                   <p className="pizza-ingredients">{description}</p>
                 )}
-                {item.info && <p className="pizza-info">{item.info}</p>}
+                {item.info && 
+                <div className="pizza--img-box">
+                <button
+                        onClick={() => {
+                          if (activeTab === ComboMenu) {
+                            setMenuBuilder({
+                              open: true,
+                              pizza: item,
+                              drink: null,
+                              dessert: null,
+                            });
+
+                            return;
+                          }
+                          addItem(item, { isKitchen });
+                        }}
+                        disabled={!canAdd}
+                        title={title}
+                        key={item.id}
+                        className="menu-options--item"
+                        style={{
+                          backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
+                        }}
+                      ></button>
+                <p className="pizza-info">{item.info}</p>
+                </div>
+                }
                 {item.size && item.size !== 0 && (
                   <p className="pizza-ingredients">
                     {item.size.split(",").map((ingredient, index) => (
@@ -235,7 +264,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                         key={drink.id}
                         className="menu-options--item"
                         style={{
-                          backgroundImage: `url(/images/products/${formatName(drink.name)}.jpg)`,
+                          backgroundImage: `url(/images/products/${formatName(drink.name)}.png)`,
                         }}
                         onClick={() =>
                           setMenuBuilder((prev) => ({
@@ -262,7 +291,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                         key={dessert.id}
                         className="menu-options--item"
                         style={{
-                          backgroundImage: `url(/images/products/${formatName(dessert.name)}.jpg)`,
+                          backgroundImage: `url(/images/products/${formatName(dessert.name)}.png)`,
                         }}
                         onClick={() => {
                           setMenuBuilder((prev) => ({

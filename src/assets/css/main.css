@@ -1490,6 +1490,12 @@ textarea.error {
   gap: 1rem;
   margin-bottom: 1rem;
 }
+.pizza--img-box {
+  max-width: 40rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 .btn-wider {
   width: 11rem;
 }
@@ -1785,10 +1791,9 @@ footer a:hover {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  border: 2px solid var(--primary-white);
 }
 .menu-options--item:hover {
-  border: 2px solid var(--primary-pink);
+  transform: scale(105%);
 }
 .menu-options--title {
   font-size: 2.5rem !important;
