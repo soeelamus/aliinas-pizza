@@ -1,0 +1,66 @@
+[
+  {
+    "id": "pizzaiolo",
+    "posted": false,
+    "title": "Pizzaiolo",
+    "type": "Flexi-job / Student / Bijverdienste",
+    "location": "Desteldonk, Oost-Vlaanderen",
+    "hours": "4 tot 12 uur per week",
+    "schedule": "Vrijdagavond en occasioneel zaterdag of zondag",
+    "shortDescription": "Bereid en bak verse pizza's in onze artisanale foodtruck.",
+    "description": "Als pizzaiolo ben je verantwoordelijk voor het afwerken, bakken en presenteren van onze pizza's tijdens service. Je werkt samen met een klein team in een gezellige en dynamische omgeving waar kwaliteit centraal staat.",
+    "tasks": [
+      "Pizza's beleggen volgens recept",
+      "Pizza's bakken in de oven",
+      "Ingrediënten voorbereiden voor service",
+      "Werkstation proper en georganiseerd houden",
+      "Meehelpen met opbouw en afbraak van de foodtruck"
+    ],
+    "requirements": [
+      "Passie voor eten en horeca",
+      "Stressbestendig tijdens drukke momenten",
+      "Oog voor kwaliteit en hygiëne",
+      "Zelfstandig kunnen werken",
+      "Ervaring is een pluspunt maar niet vereist"
+    ],
+    "offer": [
+      "Correcte verloning",
+      "Flexibele planning",
+      "Werken in een klein en hecht team",
+      "Interne opleiding voorzien",
+      "Gratis maaltijd tijdens de shift"
+    ]
+  },
+  {
+    "id": "foodtruck-helper",
+    "posted": false,
+    "title": "Foodtruck Helper",
+    "type": "Flexi-job / Student / Bijverdienste",
+    "location": "Desteldonk, Oost-Vlaanderen",
+    "hours": "4 tot 10 uur per week",
+    "schedule": "Voornamelijk vrijdagavond",
+    "shortDescription": "Ondersteun de foodtruck tijdens service en zorg voor tevreden klanten.",
+    "description": "Als foodtruck helper ben je het aanspreekpunt voor klanten. Je helpt bij bestellingen, drankjes, desserts en zorgt ervoor dat alles vlot verloopt tijdens de service.",
+    "tasks": [
+      "Klanten ontvangen",
+      "Bestellingen opnemen",
+      "Drankjes en desserts klaarmaken",
+      "Bestellingen mee controleren",
+      "Meehelpen bij opruim en schoonmaak"
+    ],
+    "requirements": [
+      "Vriendelijk en klantgericht",
+      "Verzorgd voorkomen",
+      "Stipt en betrouwbaar",
+      "Kunnen werken in een snel tempo",
+      "Minstens 16 jaar"
+    ],
+    "offer": [
+      "Aangename werksfeer",
+      "Flexibele uren",
+      "Ideale studentenjob",
+      "Correcte verloning",
+      "Gratis maaltijd tijdens de shift"
+    ]
+  }
+]

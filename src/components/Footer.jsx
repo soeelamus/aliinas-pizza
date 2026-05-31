@@ -40,7 +40,7 @@ const Footer = () => (
       <span>Last updated {APP_RELEASE}</span>
       </div>
       <div className="version-box">
-      <a href="/careers">Jobs</a>
+      <a href="/careers">Vacatures</a>
       <a href="/employees">Login</a>
       </div>
     </div>

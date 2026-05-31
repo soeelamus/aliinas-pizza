@@ -17,11 +17,14 @@ import ImagesBox from "./components/ImagesBox";
 import PizzaShop from "./components/PizzaShop";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Wave from "./components/Wave";
 
 // Pages
 import PaymentPage from "./components/pages/PaymentPage/PaymentPage";
 import SuccessPage from "./components/pages/SuccessPage/SuccessPage";
 import ImagesPage from "./components/pages/ImagesPage/ImagesPage";
+import CareersPage from "./components/pages/CareersPage/CareersPage";
+import CareerDetailPage from "./components/pages/CareersPage/CareerDetailPage";
 
 // Employees
 import EmployeesLogin from "./components/employees/EmployeesLogin";
@@ -81,6 +84,20 @@ function App() {
             element={
               <>
                 <Navbar onMain={false} />
+                <Wave />
+                <CareersPage />
+                <Footer />
+              </>
+            }
+          />
+
+          <Route
+            path="/careers/:jobId"
+            element={
+              <>
+                <Navbar onMain={false} />
+                <Wave />
+                <CareerDetailPage />
                 <Footer />
               </>
             }
@@ -90,12 +107,22 @@ function App() {
             element={
               <>
                 <Navbar onMain={false} />
+                <Wave />
                 <ImagesPage />
                 <Footer />
               </>
             }
           />
-          <Route path="/employees/login" element={<EmployeesLogin />} />
+          <Route
+            path="/employees/login"
+            element={
+              <>
+                <Navbar onMain={false} />
+                <Wave />
+                <EmployeesLogin />
+              </>
+            }
+          />
 
           <Route
             path="/employees"
@@ -104,6 +131,7 @@ function App() {
                 storageKey="employeesAuth"
                 redirectTo="/employees/login"
               >
+                <Wave />
                 <EmployeesDashboard />
               </ProtectedRoute>
             }
@@ -116,6 +144,7 @@ function App() {
                 storageKey="employeesAuth"
                 redirectTo="/employees/login"
               >
+                <Wave />
                 <EmployeeCreatePage />
               </ProtectedRoute>
             }
@@ -129,19 +158,26 @@ function App() {
             path="/employees/:employeeId"
             element={
               <EmployeeProtectedRoute>
+                <Wave />
                 <EmployeeDetailPage />
               </EmployeeProtectedRoute>
             }
           />
         </Route>
-
         <Route element={<RedirectLayout />}>
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/success" element={<SuccessPage />} />
         </Route>
-
         {/* 🟣 KITCHEN */}
-        <Route path="/kitchen/login" element={<KitchenLogin />} />
+        <Route
+          path="/kitchen/login"
+          element={
+            <>
+              <Wave />
+              <KitchenLogin />
+            </>
+          }
+        />{" "}
         <Route
           path="/kitchen"
           element={
@@ -159,7 +195,6 @@ function App() {
           {/* Catch-all for invalid kitchen routes */}
           <Route path="*" element={<Navigate to="/kitchen/login" replace />} />
         </Route>
-
         {/* 🔴 GLOBAL FALLBACK */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
