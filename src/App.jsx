@@ -77,6 +77,15 @@ function App() {
             }
           />
           <Route
+            path="/careers"
+            element={
+              <>
+                <Navbar onMain={false} />
+                <Footer />
+              </>
+            }
+          />
+          <Route
             path="/images"
             element={
               <>

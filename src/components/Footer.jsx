@@ -12,7 +12,7 @@ const Footer = () => (
           target="_blank"
           rel="noopener noreferrer"
           href="https://facebook.com/aliinas.pizza"
-          className="icon brands alt fa-facebook-f"
+          className="icon facebook"
         >
           <span className="label">Facebook</span>
         </a>
@@ -22,21 +22,24 @@ const Footer = () => (
           target="_blank"
           rel="noopener noreferrer"
           href="https://instagram.com/aliinas.pizza"
-          className="icon brands alt fa-instagram"
+          className="icon instagram"
         >
           <span className="label">Instagram</span>
         </a>
       </li>
     </ul>
-    <ul className="copyright">
+    <ul className="info">
       <li>Copyright &copy; 2026 Soe Elamus OÜ</li>
       <li>aliinas.pizza@hotmail.com</li>
       <li>Leemstraat 45, 9080 Lochristi BE</li>
       <li>BE1032.444.046</li>
     </ul>
     <div className="footer--version">
+      <div className="version-box">
       <span>Version {APP_VERSION}</span>
       <span>Last updated {APP_RELEASE}</span>
+      </div>
+      <a href="/careers">Jobs</a>
     </div>
   </footer>
 );

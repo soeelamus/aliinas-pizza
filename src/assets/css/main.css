@@ -701,21 +701,15 @@ header.special {
   text-align: center;
 }
 ul.icons {
-  cursor: default;
-  list-style: none;
   display: flex;
-
   gap: 1rem;
 }
 ul.icons li * {
   display: flex;
-  justify-content: center;
-  align-items: center;
   border-radius: 50%;
   border: 2px solid var(--primary-white);
   width: 4rem;
   height: 4rem;
-  font-size: 2rem;
 }
 ul.icons li *:hover {
   border: 2px solid var(--primary-pink);
@@ -1671,7 +1665,7 @@ footer {
   flex-direction: column;
   align-items: center;
   gap: 2rem;
-  padding: 10rem 2rem;
+  padding: 1rem;
   background-image: url(/images/pattern.png);
   background-size: 90%;
   background-repeat: repeat;
@@ -1679,25 +1673,43 @@ footer {
   color: var(--primary-white);
   position: relative;
 }
-footer .copyright {
+footer .info {
   display: flex;
   flex-wrap: wrap;
-  text-align: center;
   justify-content: center;
   width: 50rem;
   max-width: 100%;
   gap: 2rem;
 }
+footer .icons {
+  margin-top: 8rem;
+}
+footer .icon  {
+  background-position: center;
+  background-size: 60%;
+  background-repeat: no-repeat;
+}
+footer .facebook {
+  background-image: url(/images/facebook.png);
+}
+footer .instagram {
+  background-image: url(/images/instagram.png);
+
+}
 footer a:hover {
   color: var(--primary-pink);
 }
 .footer--version {
-  position: absolute;
-  left: 1rem;
-  bottom: 1rem;
   display: flex;
-  gap: 2rem;
-  font-size: 1rem;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 120rem;
+  padding: 0 2rem;
+  margin-top: 8rem;
+}
+.version-box {
+  display: flex;
+  gap: 1rem;
 }
 .outside-month {
   color: #6b6b6b !important;
