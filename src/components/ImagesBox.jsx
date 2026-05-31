@@ -1,25 +1,22 @@
-import "../components/pages/ImagesPage/ImagesPage.css";
-
-const images = ["Lokeren.png", "mood-pizza.jpg", "11.30.06.jpeg"];
-
+const images = [
+  "/images/2.png",
+  "/images/3.png",
+  "/images/4.png",
+];
 export default function ImagesBox() {
   return (
     <div className="images-container">
       <section className="images-box">
-        {images?.map((img, i) => (
+        {images.map((src, index) => (
           <img
-            key={img}
+            key={src}
             className="images-box--img"
+            src={src}
             loading="lazy"
-            src={new URL(`../assets/ImagesPage/${img}`, import.meta.url).href}
-            alt={`Pizza sfeerbeeld ${i}`}
+            alt={`Aliina's pizza ${index + 1}`}
           />
         ))}
       </section>
-
-      <a className="images-box--text link" href="/images">
-        Meer foto's
-      </a>
     </div>
   );
 }

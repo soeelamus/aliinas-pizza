@@ -22,7 +22,6 @@ import Wave from "./components/Wave";
 // Pages
 import PaymentPage from "./components/pages/PaymentPage/PaymentPage";
 import SuccessPage from "./components/pages/SuccessPage/SuccessPage";
-import ImagesPage from "./components/pages/ImagesPage/ImagesPage";
 import CareersPage from "./components/pages/CareersPage/CareersPage";
 import CareerDetailPage from "./components/pages/CareersPage/CareerDetailPage";
 
@@ -98,17 +97,6 @@ function App() {
                 <Navbar onMain={false} />
                 <Wave />
                 <CareerDetailPage />
-                <Footer />
-              </>
-            }
-          />
-          <Route
-            path="/images"
-            element={
-              <>
-                <Navbar onMain={false} />
-                <Wave />
-                <ImagesPage />
                 <Footer />
               </>
             }
