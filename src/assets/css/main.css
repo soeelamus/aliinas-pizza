@@ -1709,7 +1709,8 @@ footer a:hover {
 }
 .version-box {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
+  margin-top: 1rem;
 }
 .outside-month {
   color: #6b6b6b !important;
@@ -1717,6 +1718,12 @@ footer a:hover {
 }
 
 @media screen and (max-width: 580px) {
+  .footer--version {
+    flex-direction: column-reverse;
+  }
+  .version-box {
+    gap: 1rem;
+  }
   .nav-btns {
     gap: 0.5rem;
   }
