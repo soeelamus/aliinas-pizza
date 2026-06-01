@@ -273,6 +273,55 @@ function KitchenActive({ onBackToSetup }) {
     };
   }, [pendingUpdates]); // ✅ IMPORTANT: do NOT add currentTime here
 
+  const handleOrderDetailsChange = async (id, updates) => {
+    if (String(id) === "mock-1") {
+      mockOrderRef.current = {
+        ...mockOrderRef.current,
+        ...updates,
+      };
+
+      setOrders((prev) =>
+        prev.map((o) =>
+          String(o.id) === String(id) ? { ...o, ...updates } : o,
+        ),
+      );
+
+      return;
+    }
+
+    try {
+      setUpdatingId(id);
+
+      setOrders((prev) =>
+        prev.map((o) =>
+          String(o.id) === String(id) ? { ...o, ...updates } : o,
+        ),
+      );
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...getKitchenHeaders(),
+        },
+        body: JSON.stringify({
+          id: String(id),
+          ...updates,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.status !== "ok") {
+        throw new Error("Update failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Order aanpassen mislukt");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
   const handleStatusChange = async (id, newStatus = "done") => {
     // ✅ mock order: local only, no server call
     if (String(id) === "mock-1") {
@@ -345,10 +394,10 @@ function KitchenActive({ onBackToSetup }) {
     return (
       <section className="kitchen-section">
         <button
-          className="btn-settings btn-purple btn-small fa fa-gear"
+          className="btn-settings btn-purple btn-small"
           onClick={onBackToSetup}
         >
-          
+          ⚙
         </button>
         <Loading innerHTML={"Loading orders"} />
       </section>
@@ -358,10 +407,10 @@ function KitchenActive({ onBackToSetup }) {
   return (
     <section className="kitchen-section">
       <button
-        className="btn-settings btn-purple btn-small fa fa-gear"
+        className="btn-settings btn-purple btn-small"
         onClick={onBackToSetup}
       >
-        
+        ⚙
       </button>
 
       <h1 className="monoton-regular white">Orders</h1>
@@ -375,6 +424,7 @@ function KitchenActive({ onBackToSetup }) {
               currentTime={currentTime}
               updatingId={updatingId}
               onStatusChange={handleStatusChange}
+              onOrderDetailsChange={handleOrderDetailsChange}
               getRemainingSeconds={getRemainingSeconds}
             />
           ))}

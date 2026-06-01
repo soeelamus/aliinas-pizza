@@ -135,6 +135,10 @@
   padding: 0;
   margin-bottom: 1rem;
 }
+.kitchen-orders--actions {
+  display: flex;
+  justify-content: space-between;
+}
 
 /* RED: 0–10 min */
 .kitchen-order.urgent-red {
@@ -253,5 +257,76 @@
   .kitchen-dashboard.screen-active .kitchen-cashier {
     width: 0;
     padding: 0;
+  }
+}
+
+.order-edit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(20, 10, 35, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.order-edit-popup {
+  width: 30rem;
+  background: var(--primary-white);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+.order-edit-popup h1 {
+  color: var(--primary-purple) !important;
+}
+.order-time-display {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.order-time-digit {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.9rem;
+  background: white;
+  border: 2px solid var(--primary-pink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-purple);
+}
+.order-edit-actions {
+  margin-top: 2rem;
+}
+.order-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.order-key {
+  min-height: 4rem;
+  width: 4rem;
+  margin: 0.5rem 0 !important;
+  width: 100% !important;
+}
+
+.order-edit-error {
+  color: red;
+  font-weight: 700;
+  margin: 0.75rem 0 0;
+}
+@media (max-width: 420px) {
+  .order-edit-popup {
+    padding: 1.2rem;
+    border-radius: 1.5rem;
+  }
+
+  .order-key {
+    min-height: 3.6rem;
   }
 }
