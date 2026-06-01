@@ -3,7 +3,7 @@
   "appName": "Aliinas POS",
   "webDir": "dist",
   "server": {
-    "url": "https://aliinas-pizza.vercel.app/kitchen",
+    "url": "https://aliinas-pizza.vercel.app/kitchen/login",
     "cleartext": false
   }
 }

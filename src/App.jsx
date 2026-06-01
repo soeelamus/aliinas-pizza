@@ -108,6 +108,7 @@ function App() {
                 <Navbar onMain={false} />
                 <Wave />
                 <EmployeesLogin />
+                <Wave reverse={true} />
               </>
             }
           />
@@ -140,7 +141,13 @@ function App() {
 
           <Route
             path="/employees/:employeeId/login"
-            element={<EmployeePersonalLogin />}
+            element={
+              <>
+                <Wave />
+                <EmployeePersonalLogin />
+                <Wave reverse={true} />
+              </>
+            }
           />
           <Route
             path="/employees/:employeeId"
@@ -163,6 +170,7 @@ function App() {
             <>
               <Wave />
               <KitchenLogin />
+              <Wave reverse={true} />
             </>
           }
         />{" "}

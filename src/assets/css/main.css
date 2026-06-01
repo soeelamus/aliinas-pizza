@@ -1497,7 +1497,7 @@ textarea.error {
   gap: 1rem;
 }
 .btn-wider {
-  width: 11rem;
+  width: 11rem !important;
 }
 .success-message {
   border: 2px solid var(--primary-pink);
@@ -1920,4 +1920,27 @@ footer a:hover {
 .images-box--img:hover {
   transform: scale(105%);
   cursor: pointer;
+}
+
+.pin-display {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 2rem;
+  margin: 2rem 0;
+}
+
+.pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.pin-key {
+  height: 4rem;
+}
+
+.pin-key--secondary {
+  background: #eee;
 }
