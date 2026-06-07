@@ -24,6 +24,7 @@ import PaymentPage from "./components/pages/PaymentPage/PaymentPage";
 import SuccessPage from "./components/pages/SuccessPage/SuccessPage";
 import CareersPage from "./components/pages/CareersPage/CareersPage";
 import CareerDetailPage from "./components/pages/CareersPage/CareerDetailPage";
+import SeoLandingPage from "./components/pages/SeoLandingPage/SeoLandingPage";
 
 // Employees
 import EmployeesLogin from "./components/employees/EmployeesLogin";
@@ -89,7 +90,6 @@ function App() {
               </>
             }
           />
-
           <Route
             path="/careers/:jobId"
             element={
@@ -112,7 +112,6 @@ function App() {
               </>
             }
           />
-
           <Route
             path="/employees"
             element={
@@ -125,7 +124,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/employees/new"
             element={
@@ -138,7 +136,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/employees/:employeeId/login"
             element={
@@ -156,6 +153,18 @@ function App() {
                 <Wave />
                 <EmployeeDetailPage />
               </EmployeeProtectedRoute>
+            }
+          />
+          <Route
+            path="/:slug"
+            element={
+              <>
+                <Navbar onMain={false} />
+                <Wave />
+                <SeoLandingPage />
+                <Wave reverse={true} />
+
+              </>
             }
           />
         </Route>

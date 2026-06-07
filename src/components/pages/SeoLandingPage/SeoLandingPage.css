@@ -1,0 +1,165 @@
+.seo-page {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 4rem 0;
+}
+
+.seo-hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.seo-badge {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.seo-hero h1 {
+  margin: 0 0 1rem;
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  line-height: 0.95;
+}
+
+.seo-hero p {
+  max-width: 620px;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  opacity: 0.88;
+}
+
+.seo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+.seo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 1.2rem;
+  border-radius: 999px;
+  font-weight: 700;
+  text-decoration: none;
+  background: #fff;
+  color: #111;
+}
+
+.seo-btn--ghost {
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.seo-image-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 28px;
+  aspect-ratio: 4 / 5;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+.seo-image-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.seo-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 4rem;
+}
+
+.seo-card {
+  padding: 1.4rem;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.seo-card h2 {
+  margin: 0 0 0.7rem;
+  font-size: 1.1rem;
+}
+
+.seo-card p {
+  margin: 0;
+  line-height: 1.6;
+  opacity: 0.82;
+}
+
+@media (max-width: 850px) {
+  .seo-page {
+    padding: 2.5rem 0;
+  }
+
+  .seo-hero {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .seo-image-card {
+    aspect-ratio: 16 / 11;
+  }
+
+  .seo-card-grid {
+    grid-template-columns: 1fr;
+    margin-top: 2rem;
+  }
+}
+.seo-keywords,
+.seo-faq {
+  margin-top: 4rem;
+}
+
+.seo-keywords h2,
+.seo-faq h2 {
+  margin-bottom: 1rem;
+}
+
+.seo-keywords div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.seo-keywords span {
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.seo-faq details {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.seo-faq summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.seo-faq p {
+  margin-top: 0.7rem;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+.seo-links {
+  font-size: 0.8rem;
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}

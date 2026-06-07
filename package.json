@@ -2,9 +2,9 @@
   "name": "aliinas-pizza",
   "homepage": "https://www.aliinas.com",
   "private": false,
-  "version": "1.707",
+  "version": "1.708",
   "release": {
-    "date": "01-06-2026"
+    "date": "07-06-2026"
   },
   "type": "module",
   "scripts": {
@@ -24,6 +24,7 @@
     "micro": "^10.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-helmet-async": "^3.0.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.12.0",
     "resend": "^6.9.1",
