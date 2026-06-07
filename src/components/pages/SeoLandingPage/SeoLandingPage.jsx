@@ -7,12 +7,33 @@ import "./SeoLandingPage.css";
 export default function SeoLandingPage() {
   const { slug } = useParams();
   const page = seoPages.find((p) => p.slug === slug);
-
   if (!page) return <Navigate to="/" replace />;
+
+  const schema = {
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  name: "Aliina's",
+  url: "https://aliinas.com",
+  image: "https://aliinas.com/images/logo.png",
+  servesCuisine: "Pizza",
+  email: "aliinas.pizza@hotmail.com",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Leemstraat 45",
+    postalCode: "9080",
+    addressLocality: "Lochristi",
+    addressCountry: "BE"
+  },
+  sameAs: [
+    "https://facebook.com/aliinas.pizza",
+    "https://instagram.com/aliinas.pizza"
+  ]
+};
+
 
   return (
     <>
-      <SEO title={page.title} description={page.description} />
+      <SEO title={page.title} description={page.description} schema={schema} />
 
       <main className="seo-page">
         <section className="seo-hero">
@@ -37,31 +58,6 @@ export default function SeoLandingPage() {
           </div>
         </section>
 
-        <section className="seo-card-grid">
-          <article className="seo-card">
-            <h2>Verse Napolitaanse pizza</h2>
-            <p>
-              Dagelijks vers deeg, kwaliteitsvolle mozzarella, verse groenten en
-              zorgvuldig gekozen toppings.
-            </p>
-          </article>
-
-          <article className="seo-card">
-            <h2>Afhalen of op locatie</h2>
-            <p>
-              Kom langs op onze vaste standplaatsen of boek Aliina's voor jouw
-              feest, communie, huwelijk of bedrijfsevent.
-            </p>
-          </article>
-
-          <article className="seo-card">
-            <h2>Actief in {page.location}</h2>
-            <p>
-              Aliina's is actief in {page.location} en verschillende gemeenten in
-              Oost-Vlaanderen.
-            </p>
-          </article>
-        </section>
         <section className="seo-card-grid">
   {page.sections.map((section) => (
     <article className="seo-card" key={section.title}>

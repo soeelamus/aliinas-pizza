@@ -25,6 +25,7 @@ import SuccessPage from "./components/pages/SuccessPage/SuccessPage";
 import CareersPage from "./components/pages/CareersPage/CareersPage";
 import CareerDetailPage from "./components/pages/CareersPage/CareerDetailPage";
 import SeoLandingPage from "./components/pages/SeoLandingPage/SeoLandingPage";
+import LocationsPage from "./components/pages/LocationsPage/LocationsPage";
 
 // Employees
 import EmployeesLogin from "./components/employees/EmployeesLogin";
@@ -156,6 +157,17 @@ function App() {
             }
           />
           <Route
+            path="/locaties"
+            element={
+              <>
+                <Navbar onMain={false} />
+                <Wave />
+                <LocationsPage />
+                <Wave reverse={true} />
+              </>
+            }
+          />
+          <Route
             path="/:slug"
             element={
               <>
@@ -163,7 +175,6 @@ function App() {
                 <Wave />
                 <SeoLandingPage />
                 <Wave reverse={true} />
-
               </>
             }
           />

@@ -160,6 +160,7 @@
 .seo-links {
   font-size: 0.8rem;
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   width: 100%;
 }

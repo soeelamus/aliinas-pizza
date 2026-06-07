@@ -1,15 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
 import packageJson from "../../package.json";
-import { seoPages } from "../data/seoPages";
 
 const APP_VERSION = packageJson.version;
 const APP_RELEASE = packageJson.release.date;
 
 const Footer = () => (
   <footer id="footer">
-    
     <ul className="icons">
       <li>
         <Link
@@ -48,13 +45,11 @@ const Footer = () => (
         <Link to="/employees">Login</Link>
       </div>
     </div>
-    <div className="seo-links gap">
-      {seoPages.map((page) => (
-        <Link key={page.slug} to={`/${page.slug}`}>
-          {page.h1}
-        </Link>
-      ))}
-    </div>
+    <nav className="seo-links gap" aria-label="Populaire pagina's">
+      <Link to="/locaties">Pizza in jouw buurt</Link>
+      <Link to="/foodtruck-huren-oost-vlaanderen">Foodtruck huren</Link>
+      <Link to="/pizza-catering-oost-vlaanderen">Pizza catering</Link>
+    </nav>
   </footer>
 );
 

@@ -2,16 +2,17 @@
   "name": "aliinas-pizza",
   "homepage": "https://www.aliinas.com",
   "private": false,
-  "version": "1.708",
+  "version": "1.709",
   "release": {
     "date": "07-06-2026"
   },
   "type": "module",
   "scripts": {
     "front": "vite",
+    "prebuild": "node scripts/generate-sitemap.js",
     "build": "vite build",
-    "deploy": "vercel --prod",
-    "android": "vercel --prod && npx cap sync android"
+    "deploy": "npm run build && vercel --prod",
+    "android": "npm run deploy && npx cap sync android"
   },
   "dependencies": {
     "@capacitor-community/bluetooth-le": "^8.0.3",
