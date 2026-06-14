@@ -1440,25 +1440,19 @@ textarea.error {
 .dates li.event {
   background: none;
   color: inherit;
+  color: #473821;
 }
 .type-markt {
   background-color: #d4edbc !important;
-  color: #11734b !important;
 }
-
 .type-evenement {
   background-color: #e6cff2 !important;
-  color: #5a3286 !important;
 }
-
 .type-privaat {
   background-color: #ffe5a0 !important;
-  color: #473821 !important;
 }
-
 .type-standplaats {
-  background-color: #bfe1f6 !important;
-  color: #0a53a8 !important;
+  background-color: #d4edbc !important;
 }
 .type-order {
   background-color: var(--primary-pink);
@@ -1690,7 +1684,7 @@ footer .info {
 footer .icons {
   margin-top: 8rem;
 }
-footer .icon  {
+footer .icon {
   background-position: center;
   background-size: 60%;
   background-repeat: no-repeat;
@@ -1700,7 +1694,6 @@ footer .facebook {
 }
 footer .instagram {
   background-image: url(/images/instagram.png);
-
 }
 footer a:hover {
   color: var(--primary-pink);
@@ -1902,7 +1895,7 @@ footer a:hover {
   gap: 0.5rem;
 }
 .images-container {
-    margin: 10rem 0;
+  margin: 10rem 0;
   flex-direction: column;
 }
 .images-box {

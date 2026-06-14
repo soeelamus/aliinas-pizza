@@ -137,6 +137,18 @@ const Calendar = () => {
 
   if (loading) return <Loading innerHTML={"De kalender wordt geladen"} />;
 
+  const getWeekday = (displayDate) => {
+    const [day, month, year] = displayDate.split("-").map(Number);
+
+    const date = new Date(year, month - 1, day);
+
+    const weekday = date.toLocaleDateString("nl-BE", {
+      weekday: "long",
+    });
+
+    return `${weekday.charAt(0).toUpperCase() + weekday.slice(1)} ${day}-${String(month).padStart(2, "0")}`;
+  };
+
   return (
     <>
       <br id="kalender" />
@@ -225,9 +237,9 @@ const Calendar = () => {
 
                     <ul className="event-meta">
                       <div className="event-meta--flex">
-                        <li>⏰ {selectedEvent.displayDate}</li>
+                        <li>⏰ {getWeekday(selectedEvent.displayDate)}</li>
                         <li>
-                          {selectedEvent.startTime} – {selectedEvent.endTime}
+                          {selectedEvent.startTime} tot {selectedEvent.endTime}
                         </li>
                       </div>
 
@@ -252,16 +264,17 @@ const Calendar = () => {
                     </ul>
 
                     <p className="event-description">
+                      {selectedEvent.description}
+                      <br />
+                      <br />
                       {!privateEvent && (
                         <span>
                           ✅ Bestel de dag zelf{" "}
                           <a className="link" href="/ordering" target="_blank">
-                            gemakkelijk online
+                            online
                           </a>
                         </span>
                       )}
-                      <br />
-                      {selectedEvent.description}
                     </p>
 
                     {!privateEvent && selectedEvent.website && (
