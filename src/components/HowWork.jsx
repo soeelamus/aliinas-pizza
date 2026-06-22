@@ -26,7 +26,7 @@ const HowWork = () => (
               <h3>Hoeveel het kost</h3>
             </div>
             <div>
-              <span>Een tuinfeest met 50 gasten:</span>
+              <span>Een voorbeeld met 50 gasten:</span>
               <br />
               <br />
               <ul>
@@ -34,8 +34,8 @@ const HowWork = () => (
                 <li>15x Fungii (180)</li>
                 <li>10x Pepperoni (125)</li>
                 <li>5x Sweet Chiicken (65)</li>
-                <li>Transport & Opstart (100)</li>
-                <li>Totaal - <strong>€635 incl. BTW</strong></li>
+                <li>Transport & Opstart (150)</li>
+                <li>Totaal - €685 incl. BTW</li>
               </ul>
               <p>Dat is het. Simpel, toch?</p>
             </div>
