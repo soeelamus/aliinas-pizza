@@ -1476,6 +1476,14 @@ textarea.error {
 .pizza {
   margin-bottom: 1.5rem;
 }
+.undefined {
+  display: flex;
+  gap: 1rem;
+}
+.pizza--image {
+  max-width: 8rem;
+  width: 100%;
+}
 .pizza-filter {
   width: 100%;
   display: flex;
@@ -1520,8 +1528,8 @@ textarea.error {
   min-height: 60rem;
 }
 .pizza-box {
-  gap: 2rem;
-  width: 60rem;
+  gap: 1rem;
+  width: 65rem;
   max-width: 100%;
   display: flex;
   justify-content: space-between;
@@ -1534,10 +1542,10 @@ textarea.error {
   }
 }
 .pizza {
-  width: 25rem;
+  width: 29rem;
 }
 .pizza-special {
-  width: 100rem;
+  width: 50rem;
   max-width: 100%;
 }
 .pizza-special h3 {
@@ -1548,6 +1556,9 @@ textarea.error {
   border-radius: 0.5rem;
   margin-right: 1rem;
   padding: 0 0.5rem;
+}
+.pizza-text--box {
+  width: 100%;
 }
 .pizza-text {
   display: flex;
@@ -1784,9 +1795,17 @@ footer a:hover {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  border: none !important;
+  z-index: 100;
+  transition: all ease 0.1s;
+  cursor: pointer;
 }
-.menu-options--item:hover {
-  transform: scale(105%);
+.item--pizza:hover {
+  transform: scale(150%);
+}
+.item--drinks:hover,
+.item--desserts:hover {
+  transform: scale(120%);
 }
 .menu-options--title {
   font-size: 2.5rem !important;

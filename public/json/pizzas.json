@@ -1,13 +1,13 @@
 {
   "Pizzas": [    {
       "id": 1945,
-      "name": "Midsommar BBQ",
+      "name": "Bacon Deluxe",
       "type": "",
-      "price": 13.50,
-      "menuPrice": 17,
+      "price": 14,
+      "menuPrice": 17.50,
       "special": true,
       "stock": 1,
-      "info": "Deze speciale pizza viert Midsommar, wanneer Avond en Zonsopgang volgens de legende elkaar ontmoeten tijdens de kortste nacht van het jaar.",
+      "info": "Juli is de maand van lange avonden en goed gezelschap. De Bacon Deluxe combineert hartige bacon, champignons en rode ui tot een pizza die perfect past bij een ontspannen zomeravond.",
       "ingredients": [
         {
           "name": "Tomatensaus"
@@ -16,13 +16,19 @@
           "name": "Mozzarella"
         },
         {
+          "name": "Pecorino"
+        },
+        {
           "name": "Rode ui"
         },
         {
-          "name": "Gegrilde kip"
+          "name": "Champignons"
         },
         {
-          "name": "BBQ drizzle"
+          "name": "Bacon"
+        },
+        {
+          "name": "Lente-ui"
         }
       ],
       "allergens": [
