@@ -143,7 +143,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                   key={item.id}
                   className="menu-options--item pizza--image item--pizza"
                   style={{
-                    backgroundImage: `url(/images/products/pizzas/${formatName(item.name)}.png)`,
+                    backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
                   }}
                 ></button>
                 }
@@ -211,6 +211,15 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                 {activeTab !== ComboMenu && description && (
                   <p className="pizza-ingredients">{description}</p>
                 )}
+                {item.size && item.size !== 0 && (
+                  <p className="pizza-ingredients">
+                    {item.size.split(",").map((ingredient, index) => (
+                      <span key={index} className="ingredient-chip">
+                        {ingredient.trim()}
+                      </span>
+                    ))}
+                  </p>
+                )}
                 </div>
                 {item.info && (
                   <div className="pizza--img-box">
@@ -233,21 +242,11 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                       key={item.id}
                       className="menu-options--item item--pizza"
                       style={{
-                        backgroundImage: `url(/images/products/pizzas/${formatName(item.name)}.png)`,
+                        backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
                       }}
                     ></button>
                     <p className="pizza-info">{item.info}</p>
                   </div>
-                )}
-
-                {item.size && item.size !== 0 && (
-                  <p className="pizza-ingredients">
-                    {item.size.split(",").map((ingredient, index) => (
-                      <span key={index} className="ingredient-chip">
-                        {ingredient.trim()}
-                      </span>
-                    ))}
-                  </p>
                 )}
               </div>
             );
@@ -268,7 +267,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                         key={drink.id}
                         className="menu-options--item item--drinks"
                         style={{
-                          backgroundImage: `url(/images/products/drinks/${formatName(drink.name)}.png)`,
+                          backgroundImage: `url(/images/products/${formatName(drink.name)}.png)`,
                         }}
                         onClick={() =>
                           setMenuBuilder((prev) => ({
@@ -295,7 +294,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                         key={dessert.id}
                         className="menu-options--item item--desserts"
                         style={{
-                          backgroundImage: `url(/images/products/desserts/${formatName(dessert.name)}.png)`,
+                          backgroundImage: `url(/images/products/${formatName(dessert.name)}.png)`,
                         }}
                         onClick={() => {
                           setMenuBuilder((prev) => ({
