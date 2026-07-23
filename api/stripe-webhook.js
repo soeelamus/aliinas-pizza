@@ -55,11 +55,9 @@ export default async function handler(req, res) {
         .map((li) => {
           const product = li.price.product;
           const drink = product?.metadata?.drink || "";
-          const dessert = product?.metadata?.dessert || "";
 
-          if (drink || dessert) {
-            return `${li.quantity}x ${product.name} (🥤 ${drink || "-"} - 🍰 ${
-              dessert || "-"
+          if (drink) {
+            return `${li.quantity}x ${product.name} (🥤 ${drink || "-"}
             })`;
           }
 

@@ -10,7 +10,6 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
     open: false,
     pizza: null,
     drink: null,
-    dessert: null,
   });
 
   useEffect(() => {
@@ -49,7 +48,6 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
         : stockSheet.filter((item) => item.category === activeTab);
 
   const drinks = stockSheet.filter((item) => item.category === "Drank");
-  const desserts = stockSheet.filter((item) => item.category === "Dessert");
 
   const formatName = (name) =>
     name
@@ -123,30 +121,34 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                 key={item.id}
                 className={`pizza ${item.special && "pizza-special"}`}
               >
-                {!item.special &&
-                <button
-                  onClick={() => {
-                    if (activeTab === ComboMenu) {
-                      setMenuBuilder({
-                        open: true,
-                        pizza: item,
-                        drink: null,
-                        dessert: null,
-                      });
+                {!item.special && (
+  <div className="pizza-wrapper">
+    {activeTab === ComboMenu && <div className="drink--image" />}
 
-                      return;
-                    }
-                    addItem(item, { isKitchen });
-                  }}
-                  disabled={!canAdd}
-                  title={title}
-                  key={item.id}
-                  className="menu-options--item pizza--image item--pizza"
-                  style={{
-                    backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
-                  }}
-                ></button>
-                }
+    <button
+      onClick={() => {
+        if (activeTab === ComboMenu) {
+          setMenuBuilder({
+            open: true,
+            pizza: item,
+            drink: null,
+          });
+
+          return;
+        }
+
+        addItem(item, { isKitchen });
+      }}
+      disabled={!canAdd}
+      title={title}
+      key={item.id}
+      className="menu-options--item pizza--image item--pizza"
+      style={{
+        backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
+      }}
+    />
+  </div>
+)}
                 <div className="pizza-text--box">
                 <div className="pizza-text">
                   <h3 className={`pizza-name ${dashed}`}>
@@ -182,7 +184,6 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                               open: true,
                               pizza: item,
                               drink: null,
-                              dessert: null,
                             });
 
                             return;
@@ -205,7 +206,6 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                   <p className="pizza-ingredients">
                     <span className="ingredient-chip">Pizza {item.name}</span>
                     <span className="ingredient-chip">Drankje</span>
-                    <span className="ingredient-chip">Dessert</span>
                   </p>
                 )}
                 {activeTab !== ComboMenu && description && (
@@ -230,7 +230,6 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                             open: true,
                             pizza: item,
                             drink: null,
-                            dessert: null,
                           });
 
                           return;
@@ -269,43 +268,15 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                         style={{
                           backgroundImage: `url(/images/products/${formatName(drink.name)}.png)`,
                         }}
-                        onClick={() =>
-                          setMenuBuilder((prev) => ({
-                            ...prev,
-                            drink,
-                          }))
-                        }
-                      ></button>
-                      <span className="menu-options--name"> {drink.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-
-            {menuBuilder.drink && !menuBuilder.dessert && (
-              <>
-                <p className="menu-options--title">Welk dessert?</p>
-
-                <div className="menu-options">
-                  {desserts.map((dessert) => (
-                    <div className="menu-option">
-                      <button
-                        key={dessert.id}
-                        className="menu-options--item item--desserts"
-                        style={{
-                          backgroundImage: `url(/images/products/${formatName(dessert.name)}.png)`,
-                        }}
                         onClick={() => {
                           setMenuBuilder((prev) => ({
                             ...prev,
-                            dessert,
+                            drink,
                           }));
 
                           addMenu(
                             menuBuilder.pizza,
-                            menuBuilder.drink,
-                            dessert,
+                            drink,
                             menuBuilder.pizza.menuPrice,
                             { isKitchen },
                           );
@@ -314,14 +285,10 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                             open: false,
                             pizza: null,
                             drink: null,
-                            dessert: null,
                           });
                         }}
                       ></button>
-                      <span className="menu-options--name">
-                        {" "}
-                        {dessert.name}
-                      </span>
+                      <span className="menu-options--name"> {drink.name}</span>
                     </div>
                   ))}
                 </div>
@@ -335,7 +302,6 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                   open: false,
                   pizza: null,
                   drink: null,
-                  dessert: null,
                 })
               }
             >

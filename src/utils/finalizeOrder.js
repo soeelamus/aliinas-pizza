@@ -23,7 +23,7 @@ export async function finalizeOrder({
 items: cart
   .map((i) => {
     if (i.type === "menu" && i.menu) {
-      return `${i.quantity}x ${i.product.name} (${i.menu.drink.name}- ${i.menu.dessert.name})`;
+      return `${i.quantity}x ${i.product.name} + 🥤 ${i.menu.drink.name}`;
     }
 
     return `${i.quantity}x ${i.product.name}`;

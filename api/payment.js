@@ -28,10 +28,9 @@ export default async function handler(req, res) {
           const product = li.price?.product;
 
           const drink = product?.metadata?.drink;
-          const dessert = product?.metadata?.dessert;
 
-          if (drink || dessert) {
-            return `${li.quantity}x ${product?.name} (🥤 ${drink || "-"} - 🍰 ${dessert || "-"})`;
+          if (drink) {
+            return `${li.quantity}x ${product?.name} (🥤 ${drink || "-"})`;
           }
 
           return `${li.quantity}x ${product?.name}`;
@@ -85,10 +84,9 @@ export default async function handler(req, res) {
             currency: "eur",
             product_data: {
               name: `${item.product.name} ${(item.type || "").toUpperCase()}`,
-              description: `${item.menu?.drink?.name || ""} • ${item.menu?.dessert?.name || ""}`,
+              description: `${item.menu?.drink?.name || ""}`,
               metadata: {
                 drink: item.menu?.drink?.name || "",
-                dessert: item.menu?.dessert?.name || "",
               },
             },
             unit_amount: Math.round(item.product.price * 100),

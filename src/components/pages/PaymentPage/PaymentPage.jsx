@@ -356,7 +356,7 @@ const handleCheckout = async (e) => {
           <ul className="payment-cart">
             {localCart.map((item) => (
               <li
-                key={`${item.type}-${item.product.id}-${item.menu?.drink?.id || ""}-${item.menu?.dessert?.id || ""}`}
+                key={`${item.type}-${item.product.id}-${item.menu?.drink?.id || ""}`}
               >
                 {" "}
                 <div>
@@ -366,7 +366,7 @@ const handleCheckout = async (e) => {
 
                   {item.type === "menu" && item.menu && (
                     <div className="payment-menu-sub">
-                      <span>{item.menu.drink?.name || "-"} • {item.menu.dessert?.name || "-"}</span>
+                      <span>{item.menu.drink?.name || "-"}</span>
                     </div>
                   )}
                 </div>

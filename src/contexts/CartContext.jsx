@@ -36,7 +36,6 @@ const [cart, setCart] = useState(() => {
           ? {
               pizza: item.menu.pizza || null,
               drink: item.menu.drink || null,
-              dessert: item.menu.dessert || null,
             }
           : null,
       }));
@@ -279,7 +278,6 @@ const [cart, setCart] = useState(() => {
   const addMenu = (
   pizza,
   drink,
-  dessert,
   menuPrice,
   { isKitchen = false } = {},
 ) => {
@@ -287,17 +285,15 @@ const [cart, setCart] = useState(() => {
     // stock checks
     const pizzaStock = getStock(pizza, prev, { isKitchen });
     const drinkStock = getStock(drink, prev, { isKitchen });
-    const dessertStock = getStock(dessert, prev, { isKitchen });
 
     if (
       pizzaStock <= 0 ||
-      drinkStock <= 0 ||
-      dessertStock <= 0
+      drinkStock <= 0
     ) {
       return prev;
     }
 
-    const menuId = `menu-${pizza.id}-${drink.id}-${dessert.id}`;
+    const menuId = `menu-${pizza.id}-${drink.id}`;
 
     const existing = prev.find(
       (p) => p.type === "menu" && p.product.id === menuId,
@@ -326,7 +322,6 @@ const [cart, setCart] = useState(() => {
         menu: {
           pizza,
           drink,
-          dessert,
         },
       },
     ];
@@ -368,16 +363,9 @@ const [cart, setCart] = useState(() => {
             { isKitchen },
           );
 
-          const dessertStock = getStock(
-            p.menu.dessert,
-            prev,
-            { isKitchen },
-          );
-
           const remaining = Math.min(
             pizzaStock,
             drinkStock,
-            dessertStock,
           );
 
           const maxAllowed = p.quantity + remaining;

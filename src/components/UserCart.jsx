@@ -27,8 +27,7 @@ const UserCart = ({ isOpen }) => {
   const stock = isMenu
     ? Math.min(
         getStock(cartItem.menu?.pizza, cart, { isKitchen }),
-        getStock(cartItem.menu?.drink, cart, { isKitchen }),
-        getStock(cartItem.menu?.dessert, cart, { isKitchen })
+        getStock(cartItem.menu?.drink, cart, { isKitchen })
       )
     : getStock(cartItem.product, cart, { isKitchen });
 
@@ -46,10 +45,6 @@ const UserCart = ({ isOpen }) => {
 
               <p className="cart-subitems">
                 {cartItem.menu?.drink?.name || "-"}
-              </p>
-
-              <p className="cart-subitems">
-                {cartItem.menu?.dessert?.name || "-"}
               </p>
             </div>
           ) : (
