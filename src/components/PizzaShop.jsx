@@ -61,7 +61,7 @@ const PizzaShop = () => {
     <>
       <Wave reverse={true} />
       <div id="menu" className="style2 main">
-        <AdBox />
+        {/* <AdBox /> */}
         <OpenState isOpen={isOpen} events={events} />
         {isLoading && <Loading white="white" innerHTML="Bestelfunctie wordt geladen" />}
         {!isLoading && <Cart isOpen={isOpen} />}

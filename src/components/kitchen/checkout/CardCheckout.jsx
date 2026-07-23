@@ -30,6 +30,11 @@ export default function CardCheckout({ total, cart, onClose }) {
   const startedRef = useRef(false);
   const stoppedRef = useRef(false);
   const finalizedRef = useRef(false);
+  const sounds = useRef({
+    success: new Audio("/sound/success.mp3"),
+    error: new Audio("/sound/error.mp3"),
+    canceled: new Audio("/sound/error.mp3"),
+  });
 
   const [phase, setPhase] = useState("starting");
   const [paymentStatus, setPaymentStatus] = useState("");
@@ -37,6 +42,7 @@ export default function CardCheckout({ total, cart, onClose }) {
   const [readerInputMsg, setReaderInputMsg] = useState("");
   const [err, setErr] = useState(null);
   const [paymentIntentId, setPaymentIntentId] = useState(null);
+
 
   /*
   phases:
@@ -227,6 +233,18 @@ export default function CardCheckout({ total, cart, onClose }) {
 
     return () => clearTimeout(t);
   }, [phase]);
+
+
+  useEffect(() => {
+  const sound = sounds.current[phase];
+  if (!sound) return;
+
+  try {
+    sound.pause();
+    sound.currentTime = 0;
+    sound.play().catch(() => {});
+  } catch {}
+}, [phase]);
 
   /* -------------------------------
      UI helpers
