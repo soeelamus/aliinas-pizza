@@ -1,7 +1,7 @@
 const images = [
   "/images/2.png",
   "/images/3.png",
-  "/images/4.png",
+  "/images/bedrijfsfeest.png",
 ];
 export default function ImagesBox() {
   return (
