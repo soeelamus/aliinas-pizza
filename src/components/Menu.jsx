@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 
 const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
-  const ComboMenu = "Combo";
+  const ComboMenu = "Menu";
   const { addItem, addMenu, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState(ComboMenu);
   const [menuBuilder, setMenuBuilder] = useState({
@@ -11,6 +11,8 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
     pizza: null,
     drink: null,
   });
+
+  let glassNumber = Math.floor(Math.random() * 3) + 1
 
   useEffect(() => {
     if (menuBuilder.open) {
@@ -116,110 +118,123 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                 ? "Uitverkocht"
                 : "Toevoegen aan bestelling";
 
+                const currentGlass = glassNumber;
+
+  glassNumber++;
+  if (glassNumber > 3) {
+    glassNumber = 1;
+  }
             return (
               <div
                 key={item.id}
                 className={`pizza ${item.special && "pizza-special"}`}
               >
                 {!item.special && (
-  <div className="pizza-wrapper">
-    {activeTab === ComboMenu && <div className="drink--image" />}
+                  <div className="pizza-wrapper">
+                    {activeTab === ComboMenu && (
+                      <div
+                        style={{
+                          backgroundImage: `url(/images/products/glass-${currentGlass}.png)`,
+                        }}
+                        className="drink--image"
+                      />
+                    )}
 
-    <button
-      onClick={() => {
-        if (activeTab === ComboMenu) {
-          setMenuBuilder({
-            open: true,
-            pizza: item,
-            drink: null,
-          });
+                    <button
+                      onClick={() => {
+                        if (activeTab === ComboMenu) {
+                          setMenuBuilder({
+                            open: true,
+                            pizza: item,
+                            drink: null,
+                          });
 
-          return;
-        }
+                          return;
+                        }
 
-        addItem(item, { isKitchen });
-      }}
-      disabled={!canAdd}
-      title={title}
-      key={item.id}
-      className="menu-options--item pizza--image item--pizza"
-      style={{
-        backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
-      }}
-    />
-  </div>
-)}
+                        addItem(item, { isKitchen });
+                      }}
+                      disabled={!canAdd}
+                      title={title}
+                      key={item.id}
+                      className="menu-options--item pizza--image item--pizza"
+                      style={{
+                        backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
+                      }}
+                    />
+                  </div>
+                )}
                 <div className="pizza-text--box">
-                <div className="pizza-text">
-                  <h3 className={`pizza-name ${dashed}`}>
-                    {item.special && (
-                      <span className="pizza-special--tag">special</span>
-                    )}
-                    {activeTab === ComboMenu ? `${item.name} Menu` : item.name}{" "}
-                    {isPizza && (
-                      <span className="pizza-symbol">{item.type}</span>
-                    )}
-                  </h3>
-
-                  <div className="price-box">
-                    <h3 className={`pizza-price ${dashed}`}>
-                      {item.price % 1 === 0 ? (
-                        item.price
-                      ) : (
-                        <>
-                          {Math.floor(item.price)}
-                          <span className="decimals">
-                            {item.price.toFixed(2).split(".")[1]}
-                          </span>
-                        </>
+                  <div className="pizza-text">
+                    <h3 className={`pizza-name ${dashed}`}>
+                      {item.special && (
+                        <span className="pizza-special--tag">special</span>
+                      )}
+                      {item.name}
+                      {isPizza && (
+                        <span className="pizza-symbol">{item.type}</span>
                       )}
                     </h3>
 
-                    {isOpen && hasStock && (
-                      <button
-                        className="btn-small btn-purple"
-                        onClick={() => {
-                          if (activeTab === ComboMenu) {
-                            setMenuBuilder({
-                              open: true,
-                              pizza: item,
-                              drink: null,
-                            });
+                    <div className="price-box">
+                      <h3 className={`pizza-price ${dashed}`}>
+                        {item.price % 1 === 0 ? (
+                          item.price
+                        ) : (
+                          <>
+                            {Math.floor(item.price)}
+                            <span className="decimals">
+                              {item.price.toFixed(2).split(".")[1]}
+                            </span>
+                          </>
+                        )}
+                      </h3>
 
-                            return;
-                          }
+                      {isOpen && hasStock && (
+                        <button
+                          className="btn-small btn-purple"
+                          onClick={() => {
+                            if (activeTab === ComboMenu) {
+                              setMenuBuilder({
+                                open: true,
+                                pizza: item,
+                                drink: null,
+                              });
 
-                          addItem(item, { isKitchen });
-                        }}
-                        disabled={!canAdd}
-                        title={title}
-                      >
-                        +
-                      </button>
-                    )}
+                              return;
+                            }
+
+                            addItem(item, { isKitchen });
+                          }}
+                          disabled={!canAdd}
+                          title={title}
+                        >
+                          +
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-                {allergens && (
-                  <span className="allergen-icons">{allergens}</span>
-                )}
-                {activeTab === ComboMenu && (
-                  <p className="pizza-ingredients">
-                    <span className="ingredient-chip">Pizza {item.name}</span>
-                    <span className="ingredient-chip">Drankje</span>
-                  </p>
-                )}
-                {activeTab !== ComboMenu && description && (
-                  <p className="pizza-ingredients">{description}</p>
-                )}
-                {item.size && item.size !== 0 && (
-                  <p className="pizza-ingredients">
-                    {item.size.split(",").map((ingredient, index) => (
-                      <span key={index} className="ingredient-chip">
-                        {ingredient.trim()}
-                      </span>
-                    ))}
-                  </p>
-                )}
+                  {allergens && (
+                    <span className="allergen-icons">{allergens}</span>
+                  )}
+                  {activeTab === ComboMenu && (
+                    <p className="pizza-ingredients">
+                      <span className="ingredient-chip">Pizza {item.name}</span>
+                      <span className="ingredient-chip">Drankje</span>
+                    </p>
+                  )}
+                  {activeTab !== ComboMenu && description && (
+                    <p className="pizza-ingredients">{description}</p>
+                  )}
+                  {item.size && item.size !== 0 && (
+                    <p className="pizza-ingredients">
+                      {item.size.split(",").map((ingredient, index) => (
+                        <span key={index} className="ingredient-chip">
+                          {ingredient.trim()}
+                        </span>
+                      ))}
+                    </p>
+                  )}
                 </div>
                 {item.info && (
                   <div className="pizza--img-box">

@@ -1484,24 +1484,30 @@ textarea.error {
   width: 100%;
   max-width: 8rem;
 }
-
 .pizza--image {
   max-width: 8rem;
   width: 100%;
   position: relative;
   z-index: 2;
 }
-
 .drink--image {
   width: 6.5rem;
   height: 6.5rem;
   position: absolute;
-  top: 1rem;
+  top: 0;
   left: -3.5rem;
   background-image: url(/images/products/glass.png);
   background-size: contain;
   background-repeat: no-repeat;
   z-index: 1;
+}
+@media screen and (max-width: 480px) {
+  .drink--image {
+    width: 4.5rem;
+    height: 4.5rem;
+    top: -0.2rem;
+    left: -2.2rem;
+  }
 }
 .pizza-filter {
   width: 100%;
@@ -1809,8 +1815,8 @@ footer a:hover {
   flex-direction: column;
 }
 .menu-options--item {
-  width: 12rem;
-  height: 12rem;
+  width: 9rem;
+  height: 9rem;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -1829,12 +1835,6 @@ footer a:hover {
   font-size: 2.5rem !important;
   line-height: 3rem;
   margin-bottom: 1rem;
-}
-@media screen and (max-width: 780px) {
-  .menu-options--item {
-    width: 9rem;
-    height: 9rem;
-  }
 }
 @media screen and (max-width: 480px) {
   .menu-options--item {
