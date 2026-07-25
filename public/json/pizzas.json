@@ -5,7 +5,7 @@
       "name": "Margheriita",
       "type": "🥬",
       "price": 11,
-      "menuPrice": 12.5,
+      "menuPrice": null,
       "stock": 1,
       "ingredients": [
         {
@@ -24,7 +24,7 @@
       "id": 2652,
       "name": "Fungii",
       "price": 12,
-      "menuPrice": 13.5,
+      "menuPrice": null,
       "type": "🥬",
       "stock": 1,
       "ingredients": [
@@ -47,7 +47,7 @@
       "id": 4535,
       "name": "Formagii",
       "price": 13,
-      "menuPrice": 14.5,
+      "menuPrice": null,
       "type": "🥬",
       "stock": 1,
       "ingredients": [
@@ -74,7 +74,7 @@
       "name": "Vegii",
       "type": "🥬",
       "price": 13,
-      "menuPrice": 14.5,
+      "menuPrice": null,
       "stock": 1,
       "ingredients": [
         {
@@ -103,7 +103,7 @@
       "name": "Pepperonii",
       "type": "",
       "price": 12.5,
-      "menuPrice": 14,
+      "menuPrice": null,
       "stock": 1,
       "ingredients": [
         {
@@ -122,7 +122,7 @@
       "id": 2357,
       "name": "Hawaii",
       "price": 13,
-      "menuPrice": 14.5,
+      "menuPrice": null,
       "type": "",
       "stock": 1,
       "ingredients": [
@@ -149,7 +149,7 @@
       "name": "Jaeger",
       "type": "",
       "price": 13,
-      "menuPrice": 14.5,
+      "menuPrice": null,
       "stock": 1,
       "ingredients": [
         {
@@ -175,7 +175,7 @@
       "name": "Sweet Chiicken",
       "type": "",
       "price": 13,
-      "menuPrice": 14.5,
+      "menuPrice": null,
       "stock": 1,
       "ingredients": [
         {
@@ -201,7 +201,7 @@
       "name": "Spicy Chiicken",
       "type": "🌶️",
       "price": 13,
-      "menuPrice": 14.5,
+      "menuPrice": null,
       "stock": 1,
       "ingredients": [
         {
@@ -227,7 +227,7 @@
       "name": "Diiavola",
       "type": "🌶️",
       "price": 13.5,
-      "menuPrice": 15,
+      "menuPrice": null,
       "stock": 1,
       "ingredients": [
         {

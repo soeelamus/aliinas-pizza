@@ -3,7 +3,10 @@ import React, { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 
 const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
+  // Variables
   const ComboMenu = "Menu";
+  const ComboMenuUpsell = 2;
+
   const { addItem, addMenu, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState(ComboMenu);
   const [menuBuilder, setMenuBuilder] = useState({
@@ -12,7 +15,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
     drink: null,
   });
 
-  let glassNumber = Math.floor(Math.random() * 3) + 1
+  let glassNumber = Math.floor(Math.random() * 3) + 1;
 
   useEffect(() => {
     if (menuBuilder.open) {
@@ -31,7 +34,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   const menuItems = pizzas.map((p) => ({
     ...p,
     name: p.name,
-    price: p.menuPrice,
+    price: p.menuPrice ?? p.price + ComboMenuUpsell,
   }));
 
   const categories = [
@@ -118,12 +121,12 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                 ? "Uitverkocht"
                 : "Toevoegen aan bestelling";
 
-                const currentGlass = glassNumber;
+            const currentGlass = glassNumber;
 
-  glassNumber++;
-  if (glassNumber > 3) {
-    glassNumber = 1;
-  }
+            glassNumber++;
+            if (glassNumber > 3) {
+              glassNumber = 1;
+            }
             return (
               <div
                 key={item.id}
@@ -266,6 +269,7 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
             );
           })}
         </div>
+        <p className="ingredient-chip">Elke pizza bevat gluten en lactose</p>
       </div>
       {menuBuilder.open && (
         <div className="checkout-popup-overlay">
@@ -292,7 +296,8 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
                           addMenu(
                             menuBuilder.pizza,
                             drink,
-                            menuBuilder.pizza.menuPrice,
+                            menuBuilder.pizza.menuPrice ??
+                              menuBuilder.pizza.price,
                             { isKitchen },
                           );
 
