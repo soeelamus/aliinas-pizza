@@ -9,13 +9,17 @@ const EmployeeCreatePage = () => {
     name: "",
     email: "",
     phone: "",
-    role: "Helper",
-    hourlyWage: "",
+    role: "Flexi Job",
+    hourlyRate: "12.50",
     iban: "",
-    status: "active",
-    nextPayout: "",
-    loginCode: "",
+    active: "true",
+    pincode: "",
+    nfcUid: "",
+    notes: "",
   });
+
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,17 +33,35 @@ const EmployeeCreatePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setStatus("loading");
+    setError("");
+
+    const pincode = Number(form.pincode);
+    const hourlyRate = Number(form.hourlyRate);
+
+    if (!Number.isFinite(hourlyRate) || hourlyRate < 0) {
+      setError("Vul een geldig uurloon in.");
+      setStatus("error");
+      return;
+    }
+
+    if (!Number.isInteger(pincode) || form.pincode.length !== 4) {
+      setError("De pincode moet exact 4 cijfers bevatten.");
+      setStatus("error");
+      return;
+    }
+
     const newEmployee = {
-      id: crypto.randomUUID(),
-      name: form.name,
-      email: form.email,
-      phone: form.phone,
+      name: form.name.trim(),
+      email: form.email.trim() || null,
+      phone: form.phone.trim() || null,
       role: form.role,
-      hourlyWage: Number(form.hourlyWage),
-      iban: form.iban,
-      status: form.status,
-      nextPayout: form.nextPayout,
-      loginCode: form.loginCode,
+      hourly_rate: hourlyRate,
+      iban: form.iban.trim() || null,
+      active: form.active === "true",
+      pincode,
+      nfc_uid: form.nfcUid.trim() || null,
+      notes: form.notes.trim() || null,
     };
 
     try {
@@ -49,7 +71,7 @@ const EmployeeCreatePage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          action: "create",
+          action: "createEmployee",
           employee: newEmployee,
         }),
       });
@@ -57,13 +79,16 @@ const EmployeeCreatePage = () => {
       const data = await res.json();
 
       if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Employee save failed");
+        throw new Error(
+          data.error || "Werknemer kon niet opgeslagen worden",
+        );
       }
 
-      navigate("/employees");
+      navigate(`/employees/${data.employee.id}`);
     } catch (err) {
       console.error("Employee save error:", err);
-      alert("Werknemer kon niet opgeslagen worden.");
+      setError(err.message || "Werknemer kon niet opgeslagen worden.");
+      setStatus("error");
     }
   };
 
@@ -83,7 +108,7 @@ const EmployeeCreatePage = () => {
         </label>
 
         <label>
-          Email
+          E-mail
           <input
             name="email"
             type="email"
@@ -94,33 +119,41 @@ const EmployeeCreatePage = () => {
 
         <label>
           Telefoon
-          <input name="phone" value={form.phone} onChange={handleChange} />
+          <input
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+          />
         </label>
 
         <label>
           Rol
-          <select name="role" value={form.role} onChange={handleChange}>
-            <option>Owner</option>
-            <option>Manager</option>
-            <option>Pizzaiolo</option>
-            <option>Kitchen Crew</option>
-            <option>Cleaning Crew</option>
-            <option>Service Crew</option>
-            <option>Driver</option>
-            <option>Babysitter</option>
-            <option>Student Worker</option>
-            <option>Flexi Job</option>
-            <option>Freelancer</option>
+          <select
+            name="role"
+            value={form.role}
+            onChange={handleChange}
+          >
+            <option value="Manager">Manager</option>
+            <option value="Pizzaiolo">Pizzaiolo</option>
+            <option value="Kitchen Crew">Kitchen Crew</option>
+            <option value="Cleaning Crew">Cleaning Crew</option>
+            <option value="Service Crew">Service Crew</option>
+            <option value="Driver">Driver</option>
+            <option value="Babysitter">Babysitter</option>
+            <option value="Student Worker">Student Worker</option>
+            <option value="Flexi Job">Flexi Job</option>
+            <option value="Freelancer">Freelancer</option>
           </select>
         </label>
 
         <label>
           Loon per uur
           <input
-            name="hourlyWage"
+            name="hourlyRate"
             type="number"
+            min="0"
             step="0.01"
-            value={form.hourlyWage}
+            value={form.hourlyRate}
             onChange={handleChange}
             required
           />
@@ -128,43 +161,76 @@ const EmployeeCreatePage = () => {
 
         <label>
           IBAN
-          <input name="iban" value={form.iban} onChange={handleChange} />
-        </label>
-
-        <label>
-          Volgende uitbetaling
           <input
-            name="nextPayout"
-            type="date"
-            value={form.nextPayout}
+            name="iban"
+            value={form.iban}
             onChange={handleChange}
           />
         </label>
 
         <label>
           Status
-          <select name="status" value={form.status} onChange={handleChange}>
-            <option value="active">Actief</option>
-            <option value="inactive">Inactief</option>
+          <select
+            name="active"
+            value={form.active}
+            onChange={handleChange}
+          >
+            <option value="true">Actief</option>
+            <option value="false">Inactief</option>
           </select>
         </label>
 
         <label>
-          Login code
+          Pincode
           <input
+            name="pincode"
             type="password"
-            value={form.loginCode}
-            onChange={(e) =>
-              setForm({
-                ...form,
-                loginCode: e.target.value,
-              })
-            }
+            inputMode="numeric"
+            pattern="[0-9]{4}"
+            maxLength={4}
+            value={form.pincode}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, "").slice(0, 4);
+
+              setForm((prev) => ({
+                ...prev,
+                pincode: value,
+              }));
+            }}
+            required
           />
         </label>
 
-        <button className="employee-add-btn" type="submit">
-          Werknemer opslaan
+        <label>
+          NFC UID
+          <input
+            name="nfcUid"
+            value={form.nfcUid}
+            onChange={handleChange}
+            placeholder="Later automatisch invullen"
+          />
+        </label>
+
+        <label>
+          Notities
+          <textarea
+            name="notes"
+            value={form.notes}
+            onChange={handleChange}
+            rows={4}
+          />
+        </label>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+        <button
+          className="employee-add-btn"
+          type="submit"
+          disabled={status === "loading"}
+        >
+          {status === "loading"
+            ? "Werknemer opslaan..."
+            : "Werknemer opslaan"}
         </button>
       </form>
     </main>
