@@ -44,6 +44,8 @@ import { LineChart } from "@mui/x-charts/LineChart";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 
+import BookingCalendar from "./BookingCalendar";
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("nl-NL", {
     style: "currency",
@@ -846,6 +848,13 @@ export default function DashboardPage() {
             title="Verkoop per dag"
             subtitle="Orders, items en omzet per kalenderdag"
           >
+            <BookingCalendar />
+
+            <SectionCard
+              title="Verkoop per dag"
+              subtitle="Orders, items en omzet per kalenderdag"
+            ></SectionCard>
+
             <TableContainer>
               <Table size="small">
                 <TableHead>

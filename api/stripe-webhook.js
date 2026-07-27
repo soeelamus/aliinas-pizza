@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { buffer } from "micro";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_TEST_TEST, {
   apiVersion: "2023-10-16",
 });
 

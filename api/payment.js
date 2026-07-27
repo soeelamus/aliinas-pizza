@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY_TEST_TEST, {
   apiVersion: "2023-10-16",
 });
 
@@ -28,9 +28,7 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
       const sessionId = String(
-        req.query.sessionId ||
-          req.query.session_id ||
-          "",
+        req.query.sessionId || req.query.session_id || "",
       ).trim();
 
       if (!sessionId) {
@@ -39,24 +37,14 @@ export default async function handler(req, res) {
         });
       }
 
-      const session =
-        await stripe.checkout.sessions.retrieve(
-          sessionId,
-          {
-            expand: [
-              "line_items",
-              "line_items.data.price.product",
-            ],
-          },
-        );
+      const session = await stripe.checkout.sessions.retrieve(sessionId, {
+        expand: ["line_items", "line_items.data.price.product"],
+      });
 
-      const itemsString = (
-        session.line_items?.data || []
-      )
+      const itemsString = (session.line_items?.data || [])
         .map((lineItem) => {
           const product = lineItem.price?.product;
-          const drink =
-            product?.metadata?.drink || "";
+          const drink = product?.metadata?.drink || "";
 
           if (drink) {
             return `${lineItem.quantity}x ${product?.name} (🥤 ${drink})`;
@@ -70,20 +58,15 @@ export default async function handler(req, res) {
         status: session.payment_status,
         sessionId: session.id,
         itemsString,
-        total:
-          Number(session.amount_total || 0) / 100,
-        pickupTime:
-          session.metadata?.pickupTime || "",
-        pickupDate:
-          session.metadata?.pickupDate || "",
+        total: Number(session.amount_total || 0) / 100,
+        pickupTime: session.metadata?.pickupTime || "",
+        pickupDate: session.metadata?.pickupDate || "",
         customerName:
           session.metadata?.customerName ||
           session.customer_details?.name ||
           "",
-        customerEmail:
-          session.customer_details?.email || "",
-        customerNotes:
-          session.metadata?.customerNotes || "",
+        customerEmail: session.customer_details?.email || "",
+        customerNotes: session.metadata?.customerNotes || "",
         created: session.created,
       });
     }
@@ -109,8 +92,7 @@ export default async function handler(req, res) {
         });
       }
 
-      const pickupDate =
-        customer.pickupDate || getBrusselsDate();
+      const pickupDate = customer.pickupDate || getBrusselsDate();
 
       const lineItems = cart.map((item, index) => {
         const quantity = Number(item?.quantity);
@@ -122,50 +104,32 @@ export default async function handler(req, res) {
           !Number.isInteger(quantity) ||
           quantity <= 0
         ) {
-          throw new Error(
-            `Invalid cart item at index ${index}`,
-          );
+          throw new Error(`Invalid cart item at index ${index}`);
         }
 
-        const isMenu =
-          item.type === "menu" &&
-          Boolean(item.menu?.pizza);
+        const isMenu = item.type === "menu" && Boolean(item.menu?.pizza);
 
         // Bij een menu is item.product.id een kunstmatig ID,
         // bijvoorbeeld "menu-1489-2006".
         // Daarom gebruiken we item.menu.pizza.id.
-        const productId = isMenu
-          ? item.menu.pizza.id
-          : item.product.id;
+        const productId = isMenu ? item.menu.pizza.id : item.product.id;
 
-        const productName = isMenu
-          ? item.menu.pizza.name
-          : item.product.name;
+        const productName = isMenu ? item.menu.pizza.name : item.product.name;
 
-        const drink = isMenu
-          ? item.menu?.drink
-          : null;
+        const drink = isMenu ? item.menu?.drink : null;
 
-        const dessert = isMenu
-          ? item.menu?.dessert
-          : null;
+        const dessert = isMenu ? item.menu?.dessert : null;
 
         if (!productId) {
-          throw new Error(
-            `Product-ID ontbreekt voor ${productName}`,
-          );
+          throw new Error(`Product-ID ontbreekt voor ${productName}`);
         }
 
         if (drink && !drink.id) {
-          throw new Error(
-            `Product-ID ontbreekt voor drank ${drink.name}`,
-          );
+          throw new Error(`Product-ID ontbreekt voor drank ${drink.name}`);
         }
 
         if (dessert && !dessert.id) {
-          throw new Error(
-            `Product-ID ontbreekt voor dessert ${dessert.name}`,
-          );
+          throw new Error(`Product-ID ontbreekt voor dessert ${dessert.name}`);
         }
 
         const descriptionParts = [];
@@ -183,9 +147,7 @@ export default async function handler(req, res) {
             currency: "eur",
 
             product_data: {
-              name: isMenu
-                ? `${productName} MENU`
-                : productName,
+              name: isMenu ? `${productName} MENU` : productName,
 
               description:
                 descriptionParts.length > 0
@@ -196,31 +158,19 @@ export default async function handler(req, res) {
                 product_id: String(productId),
                 pizza_name: String(productName),
 
-                item_type: isMenu
-                  ? "menu"
-                  : "product",
+                item_type: isMenu ? "menu" : "product",
 
-                drink: drink?.name
-                  ? String(drink.name)
-                  : "",
+                drink: drink?.name ? String(drink.name) : "",
 
-                drink_id: drink?.id
-                  ? String(drink.id)
-                  : "",
+                drink_id: drink?.id ? String(drink.id) : "",
 
-                dessert: dessert?.name
-                  ? String(dessert.name)
-                  : "",
+                dessert: dessert?.name ? String(dessert.name) : "",
 
-                dessert_id: dessert?.id
-                  ? String(dessert.id)
-                  : "",
+                dessert_id: dessert?.id ? String(dessert.id) : "",
               },
             },
 
-            unit_amount: Math.round(
-              unitPrice * 100,
-            ),
+            unit_amount: Math.round(unitPrice * 100),
           },
 
           quantity,
@@ -229,44 +179,38 @@ export default async function handler(req, res) {
 
       const baseUrl = getBaseUrl(req);
 
-      const session =
-        await stripe.checkout.sessions.create({
-          mode: "payment",
-          line_items: lineItems,
+      const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        line_items: lineItems,
 
-          success_url:
-            `${baseUrl}/success` +
-            "?session_id={CHECKOUT_SESSION_ID}",
+        // success_url:
+        //   `${baseUrl}/success` +
+        //   "?session_id={CHECKOUT_SESSION_ID}",
 
-          cancel_url: `${baseUrl}/ordering`,
+        success_url: `${baseUrl}/?booking_success=1`,
 
-          customer_email:
-            customer.email || undefined,
+        cancel_url: `${baseUrl}/ordering`,
 
-          customer_creation: "always",
+        customer_email: customer.email || undefined,
 
+        customer_creation: "always",
+
+        metadata: {
+          pickupTime: customer.pickupTime || "ASAP",
+          pickupDate,
+          customerName: customer.name || "",
+          customerNotes: customer.notes || "",
+        },
+
+        payment_intent_data: {
           metadata: {
-            pickupTime:
-              customer.pickupTime || "ASAP",
+            pickupTime: customer.pickupTime || "ASAP",
             pickupDate,
-            customerName:
-              customer.name || "",
-            customerNotes:
-              customer.notes || "",
+            customerName: customer.name || "",
+            customerNotes: customer.notes || "",
           },
-
-          payment_intent_data: {
-            metadata: {
-              pickupTime:
-                customer.pickupTime || "ASAP",
-              pickupDate,
-              customerName:
-                customer.name || "",
-              customerNotes:
-                customer.notes || "",
-            },
-          },
-        });
+        },
+      });
 
       return res.status(200).json({
         checkoutUrl: session.url,

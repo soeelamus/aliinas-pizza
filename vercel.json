@@ -2,14 +2,19 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "www.aliinas.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.aliinas.com"
+        }
+      ],
       "destination": "https://aliinas.com/$1",
       "permanent": true
     }
   ],
   "rewrites": [
     {
-      "source": "/((?!.*\\.).*)",
+      "source": "/((?!api/|.*\\.).*)",
       "destination": "/index.html"
     }
   ]

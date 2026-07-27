@@ -26,6 +26,7 @@ import CareersPage from "./components/pages/CareersPage/CareersPage";
 import CareerDetailPage from "./components/pages/CareersPage/CareerDetailPage";
 import SeoLandingPage from "./components/pages/SeoLandingPage/SeoLandingPage";
 import LocationsPage from "./components/pages/LocationsPage/LocationsPage";
+import ReservationPage from "./components/pages/ReservationPage/ReservationPage";
 
 // Employees
 import EmployeesLogin from "./components/employees/EmployeesLogin";
@@ -179,6 +180,10 @@ function App() {
                 <Wave reverse={true} />
               </>
             }
+          />
+          <Route
+            path="/reservation/:customerToken"
+            element={<ReservationPage />}
           />
           <Route
             path="/:slug"

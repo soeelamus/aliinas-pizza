@@ -1056,7 +1056,11 @@ button {
   justify-content: flex-end;
   flex-direction: row;
   gap: 1rem;
-  margin: 2rem -1rem 0;
+  margin: 0 -1rem 0;
+}
+.booking-choice-buttons {
+  display: flex;
+  gap: 1rem;
 }
 .clearfix::after {
   content: "";
@@ -1080,8 +1084,7 @@ button {
 }
 .error-message {
   color: red;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   display: block;
 }
 input.error,
@@ -1647,7 +1650,7 @@ textarea.error {
   margin-bottom: 3rem;
 }
 .margin-2 {
-  margin: 2rem;
+  margin: 2rem 0;
 }
 .leaflet-popup {
   margin-bottom: 3.7rem !important;
