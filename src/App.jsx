@@ -34,6 +34,7 @@ import EmployeeDetailPage from "./components/employees/EmployeeDetailPage";
 import EmployeeCreatePage from "./components/employees/EmployeeCreatePage";
 import EmployeePersonalLogin from "./components/employees/EmployeePersonalLogin";
 import EmployeeProtectedRoute from "./components/employees/EmployeeProtectedRoute";
+import DashboardPage from "./components/employees/DashboardPage";
 
 // Kitchen components
 import KitchenLogin from "./components/kitchen/KitchenLogin";
@@ -122,6 +123,18 @@ function App() {
               >
                 <Wave />
                 <EmployeesDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/employees/dashboard"
+            element={
+              <ProtectedRoute
+                storageKey="employeesAuth"
+                redirectTo="/employees/login"
+              >
+                <Wave />
+                <DashboardPage />
               </ProtectedRoute>
             }
           />
