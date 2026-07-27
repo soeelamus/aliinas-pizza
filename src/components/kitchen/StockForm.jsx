@@ -1,184 +1,285 @@
 import { useEffect, useMemo, useState } from "react";
 import Loading from "../Loading/Loading";
 
+const API_URL = "/api/stock";
+const LOCAL_URL = "/json/stock.json";
+
+const normalizeStockArray = (data) => {
+  if (!Array.isArray(data)) return [];
+
+  return data
+    .filter((item) => {
+      if (!item) return false;
+      if (item.id === undefined && !item.name) return false;
+
+      // Supabase-producten:
+      // enkel artikelen tonen waarvan voorraad echt bijgehouden wordt.
+      if (item.track_stock !== undefined) {
+        return item.track_stock === true;
+      }
+
+      // Oude lokale fallback:
+      // pizza's hebben normaal geen stockrecord en extra's beginnen met 9.
+      return !String(item.id ?? "").startsWith("9");
+    })
+    .map((item) => ({
+      id: Number(item.id),
+      name: item.name ?? "",
+      stock:
+        item.stock === null || item.stock === undefined
+          ? 0
+          : Number(item.stock),
+      category: item.category ?? "",
+      track_stock:
+        item.track_stock === undefined
+          ? true
+          : Boolean(item.track_stock),
+    }))
+    .filter(
+      (item) =>
+        Number.isInteger(item.id) &&
+        item.id > 0 &&
+        Number.isFinite(item.stock),
+    );
+};
+
+const fetchJsonStrict = async (url, options = {}) => {
+  const res = await fetch(url, {
+    cache: "no-store",
+    ...options,
+  });
+
+  const contentType = res.headers.get("content-type") || "";
+  const text = await res.text();
+
+  if (!contentType.includes("application/json")) {
+    throw new Error(
+      `Expected JSON from ${url}, got ${contentType}: ${text.slice(0, 80)}`,
+    );
+  }
+
+  let json;
+
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new Error(`Invalid JSON from ${url}`);
+  }
+
+  if (!res.ok) {
+    throw new Error(
+      json?.error ||
+        json?.message ||
+        `Request failed with HTTP ${res.status}`,
+    );
+  }
+
+  if (json && typeof json === "object" && json.ok === false) {
+    throw new Error(json.error || "API returned ok:false");
+  }
+
+  return json;
+};
+
 export default function StockForm() {
   const [stockItems, setStockItems] = useState([]);
   const [message, setMessage] = useState("");
   const [isDirty, setIsDirty] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [source, setSource] = useState(""); // "api" | "local"
+  const [isSaving, setIsSaving] = useState(false);
+  const [source, setSource] = useState("");
 
-  const API_URL = "/api/stock";
-  const LOCAL_URL = "/json/stock.json";
-
-  // ---------- helpers ----------
-  const normalizeStockArray = (data) => {
-    if (!Array.isArray(data)) return [];
-    return data
-      .filter((x) => x && (x.id !== undefined || x.name))
-      .map((x) => ({
-        id: String(x.id ?? x.name ?? ""),
-        name: x.name ?? "",
-        stock: x.stock ?? 0,
-      }));
-  };
-
-  const fetchJsonStrict = async (url) => {
-    const res = await fetch(url, { cache: "no-store" });
-    const ct = res.headers.get("content-type") || "";
-    const text = await res.text();
-
-    // Als /api niet bestaat krijg je vaak HTML -> content-type text/html
-    if (!ct.includes("application/json")) {
-      throw new Error(
-        `Expected JSON from ${url}, got ${ct}: ${text.slice(0, 80)}`,
-      );
-    }
-
-    const json = JSON.parse(text);
-
-    // Als jouw API ooit { ok:false } terugstuurt, behandel dat ook als error
-    if (json && typeof json === "object" && json.ok === false) {
-      throw new Error(json.error || "API returned ok:false");
-    }
-
-    return json;
-  };
+  const getKitchenHeaders = () => ({
+    "Content-Type": "application/json",
+    "x-kitchen-token": localStorage.getItem("kitchenAuth") || "",
+  });
 
   const fetchStockWithFallback = async () => {
-    // 1) probeer API
     try {
       const apiData = await fetchJsonStrict(API_URL);
+
       setSource("api");
+
       return normalizeStockArray(apiData);
-    } catch (e1) {
-      // 2) fallback naar local file
-      const res = await fetch(LOCAL_URL, { cache: "no-store" });
-      if (!res.ok) throw new Error("Local stock.json not found in /public");
-      const localData = await res.json();
+    } catch (apiError) {
+      console.warn(
+        "Stock API unavailable, using local fallback:",
+        apiError,
+      );
+
+      const localData = await fetchJsonStrict(LOCAL_URL);
+
       setSource("local");
+
       return normalizeStockArray(localData);
     }
   };
 
-  // ---------- initial load ----------
-  useEffect(() => {
-    let mounted = true;
+  const loadStock = async () => {
+    setIsLoading(true);
+    setMessage("");
 
-    (async () => {
-      setIsLoading(true);
-      setMessage("");
+    try {
+      const items = await fetchStockWithFallback();
 
-      try {
-        const items = await fetchStockWithFallback();
-        if (!mounted) return;
-        setStockItems(items);
-      } catch (err) {
-        console.error(err);
-        if (!mounted) return;
-        setMessage("Failed to fetch stock (API en local fallback faalden).");
-        setStockItems([]);
-      } finally {
-        if (mounted) setIsLoading(false);
-      }
-    })();
+      setStockItems(items);
+      setIsDirty(false);
+    } catch (error) {
+      console.error("Stock load error:", error);
 
-    return () => {
-      mounted = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      setMessage(
+        "Voorraad kon niet geladen worden via de API of lokale fallback.",
+      );
 
-  // ---------- change handlers ----------
-  const handleChange = (id, value) => {
-    setStockItems((prev) =>
-      prev.map((item) =>
-        String(item.id) === String(id) ? { ...item, stock: value } : item,
-      ),
-    );
-    setIsDirty(true);
+      setStockItems([]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // ---------- submit ----------
-  const canSubmit = useMemo(() => {
-    // Alleen zinvol als je via API werkt; lokaal kan je niet wegschrijven.
-    return isDirty && source === "api";
-  }, [isDirty, source]);
+  useEffect(() => {
+    loadStock();
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleChange = (id, value) => {
+    setStockItems((currentItems) =>
+      currentItems.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              stock: value,
+            }
+          : item,
+      ),
+    );
+
+    setIsDirty(true);
+    setMessage("");
+  };
+
+  const canSubmit = useMemo(() => {
+    return isDirty && source === "api" && !isSaving;
+  }, [isDirty, source, isSaving]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     if (source !== "api") {
       setMessage(
-        "Je draait zonder server: voorraad kan niet opgeslagen worden. (Je ziet nu de local stock.json.)",
+        "De lokale stock.json is alleen-lezen. Voorraad kan momenteel niet opgeslagen worden.",
       );
+
       return;
     }
 
-    setMessage("Updating...");
+    const updates = stockItems.map((item) => ({
+      id: item.id,
+      stock:
+        item.stock === ""
+          ? 0
+          : Math.max(0, Number(item.stock)),
+    }));
+
+    const hasInvalidValue = updates.some(
+      (item) =>
+        !Number.isInteger(item.id) ||
+        !Number.isFinite(item.stock),
+    );
+
+    if (hasInvalidValue) {
+      setMessage("Controleer de ingevoerde voorraadwaarden.");
+      return;
+    }
+
+    setIsSaving(true);
+    setMessage("Voorraad wordt opgeslagen...");
 
     try {
-      const dataToSend = stockItems.map((item) => ({
-        ...item,
-        stock: item.stock === "" ? 0 : Number(item.stock),
-      }));
-
-      const res = await fetch(API_URL, {
+      const result = await fetchJsonStrict(API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataToSend),
+        headers: getKitchenHeaders(),
+        body: JSON.stringify(updates),
       });
 
-      // jouw nieuwe api/stock.js geeft JSON terug
-      const result = await res.json();
-
-      if (!res.ok || result?.ok === false) {
-        setMessage(
-          `Error updating stock: ${result?.message || result?.error || "unknown"}`,
-        );
-        return;
-      }
-
-      setMessage(result?.message || "Stock updated!");
-      setIsDirty(false);
-    } catch (err) {
-      console.error(err);
-      setMessage(
-        "Error updating stock. (Waarschijnlijk draait /api/stock niet lokaal.)",
+      const updatedById = new Map(
+        (result.updated || []).map((item) => [
+          Number(item.id),
+          item,
+        ]),
       );
+
+      setStockItems((currentItems) =>
+        currentItems.map((item) => {
+          const updated = updatedById.get(item.id);
+
+          if (!updated) return item;
+
+          return {
+            ...item,
+            stock: Number(updated.stock),
+          };
+        }),
+      );
+
+      setIsDirty(false);
+      setMessage("Voorraad opgeslagen.");
+    } catch (error) {
+      console.error("Stock update error:", error);
+
+      setMessage(
+        error.message || "Voorraad kon niet opgeslagen worden.",
+      );
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  // ---------- UI states ----------
-  if (isLoading) return <Loading innerHTML={"Loading stock"} />;
+  if (isLoading) {
+    return <Loading innerHTML="Voorraad laden" />;
+  }
 
-  if (!stockItems || !stockItems.length) {
+  if (stockItems.length === 0) {
     return (
       <div className="kitchen-section form">
         <h1 className="monoton-regular white">Voorraad</h1>
-        <p>{message || "Geen stock items gevonden."}</p>
+        <p>{message || "Geen voorraadartikelen gevonden."}</p>
+
+        <button
+          type="button"
+          className="btn-purple btn-margin"
+          onClick={loadStock}
+        >
+          Opnieuw laden
+        </button>
       </div>
     );
   }
 
-  // Filter ID's that start with 9 (All extra Items)
-  const excludedExtraStockItems = stockItems.filter(
-    (item) => !item.id.toString().startsWith("9"),
-  );
-
   return (
     <div className="kitchen-section form">
       <h1 className="monoton-regular white">Voorraad</h1>
+
+      {source === "local" && (
+        <p>
+          Lokale fallback actief. Wijzigingen kunnen niet worden
+          opgeslagen.
+        </p>
+      )}
+
       <form onSubmit={handleSubmit}>
-        {excludedExtraStockItems.map((item) => (
+        {stockItems.map((item) => (
           <div key={item.id}>
             <label className="form-text">
               {item.name}:{" "}
               <input
                 type="number"
                 min="0"
-                value={item.stock ?? ""}
-                onChange={(e) => handleChange(item.id, e.target.value)}
+                step="1"
+                value={item.stock}
+                onChange={(event) =>
+                  handleChange(item.id, event.target.value)
+                }
+                disabled={isSaving}
               />
             </label>
           </div>
@@ -191,11 +292,20 @@ export default function StockForm() {
           type="submit"
           disabled={!canSubmit}
         >
-          Update
+          {isSaving ? "Opslaan..." : "Update"}
+        </button>
+
+        <button
+          className="btn-purple btn-margin"
+          type="button"
+          onClick={loadStock}
+          disabled={isSaving}
+        >
+          Herladen
         </button>
       </form>
 
-      <p>{message}</p>
+      {message && <p>{message}</p>}
     </div>
   );
 }

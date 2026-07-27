@@ -2,10 +2,19 @@
 import React, { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 
-const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
+const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
   // Variables
   const ComboMenu = "Menu";
   const ComboMenuUpsell = 2;
+  const CATEGORY_ORDER = [
+    "Menu",
+    "Pizza",
+    "Drank",
+    "Dessert",
+    "Energy",
+    "Bier",
+    "Extra",
+  ];
 
   const { addItem, addMenu, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState(ComboMenu);
@@ -30,19 +39,39 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
   }, [menuBuilder.open]);
 
   const hasStock = stockSheet.length > 0;
-  const pizzaItems = pizzas;
-  const menuItems = pizzas.map((p) => ({
-    ...p,
-    name: p.name,
-    price: p.menuPrice ?? p.price + ComboMenuUpsell,
+
+  const sellableStockItems = stockSheet.filter(
+    (item) => item.active !== false && item.product_type !== "inventory",
+  );
+
+  const pizzaItems = sellableStockItems
+    .filter((item) => item.product_type === "pizza")
+    .sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999));
+    
+  const menuItems = pizzaItems.map((pizza) => ({
+    ...pizza,
+    price:
+      pizza.menuPrice ??
+      pizza.menu_price ??
+      Number(pizza.price) + ComboMenuUpsell,
   }));
 
+  const stockCategories = Array.from(
+    new Set(sellableStockItems.map((item) => item.category).filter(Boolean)),
+  );
+
+  const extraCategories = stockCategories.filter(
+    (category) => !CATEGORY_ORDER.includes(category),
+  );
+
   const categories = [
-    ComboMenu,
-    "Pizza",
-    ...Array.from(
-      new Set(stockSheet.map((item) => item.category).filter(Boolean)),
+    ...CATEGORY_ORDER.filter(
+      (category) =>
+        category === ComboMenu ||
+        category === "Pizza" ||
+        stockCategories.includes(category),
     ),
+    ...extraCategories,
   ];
 
   const itemsToRender =
@@ -50,10 +79,10 @@ const Menu = ({ pizzas, stockSheet = [], isOpen, isKitchen }) => {
       ? pizzaItems
       : activeTab === ComboMenu
         ? menuItems
-        : stockSheet.filter((item) => item.category === activeTab);
-
-  const drinks = stockSheet.filter((item) => item.category === "Drank");
-
+        : sellableStockItems.filter((item) => item.category === activeTab);
+  const drinks = stockSheet.filter(
+    (item) => item.category === "Drank" && item.product_type !== "inventory",
+  );
   const formatName = (name) =>
     name
       .toLowerCase()

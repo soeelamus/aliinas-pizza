@@ -4,6 +4,46 @@ import Loading from "../Loading/Loading";
 
 const KEYS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
+const getLegacyOrderItems = (itemsText) => {
+  if (!itemsText) return [];
+
+  return itemsText
+    .split(",")
+    .map((item) => item.trim())
+    .map((item, index) => {
+      const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
+
+      if (!match) return null;
+
+      return {
+        id: `legacy-${index}`,
+        quantity: Number(match[1]),
+        product_name: match[2].trim(),
+        item_type: "product",
+        metadata: {},
+      };
+    })
+    .filter(Boolean);
+};
+
+const getItemLabel = (item) => {
+  if (item.item_type === "menu_main") {
+    return `${item.product_name} — Menu`;
+  }
+
+  if (item.item_type === "menu_component") {
+    if (item.metadata?.component === "drink") {
+      return `🥤 ${item.product_name}`;
+    }
+
+    if (item.metadata?.component === "dessert") {
+      return `🍰 ${item.product_name}`;
+    }
+  }
+
+  return item.product_name;
+};
+
 export default function Order({
   order,
   onStatusChange,
@@ -26,24 +66,22 @@ export default function Order({
     isOrange: false,
   };
 
-  const pizzas =
-    order.items
-      ?.split(",")
-      .map((item) => item.trim())
-      .map((item) => {
-        const match = item.match(/^(\d+)\s*x\s*(.+)$/i);
-        return match
-          ? { quantity: Number(match[1]), name: match[2].trim() }
-          : null;
-      })
-      .filter(Boolean) || [];
+  const orderItems =
+    Array.isArray(order.order_items) && order.order_items.length > 0
+      ? order.order_items
+      : getLegacyOrderItems(order.items);
 
-  const handleClick = (newStatus) => onStatusChange(order.id, newStatus);
+  const handleClick = (newStatus) => {
+    onStatusChange(order.id, newStatus);
+  };
 
-  const toggle = () => setIsCollapsed((v) => !v);
+  const toggle = () => {
+    setIsCollapsed((value) => !value);
+  };
 
   const openTimePopup = (e) => {
     e.stopPropagation();
+
     setNameInput(order.customername || "");
     setTimeInput("");
     setTimeError("");
@@ -93,35 +131,37 @@ export default function Order({
   };
 
   const addTimeDigit = (digit) => {
-    if (loading) return;
-    if (timeInput.length >= 4) return;
+    if (loading || timeInput.length >= 4) return;
 
     const newValue = timeInput + digit;
 
     setTimeInput(newValue);
     setTimeError("");
 
-    if (newValue.length === 4) {
-      if (!validateTime(newValue)) return;
+    if (newValue.length !== 4) return;
+    if (!validateTime(newValue)) return;
 
-      setLoading(true);
+    setLoading(true);
 
-      savePickupTime(newValue).catch((err) => {
+    savePickupTime(newValue)
+      .then(() => {
+        setTimeout(() => {
+          setLoading(false);
+          setShowTimePopup(false);
+          setTimeInput("");
+          setTimeError("");
+        }, 1000);
+      })
+      .catch((err) => {
         console.error(err);
-      });
-
-      setTimeout(() => {
         setLoading(false);
-
-        setShowTimePopup(false);
-        setTimeInput("");
-        setTimeError("");
-      }, 1000);
-    }
+        setTimeError("Order aanpassen mislukt");
+      });
   };
 
   const removeTimeDigit = () => {
     if (loading) return;
+
     setTimeInput((prev) => prev.slice(0, -1));
   };
 
@@ -163,18 +203,42 @@ export default function Order({
         style={{ display: isCollapsed ? "block" : "none" }}
         onClick={(e) => e.stopPropagation()}
       >
-        {pizzas.map((pizza, i) => (
-          <div className="pizzas" key={i}>
-            <label className="pizza-item">
-              <input type="checkbox" onClick={(e) => e.stopPropagation()} />
-              <span className="pizza-qty">{pizza.quantity}x</span>
-              <span className="pizza-name">{pizza.name}</span>
-            </label>
-          </div>
-        ))}
+        {orderItems.map((item, index) => {
+          const isMenuComponent = item.item_type === "menu_component";
+
+          return (
+            <div
+              className={`pizzas ${
+                isMenuComponent ? "menu-component" : ""
+              }`}
+              key={item.id || `${item.product_name}-${index}`}
+            >
+              <label className="pizza-item">
+                <input
+                  type="checkbox"
+                  onClick={(e) => e.stopPropagation()}
+                />
+
+                <span className="pizza-qty">
+                  {item.quantity}x
+                </span>
+
+                <span className="pizza-name">
+                  {getItemLabel(item)}
+                </span>
+              </label>
+            </div>
+          );
+        })}
+
+        {orderItems.length === 0 && (
+          <p className="pizzas">Geen orderitems gevonden.</p>
+        )}
 
         {order.customernotes && (
-          <span className="pizzas list">Notes: {order.customernotes}</span>
+          <span className="pizzas list">
+            Notes: {order.customernotes}
+          </span>
         )}
 
         <div className="kitchen-orders--actions">
@@ -219,14 +283,17 @@ export default function Order({
       </div>
 
       {showTimePopup && (
-        <div className="order-edit-overlay" onClick={closeTimePopup}>
+        <div
+          className="order-edit-overlay"
+          onClick={closeTimePopup}
+        >
           <div
             className="order-edit-popup"
             onClick={(e) => e.stopPropagation()}
           >
             {loading ? (
               <div className="checkout-loading-overlay">
-                <Loading innerHTML={"Order wordt aangepast"} />
+                <Loading innerHTML="Order wordt aangepast" />
               </div>
             ) : (
               <>
@@ -245,7 +312,10 @@ export default function Order({
 
                 <div className="order-time-display">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <span key={i} className="order-time-digit">
+                    <span
+                      key={i}
+                      className="order-time-digit"
+                    >
                       {timeInput[i] || "○"}
                     </span>
                   ))}
@@ -288,7 +358,11 @@ export default function Order({
                   </button>
                 </div>
 
-                {timeError && <p className="order-edit-error">{timeError}</p>}
+                {timeError && (
+                  <p className="order-edit-error">
+                    {timeError}
+                  </p>
+                )}
 
                 <div className="order-edit-actions">
                   <button

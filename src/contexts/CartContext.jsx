@@ -1,5 +1,12 @@
 // src/contexts/CartContext.jsx
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useEvents } from "../contexts/EventsContext";
 
 const CartContext = createContext();
@@ -8,42 +15,42 @@ export const CartProvider = ({ children }) => {
   const [stockSheetState, setStockSheetState] = useState([]);
   const { isOpen } = useEvents();
 
-const [cart, setCart] = useState(() => {
-  try {
-    const saved = localStorage.getItem("cart");
-    if (!saved) return [];
+  const [cart, setCart] = useState(() => {
+    try {
+      const saved = localStorage.getItem("cart");
+      if (!saved) return [];
 
-    const parsed = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
 
-    if (!Array.isArray(parsed)) return [];
+      if (!Array.isArray(parsed)) return [];
 
-    return parsed
-      .filter((item) => item && item.product)
-      .map((item) => ({
-        quantity: item.quantity || 0,
-        type: item.type || null,
+      return parsed
+        .filter((item) => item && item.product)
+        .map((item) => ({
+          quantity: item.quantity || 0,
+          type: item.type || null,
 
-        product: {
-          id: String(item.product.id ?? ""),
-          name: item.product.name ?? "",
-          price: item.product.price ?? 0,
-          type: item.product.type ?? "",
-          category: item.product.category ?? "",
-        },
+          product: {
+            id: String(item.product.id ?? ""),
+            name: item.product.name ?? "",
+            price: item.product.price ?? 0,
+            type: item.product.type ?? "",
+            category: item.product.category ?? "",
+          },
 
-        // 🔥 BELANGRIJK: menu behouden
-        menu: item.menu
-          ? {
-              pizza: item.menu.pizza || null,
-              drink: item.menu.drink || null,
-            }
-          : null,
-      }));
-  } catch (e) {
-    console.error("Failed to parse cart:", e);
-    return [];
-  }
-});
+          // 🔥 BELANGRIJK: menu behouden
+          menu: item.menu
+            ? {
+                pizza: item.menu.pizza || null,
+                drink: item.menu.drink || null,
+              }
+            : null,
+        }));
+    } catch (e) {
+      console.error("Failed to parse cart:", e);
+      return [];
+    }
+  });
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -53,12 +60,8 @@ const [cart, setCart] = useState(() => {
   // Stock fetch (API -> fallback)
   // =========================
   const lastDoughStock = useRef(null);
-  const lastStockVersion = useRef(null);
-  const lastFullFetchAt = useRef(0);
-  const versionCheckDisabledUntil = useRef(0);
 
   const API_URL = "/api/stock";
-  const VERSION_URL = "/api/stock-version";
   const LOCAL_URL = "/json/stock.json";
 
   const normalizeStockArray = (data) => {
@@ -69,9 +72,30 @@ const [cart, setCart] = useState(() => {
         id: String(x.id ?? x.name ?? ""),
         name: x.name ?? "",
         size: x.size ?? "",
-        stock: Number(x.stock ?? 0),
-        category: (x.category ?? "").toString().trim(),
+        description: x.description ?? x.size ?? "",
+
+        stock:
+          x.stock === null || x.stock === undefined ? null : Number(x.stock),
+
+        category: String(x.category ?? "").trim(),
         price: Number(x.price ?? x.Price ?? 0),
+
+        product_type: x.product_type || "product",
+        type: x.type || "",
+
+        ingredients: Array.isArray(x.ingredients) ? x.ingredients : [],
+
+        allergens: Array.isArray(x.allergens) ? x.allergens : [],
+
+        track_stock:
+          x.track_stock === undefined ? true : Boolean(x.track_stock),
+
+        active: x.active === undefined ? true : Boolean(x.active),
+
+        display_order:
+          x.display_order === null || x.display_order === undefined
+            ? null
+            : Number(x.display_order),
       }));
   };
 
@@ -129,71 +153,29 @@ const [cart, setCart] = useState(() => {
     }
   };
 
-  const refreshStock = async () => {
-    if (!isOpen) return;
-
-    const nowMs = Date.now();
-
-    // ✅ throttle full fetch: max 1x per 20s (pas aan indien nodig)
-    const MIN_FETCH_INTERVAL_MS = 20_000;
-    if (nowMs - lastFullFetchAt.current < MIN_FETCH_INTERVAL_MS) {
-      return;
-    }
-
+  const refreshStock = useCallback(async () => {
     try {
-      // 1) version check (optioneel) — met cooldown als endpoint stuk is
-      if (nowMs >= versionCheckDisabledUntil.current) {
-        try {
-          const vRes = await fetchJsonStrict(VERSION_URL);
-          const version = String(vRes?.version ?? "");
-
-          if (version && version === lastStockVersion.current) {
-            console.log(
-              "📦 Stock unchanged → skip full fetch (version:",
-              version,
-              ")",
-            );
-            return;
-          }
-
-          console.log(
-            "📦 Stock changed",
-            lastStockVersion.current,
-            "→",
-            version,
-          );
-          lastStockVersion.current = version;
-        } catch (e) {
-          console.warn(
-            "⚠️ Stock version check failed → disabling version-check 60s:",
-            e.message,
-          );
-          // ✅ 60s geen version-check meer proberen (voorkomt spam loop)
-          versionCheckDisabledUntil.current = nowMs + 60_000;
-        }
-      }
-
-      // 2) full stock fetch (throttled)
-      lastFullFetchAt.current = nowMs;
-
-      const { source, items } = await fetchStockWithFallback();
-      console.log(`📦 Full stock fetch (${source}) → items:`, items.length);
+      const { items } = await fetchStockWithFallback();
 
       setStockSheetState(items);
 
       const dough = items.find(
-        (item) => (item.name || "").toLowerCase() === "deegballen",
+        (item) => String(item.name || "").toLowerCase() === "deegballen",
       );
+
       const doughStock = dough ? Number(dough.stock) : 0;
 
       if (doughStock !== lastDoughStock.current) {
-        console.log("🍕 Deegballen stock changed:", doughStock);
+        console.log("🍕 Deegballen stock:", doughStock);
         lastDoughStock.current = doughStock;
       }
+
+      return items;
     } catch (err) {
-      console.error("❌ Refresh stock error:", err.message || err);
+      console.error("Refresh stock error:", err);
+      throw err;
     }
-  };
+  }, []);
 
   // =========================
   // Stock helper
@@ -209,48 +191,71 @@ const [cart, setCart] = useState(() => {
   const getStock = (product, currentCart = [], { isKitchen = false } = {}) => {
     if (!stockSheetState.length) return 0;
 
-    const isPizza = !product.category || product.category === "";
+    const isPizza =
+      product.product_type === "pizza" ||
+      product.category === "Pizza" ||
+      !product.category;
 
+    // Pizza's gebruiken de voorraad deegballen
     if (isPizza) {
       const dough = stockSheetState.find(
-        (item) => (item.name || "").toLowerCase() === "deegballen",
+        (item) => String(item.name || "").toLowerCase() === "deegballen",
       );
+
       const totalStock = dough ? Number(dough.stock) : 0;
 
-      // ✅ reserve enkel online
       const effectiveStock = isKitchen
         ? totalStock
         : Math.max(0, totalStock - DOUGH_RESERVE_ONLINE);
 
-      const pizzasInCart = currentCart.reduce((sum, p) => {
-  // gewone pizza
-  if (!p.type && (!p.product.category || p.product.category === "")) {
-    return sum + p.quantity;
-  }
+      const pizzasInCart = currentCart.reduce((sum, cartItem) => {
+        if (cartItem.type === "menu") {
+          return sum + Number(cartItem.quantity || 0);
+        }
 
-  // menu pizza
-  if (p.type === "menu") {
-    return sum + p.quantity;
-  }
+        const cartProduct = cartItem.product;
 
-  return sum;
-}, 0);
+        const isCartPizza =
+          cartProduct?.product_type === "pizza" ||
+          cartProduct?.category === "Pizza" ||
+          !cartProduct?.category;
+
+        if (isCartPizza) {
+          return sum + Number(cartItem.quantity || 0);
+        }
+
+        return sum;
+      }, 0);
 
       return Math.max(0, effectiveStock - pizzasInCart);
     }
 
-    // Niet-pizza items: normale stock per item id
-    const itemStock =
-      stockSheetState.find((s) => String(s.id) === String(product.id))?.stock ??
-      0;
+    // Andere producten
+    const stockProduct = stockSheetState.find(
+      (stockItem) => String(stockItem.id) === String(product.id),
+    );
+
+    if (!stockProduct) {
+      return 0;
+    }
+
+    // Geen stocktracking = onbeperkt beschikbaar
+    if (stockProduct.track_stock === false) {
+      return Number.POSITIVE_INFINITY;
+    }
+
+    const itemStock = Number(stockProduct.stock ?? 0);
 
     const quantityInCart = currentCart
-      .filter((p) => String(p.product.id) === String(product.id))
-      .reduce((sum, p) => sum + p.quantity, 0);
+      .filter(
+        (cartItem) =>
+          cartItem.type !== "menu" &&
+          String(cartItem.product.id) === String(product.id),
+      )
+      .reduce((sum, cartItem) => sum + Number(cartItem.quantity || 0), 0);
 
-    return Math.max(0, Number(itemStock) - quantityInCart);
+    return Math.max(0, itemStock - quantityInCart);
   };
-
   // =========================
   // Cart actions
   // =========================
@@ -275,100 +280,92 @@ const [cart, setCart] = useState(() => {
     });
   };
 
-  const addMenu = (
-  pizza,
-  drink,
-  menuPrice,
-  { isKitchen = false } = {},
-) => {
-  setCart((prev) => {
-    // stock checks
-    const pizzaStock = getStock(pizza, prev, { isKitchen });
-    const drinkStock = getStock(drink, prev, { isKitchen });
+  const addMenu = (pizza, drink, menuPrice, { isKitchen = false } = {}) => {
+    setCart((prev) => {
+      // stock checks
+      const pizzaStock = getStock(pizza, prev, { isKitchen });
+      const drinkStock = getStock(drink, prev, { isKitchen });
 
-    if (
-      pizzaStock <= 0 ||
-      drinkStock <= 0
-    ) {
-      return prev;
-    }
+      if (pizzaStock <= 0 || drinkStock <= 0) {
+        return prev;
+      }
 
-    const menuId = `menu-${pizza.id}-${drink.id}`;
+      const menuId = `menu-${pizza.id}-${drink.id}`;
 
-    const existing = prev.find(
-      (p) => p.type === "menu" && p.product.id === menuId,
-    );
-
-    if (existing) {
-      return prev.map((p) =>
-        p.product.id === menuId
-          ? { ...p, quantity: p.quantity + 1 }
-          : p,
+      const existing = prev.find(
+        (p) => p.type === "menu" && p.product.id === menuId,
       );
-    }
 
-    return [
-      ...prev,
-      {
-        type: "menu",
-        quantity: 1,
+      if (existing) {
+        return prev.map((p) =>
+          p.product.id === menuId ? { ...p, quantity: p.quantity + 1 } : p,
+        );
+      }
 
-        product: {
-          id: menuId,
-          name: pizza.name,
-          price: menuPrice,
+      return [
+        ...prev,
+        {
+          type: "menu",
+          quantity: 1,
+
+          product: {
+            id: menuId,
+            name: pizza.name,
+            price: menuPrice,
+          },
+
+          menu: {
+            pizza,
+            drink,
+          },
         },
-
-        menu: {
-          pizza,
-          drink,
-        },
-      },
-    ];
-  });
-};
+      ];
+    });
+  };
 
   const removeItem = (product) =>
     setCart((prev) =>
       prev.filter((p) => String(p.product.id) !== String(product.id)),
     );
 
- const changeQuantity = (
-  product,
-  amount,
-  { isKitchen = false } = {},
-) => {
-  setCart((prev) => {
-    return prev
-      .map((p) => {
-        if (String(p.product.id) !== String(product.id)) {
-          return p;
-        }
+  const changeQuantity = (product, amount, { isKitchen = false } = {}) => {
+    setCart((prev) => {
+      return prev
+        .map((p) => {
+          if (String(p.product.id) !== String(product.id)) {
+            return p;
+          }
 
-        const newQty = p.quantity + amount;
+          const newQty = p.quantity + amount;
 
-        if (newQty <= 0) return null;
+          if (newQty <= 0) return null;
 
-        // MENU
-        if (p.type === "menu") {
-          const pizzaStock = getStock(
-            p.menu.pizza,
-            prev,
-            { isKitchen },
-          );
+          // MENU
+          if (p.type === "menu") {
+            const pizzaStock = getStock(p.menu.pizza, prev, { isKitchen });
 
-          const drinkStock = getStock(
-            p.menu.drink,
-            prev,
-            { isKitchen },
-          );
+            const drinkStock = getStock(p.menu.drink, prev, { isKitchen });
 
-          const remaining = Math.min(
-            pizzaStock,
-            drinkStock,
-          );
+            const remaining = Math.min(pizzaStock, drinkStock);
 
-          const maxAllowed = p.quantity + remaining;
+            const maxAllowed = p.quantity + remaining;
+
+            if (newQty > maxAllowed) {
+              return {
+                ...p,
+                quantity: maxAllowed,
+              };
+            }
+
+            return {
+              ...p,
+              quantity: newQty,
+            };
+          }
+
+          // NORMAL ITEM
+          const maxAllowed =
+            p.quantity + getStock(p.product, prev, { isKitchen });
 
           if (newQty > maxAllowed) {
             return {
@@ -381,28 +378,10 @@ const [cart, setCart] = useState(() => {
             ...p,
             quantity: newQty,
           };
-        }
-
-        // NORMAL ITEM
-        const maxAllowed =
-          p.quantity +
-          getStock(p.product, prev, { isKitchen });
-
-        if (newQty > maxAllowed) {
-          return {
-            ...p,
-            quantity: maxAllowed,
-          };
-        }
-
-        return {
-          ...p,
-          quantity: newQty,
-        };
-      })
-      .filter(Boolean);
-  });
-};
+        })
+        .filter(Boolean);
+    });
+  };
 
   const clearCart = () => {
     setCart([]);

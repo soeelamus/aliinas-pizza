@@ -1,5 +1,5 @@
-// pages/api/pickup-slots.js
-const GAS_URL = process.env.SHEETS_ORDER;
+// /api/pickup-slots.js
+import { supabase } from "../src/lib/supabase.js";
 
 function todayBrusselsYYYYMMDD() {
   return new Intl.DateTimeFormat("sv-SE", {
@@ -7,63 +7,66 @@ function todayBrusselsYYYYMMDD() {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  }).format(new Date()); // "YYYY-MM-DD"
+  }).format(new Date());
 }
 
-function parseCsvToObjects(csvText) {
-  const lines = (csvText || "").split("\n").filter(Boolean);
-  if (lines.length <= 1) return { headers: [], rows: [] };
+function getBrusselsDayBounds(date) {
+  const start = new Date(`${date}T00:00:00+02:00`);
+  const end = new Date(`${date}T23:59:59.999+02:00`);
 
-  const headers = lines[0]
-    .split(",")
-    .map((h) => h.replace(/^"|"$/g, "").trim().toLowerCase());
-
-  const rows = lines.slice(1).map((line) => {
-    const cols = line.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-    const obj = {};
-    headers.forEach((h, i) => {
-      obj[h] = cols[i] ? cols[i].replace(/^"|"$/g, "").trim() : "";
-    });
-    return obj;
-  });
-
-  return { headers, rows };
+  return {
+    start: start.toISOString(),
+    end: end.toISOString(),
+  };
 }
 
 export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "s-maxage=10, stale-while-revalidate=10");
+
   try {
     if (req.method !== "GET") {
-      return res.status(405).json({ error: "Method not allowed" });
+      return res.status(405).json({
+        ok: false,
+        error: "Method not allowed",
+      });
     }
-
-    if (!GAS_URL) {
-      return res.status(500).json({ error: "Missing SHEETS_ORDER env var" });
-    }
-
-    // ✅ cache: Vercel edge cache 20s + stale while revalidate
-    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=60");
 
     const date = String(req.query.date || todayBrusselsYYYYMMDD()).trim();
 
-    const response = await fetch(GAS_URL);
-    const csvText = await response.text();
-    const { rows } = parseCsvToObjects(csvText);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+      return res.status(400).json({
+        ok: false,
+        error: "Ongeldige datum",
+      });
+    }
 
-    const booked = rows
-      .filter((row) => {
-        const orderedTime = (row.orderedtime || "").trim(); // ISO string
-        const orderedDate = orderedTime.slice(0, 10);
-        return orderedDate === date;
-      })
-      .map((row) => (row.pickuptime || "").trim())
-      .filter((t) => t && t.toUpperCase() !== "ASAP");
+    const { start, end } = getBrusselsDayBounds(date);
+
+    const { data, error } = await supabase
+      .from("orders")
+      .select("pickup_time")
+      .eq("pickup_date", date)
+      .neq("status", "cancelled");
+
+    if (error) {
+      throw error;
+    }
+
+    const booked = (data || [])
+      .map((order) => String(order.pickup_time || "").trim())
+      .filter((time) => time && time.toUpperCase() !== "ASAP");
 
     return res.status(200).json({
+      ok: true,
       date,
       booked: [...new Set(booked)],
     });
-  } catch (err) {
-    console.error("Vercel API /pickup-slots error:", err);
-    return res.status(500).json({ error: err.message });
+  } catch (error) {
+    console.error("API /pickup-slots error:", error);
+
+    return res.status(500).json({
+      ok: false,
+      error: error.message || "Server error",
+    });
   }
 }

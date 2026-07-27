@@ -58,9 +58,6 @@ function KitchenActive({ onBackToSetup }) {
   const intervalRef = useRef(null);
   const audioAllowed = useRef(true);
 
-  // ✅ version tracking
-  const lastOrdersVersion = useRef(null);
-
   // ✅ MOCK order (stable ref) for debugging when server is offline
   const mockOrderRef = useRef({
     id: "mock-1",
@@ -210,52 +207,15 @@ function KitchenActive({ onBackToSetup }) {
       }
     };
 
-    const checkVersionAndFetch = async () => {
-      try {
-        const vRes = await fetch("/api/orders-version", {
-          cache: "no-store",
-          headers: getKitchenHeaders(),
-        });
-        if (!vRes.ok) throw new Error(`orders-version HTTP ${vRes.status}`);
-
-        const vJson = await vRes.json();
-        const version = String(vJson?.version ?? "");
-
-        if (version && version === lastOrdersVersion.current) {
-          console.log(
-            "🍳 Orders unchanged → skip fetch (version:",
-            version,
-            ")",
-          );
-          // still ensure we are not stuck loading on first run
-          if (firstFetch.current && isMounted) setLoading(false);
-          return;
-        }
-
-        console.log(
-          "🍳 Orders changed",
-          lastOrdersVersion.current,
-          "→",
-          version,
-        );
-        lastOrdersVersion.current = version;
-
-        await fetchOrders();
-      } catch (e) {
-        console.warn("🍳 orders-version failed → fallback to full fetch:", e);
-        await fetchOrders(); // fetchOrders will fallback to mock if needed
-      }
-    };
-
     const stop = () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
       intervalRef.current = null;
     };
 
     const start = () => {
-      stop(); // prevent double intervals
-      checkVersionAndFetch(); // run immediately
-      intervalRef.current = setInterval(checkVersionAndFetch, 15000);
+      stop();
+      fetchOrders();
+      intervalRef.current = setInterval(fetchOrders, 5000);
     };
 
     const onVis = () => {
@@ -271,7 +231,7 @@ function KitchenActive({ onBackToSetup }) {
       stop();
       document.removeEventListener("visibilitychange", onVis);
     };
-  }, [pendingUpdates]); // ✅ IMPORTANT: do NOT add currentTime here
+  }, [getKitchenHeaders]);
 
   const handleOrderDetailsChange = async (id, updates) => {
     if (String(id) === "mock-1") {
@@ -305,6 +265,7 @@ function KitchenActive({ onBackToSetup }) {
           ...getKitchenHeaders(),
         },
         body: JSON.stringify({
+          action: "updateOrder",
           id: String(id),
           ...updates,
         }),
@@ -349,7 +310,11 @@ function KitchenActive({ onBackToSetup }) {
           "Content-Type": "application/json",
           ...getKitchenHeaders(),
         },
-        body: JSON.stringify({ id: String(id), status: newStatus }),
+        body: JSON.stringify({
+          action: "updateStatus",
+          id: String(id),
+          status: newStatus,
+        }),
       });
 
       const data = await res.json();

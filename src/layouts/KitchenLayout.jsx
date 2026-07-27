@@ -8,34 +8,55 @@ const KitchenLayout = () => {
   const { setForcedIsOpen } = useEvents();
   const intervalRef = useRef(null);
 
-    useEffect(() => {
+  useEffect(() => {
     setForcedIsOpen(true);
-    return () => setForcedIsOpen(false);
+
+    return () => {
+      setForcedIsOpen(false);
+    };
   }, [setForcedIsOpen]);
 
   useEffect(() => {
-    const start = () => {
-      stop();
-      refreshStock();
-      intervalRef.current = setInterval(refreshStock, 20000);
-    };
-
     const stop = () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
       intervalRef.current = null;
     };
 
-    const onVis = () => {
-      if (document.visibilityState === "visible") start();
-      else stop();
+    const start = () => {
+      stop();
+
+      refreshStock();
+
+      intervalRef.current = setInterval(() => {
+        refreshStock();
+      }, 5000);
     };
 
-    document.addEventListener("visibilitychange", onVis);
-    onVis();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        start();
+      } else {
+        stop();
+      }
+    };
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibilityChange,
+    );
+
+    handleVisibilityChange();
 
     return () => {
       stop();
-      document.removeEventListener("visibilitychange", onVis);
+
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibilityChange,
+      );
     };
   }, [refreshStock]);
 
