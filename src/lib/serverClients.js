@@ -8,7 +8,7 @@ const supabaseServiceRoleKey =
   process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const stripeSecretKey =
-  process.env.STRIPE_SECRET_KEY_TEST_TEST;
+  process.env.STRIPE_SECRET_KEY;
 
 if (!supabaseUrl) {
   throw new Error(
@@ -24,7 +24,7 @@ if (!supabaseServiceRoleKey) {
 
 if (!stripeSecretKey) {
   throw new Error(
-    "STRIPE_SECRET_KEY_TEST_TEST ontbreekt",
+    "STRIPE_SECRET_KEY ontbreekt",
   );
 }
 

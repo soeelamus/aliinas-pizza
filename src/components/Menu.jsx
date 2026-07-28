@@ -47,7 +47,7 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
   const pizzaItems = sellableStockItems
     .filter((item) => item.product_type === "pizza")
     .sort((a, b) => (a.display_order ?? 999) - (b.display_order ?? 999));
-    
+
   const menuItems = pizzaItems.map((pizza) => ({
     ...pizza,
     price:
@@ -80,8 +80,11 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
       : activeTab === ComboMenu
         ? menuItems
         : sellableStockItems.filter((item) => item.category === activeTab);
-  const drinks = stockSheet.filter(
+  const softDrinks = stockSheet.filter(
     (item) => item.category === "Drank" && item.product_type !== "inventory",
+  );
+  const beers = stockSheet.filter(
+    (item) => item.category === "Bier" && item.product_type !== "inventory",
   );
   const formatName = (name) =>
     name
@@ -308,10 +311,9 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
                 <p className="menu-options--title">Welk drankje?</p>
 
                 <div className="menu-options">
-                  {drinks.map((drink) => (
-                    <div className="menu-option">
+                  {softDrinks.map((drink) => (
+                    <div className="menu-option" key={drink.id}>
                       <button
-                        key={drink.id}
                         className="menu-options--item item--drinks"
                         style={{
                           backgroundImage: `url(/images/products/${formatName(drink.name)}.png)`,
@@ -336,11 +338,62 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
                             drink: null,
                           });
                         }}
-                      ></button>
-                      <span className="menu-options--name"> {drink.name}</span>
+                      />
+                      <span className="menu-options--name">{drink.name}</span>
                     </div>
                   ))}
                 </div>
+
+                {beers.length > 0 && (
+                  <>
+                    <p className="menu-options--title">Bier</p>
+
+                    <div className="menu-options">
+                      {beers.map((beer) => (
+                        <div className="menu-option" key={beer.id}>
+                          <button
+                            className="menu-options--item item--drinks"
+                            style={{
+                              backgroundImage: `url(/images/products/${formatName(beer.name)}.png)`,
+                            }}
+                            onClick={() => {
+                              setMenuBuilder((prev) => ({
+                                ...prev,
+                                drink: beer,
+                              }));
+
+                              addMenu(
+                                menuBuilder.pizza,
+                                beer,
+                                menuBuilder.pizza.menuPrice ??
+                                  menuBuilder.pizza.price,
+                                { isKitchen },
+                              );
+
+                              setMenuBuilder({
+                                open: false,
+                                pizza: null,
+                                drink: null,
+                              });
+                            }}
+                          />
+                          <span className="menu-options--name">
+                            {beer.name}
+                          </span>
+                          {beer.size && beer.size !== 0 && (
+                            <p className="pizza-ingredients">
+                              {beer.size.split(",").map((ingredient, index) => (
+                                <span key={index} className="ingredient-chip">
+                                  {ingredient.trim()}
+                                </span>
+                              ))}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
               </>
             )}
 

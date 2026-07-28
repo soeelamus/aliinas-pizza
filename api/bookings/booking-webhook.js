@@ -371,12 +371,12 @@ export default async function handler(req, res) {
   }
 
   const webhookSecret =
-    process.env.STRIPE_BOOKING_WEBHOOK_SECRET_TEST;
+    process.env.STRIPE_BOOKING_WEBHOOK_SECRET;
 
   if (!webhookSecret) {
     return res.status(500).json({
       error:
-        "STRIPE_BOOKING_WEBHOOK_SECRET_TEST ontbreekt.",
+        "STRIPE_BOOKING_WEBHOOK_SECRET ontbreekt.",
     });
   }
 

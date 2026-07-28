@@ -1,11 +1,11 @@
 import Stripe from "stripe";
 
 const stripeSecretKey =
-  process.env.STRIPE_SECRET_KEY_TEST;
+  process.env.STRIPE_SECRET_KEY;
 
 if (!stripeSecretKey) {
   throw new Error(
-    "STRIPE_SECRET_KEY_TEST ontbreekt",
+    "STRIPE_SECRET_KEY ontbreekt",
   );
 }
 
