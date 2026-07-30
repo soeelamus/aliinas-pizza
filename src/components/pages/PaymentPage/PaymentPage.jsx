@@ -12,10 +12,14 @@ const PaymentPage = () => {
   const { cart, totalAmount } = useCart();
   const [localCart, setLocalCart] = useState(cart);
 
+  const stored = JSON.parse(
+    localStorage.getItem("paymentData") || "{}",
+  ).formData;
+
   const [formData, setFormData] = useState({
-    name: "",
+    name: stored?.name || "",
     pickupTime: "",
-    email: "",
+    email: stored?.email || "",
     notes: "",
     agreeTerms: false,
   });
@@ -84,49 +88,49 @@ const PaymentPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-const handleCheckout = async (e) => {
-  e.preventDefault();
-  if (!validate()) return;
+  const handleCheckout = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
 
-  localStorage.setItem("paymentData", JSON.stringify({ formData }));
-  setLoading(true);
+    localStorage.setItem("paymentData", JSON.stringify({ formData }));
+    setLoading(true);
 
-  try {
-    const res = await fetch("/api/payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        total: totalAmount(),
-        customer: formData,
-        cart: localCart,
-      }),
-    });
-
-    const text = await res.text();
-
-    let data;
     try {
-      data = JSON.parse(text);
-    } catch {
-      throw new Error(text || "Server gaf geen geldige JSON terug");
-    }
+      const res = await fetch("/api/payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          total: totalAmount(),
+          customer: formData,
+          cart: localCart,
+        }),
+      });
 
-    if (!res.ok) {
-      throw new Error(data.error || "Payment request failed");
-    }
+      const text = await res.text();
 
-    if (!data.checkoutUrl) {
-      throw new Error("Geen checkoutUrl ontvangen");
-    }
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(text || "Server gaf geen geldige JSON terug");
+      }
 
-    window.location.href = data.checkoutUrl;
-  } catch (error) {
-    console.error("Checkout error:", error);
-    alert(`Betaling kon niet gestart worden. ${error.message}`);
-  } finally {
-    setLoading(false);
-  }
-};
+      if (!res.ok) {
+        throw new Error(data.error || "Payment request failed");
+      }
+
+      if (!data.checkoutUrl) {
+        throw new Error("Geen checkoutUrl ontvangen");
+      }
+
+      window.location.href = data.checkoutUrl;
+    } catch (error) {
+      console.error("Checkout error:", error);
+      alert(`Betaling kon niet gestart worden. ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // ✅ 1) haal orders van vandaag op + tel per pickuptime
   useEffect(() => {
@@ -240,7 +244,7 @@ const handleCheckout = async (e) => {
               <div className="option1">
                 <label htmlFor="name">Naam</label>
                 <input
-                  className="form-textarea"
+                  className={`form-textarea ${!formData.email.trim() ? "input-error" : ""}`}
                   type="text"
                   id="name"
                   name="name"
@@ -256,7 +260,9 @@ const handleCheckout = async (e) => {
                 <label htmlFor="pickupTime">Afhaaltijd</label>
 
                 <select
-                  className="form-textarea form-select"
+                  className={`form-textarea form-select bold ${
+                    !formData.pickupTime.trim() ? "input-error" : ""
+                  }`}
                   id="pickupTime"
                   name="pickupTime"
                   value={formData.pickupTime}
@@ -282,7 +288,7 @@ const handleCheckout = async (e) => {
             <div className="option3">
               <label htmlFor="email">E-mail</label>
               <input
-                className="form-textarea"
+                className={`form-textarea ${!formData.email.trim() ? "input-error" : ""}`}
                 type="email"
                 id="email"
                 name="email"
@@ -302,7 +308,7 @@ const handleCheckout = async (e) => {
               className="form-textarea"
               id="notes"
               name="notes"
-              placeholder="Graag de Margheriita vegan maken"
+              placeholder="Opmerking"
               value={formData.notes}
               onChange={handleChange}
               rows={1}
@@ -325,7 +331,7 @@ const handleCheckout = async (e) => {
                       <span className="checkbox"></span>
                     </label>
                     <p>
-                      Ik zal mijn bestelling vandaag ophalen in:{" "}
+                      Ik zal mijn bestelling vandaag ophalen in{" "}
                       <strong>{todaysEvent.address}</strong>
                       {formData.pickupTime && (
                         <>

@@ -58,7 +58,6 @@ const SuccessPage = () => {
 
     const timer = setTimeout(() => {
       localStorage.removeItem("cart");
-      localStorage.removeItem("paymentData");
     }, 5000);
 
     return () => clearTimeout(timer);
@@ -103,7 +102,6 @@ const SuccessPage = () => {
             className="btn-purple"
             onClick={() => {
               localStorage.removeItem("cart");
-              localStorage.removeItem("paymentData");
               navigate("/");
               window.location.reload();
             }}

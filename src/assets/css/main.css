@@ -74,6 +74,9 @@ textarea {
   font-weight: 300;
   line-height: 1.65em;
 }
+.input-error {
+  border: 1px solid var(--primary-pink) !important;
+}
 a {
   -moz-transition:
     color 0.2s ease-in-out,
@@ -865,6 +868,9 @@ body.is-preload #header:after {
 }
 body {
   overflow-x: hidden;
+}
+.bold {
+  font-weight: 700;
 }
 .header-container {
   height: 100vh;
