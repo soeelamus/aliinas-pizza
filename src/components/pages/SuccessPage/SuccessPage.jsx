@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import confetti from "canvas-confetti";
 
 import "./SuccessPage.css";
 import Success from "../../SuccessCard";
@@ -62,6 +63,42 @@ const SuccessPage = () => {
 
     return () => clearTimeout(timer);
   }, [status]);
+
+  useEffect(() => {
+  if (status !== "paid") return;
+
+  const duration = 2000;
+  const end = Date.now() + duration;
+
+  const interval = setInterval(() => {
+    const timeLeft = end - Date.now();
+
+    if (timeLeft <= 0) {
+      clearInterval(interval);
+      return;
+    }
+
+    const particleCount = Math.ceil(100 * (timeLeft / duration));
+
+    confetti({
+      particleCount,
+      angle: 60,
+      spread: 70,
+      origin: { x: 0, y: 0.7 },
+      zIndex: 9999,
+    });
+
+    confetti({
+      particleCount,
+      angle: 120,
+      spread: 70,
+      origin: { x: 1, y: 0.7 },
+      zIndex: 9999,
+    });
+  }, 250);
+
+  return () => clearInterval(interval);
+}, [status]);
 
   /* -------------------
      UI rendering
