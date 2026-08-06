@@ -105,6 +105,17 @@ function App() {
             }
           />
           <Route
+            path="/reservation/:customerToken"
+            element={
+              <>
+                <Navbar onMain={false} />
+                <Wave />
+                <ReservationPage />
+                <Wave reverse={true}/>
+              </>
+            }
+          />
+          <Route
             path="/employees/login"
             element={
               <>
@@ -180,10 +191,6 @@ function App() {
                 <Wave reverse={true} />
               </>
             }
-          />
-          <Route
-            path="/reservation/:customerToken"
-            element={<ReservationPage />}
           />
           <Route
             path="/:slug"

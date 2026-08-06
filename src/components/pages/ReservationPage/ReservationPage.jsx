@@ -1,8 +1,4 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import {
   Alert,
@@ -37,10 +33,9 @@ import {
   SaveRounded,
 } from "@mui/icons-material";
 
-import {
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
+import { IS_LOCAL } from "../../../utils/mockApi";
+import "./ReservationPage.css";
 
 const HARDCODED_PIN = "9080";
 
@@ -63,22 +58,12 @@ function formatDate(value) {
     day: "numeric",
     month: "long",
     year: "numeric",
-  }).format(
-    new Date(`${value}T12:00:00`),
-  );
+  }).format(new Date(`${value}T12:00:00`));
 }
 
-function DetailItem({
-  icon,
-  label,
-  value,
-}) {
+function DetailItem({ icon, label, value }) {
   return (
-    <Stack
-      direction="row"
-      spacing={1.5}
-      alignItems="flex-start"
-    >
+    <Stack direction="row" spacing={1.5} alignItems="flex-start">
       <Box
         sx={{
           width: 42,
@@ -95,10 +80,7 @@ function DetailItem({
       </Box>
 
       <Box sx={{ minWidth: 0 }}>
-        <Typography
-          variant="caption"
-          color="text.secondary"
-        >
+        <Typography variant="caption" color="text.secondary">
           {label}
         </Typography>
 
@@ -125,86 +107,57 @@ export default function ReservationPage() {
   );
 
   const [pin, setPin] = useState("");
-  const [
-    authenticatedPin,
-    setAuthenticatedPin,
-  ] = useState("");
+  const [authenticatedPin, setAuthenticatedPin] = useState("");
 
-  const [booking, setBooking] =
-    useState(null);
+  const [booking, setBooking] = useState(null);
 
-  const [pizzas, setPizzas] =
-    useState([]);
+  const [pizzas, setPizzas] = useState([]);
 
-  const [quantities, setQuantities] =
-    useState({});
+  const [quantities, setQuantities] = useState({});
 
-  const [activePayment, setActivePayment] =
-    useState(false);
+  const [activePayment, setActivePayment] = useState(false);
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [menuLoading, setMenuLoading] =
-    useState(false);
+  const [menuLoading, setMenuLoading] = useState(false);
 
-  const [saving, setSaving] =
-    useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const [paying, setPaying] =
-    useState(false);
+  const [paying, setPaying] = useState(false);
 
-  const [error, setError] =
-    useState("");
+  const [error, setError] = useState("");
 
-  const [message, setMessage] =
-    useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const depositSuccess =
-      searchParams.get("payment") === "success";
+    const depositSuccess = searchParams.get("payment") === "success";
 
     if (depositSuccess && customerToken) {
-      localStorage.setItem(
-        storageKey,
-        HARDCODED_PIN,
-      );
+      localStorage.setItem(storageKey, HARDCODED_PIN);
 
       setAuthenticatedPin(HARDCODED_PIN);
 
-      setMessage(
-        "Je voorschot is betaald. Je reservatie is bevestigd.",
-      );
+      setMessage("Je voorschot is betaald. Je reservatie is bevestigd.");
 
       return;
     }
 
-    const storedPin =
-      localStorage.getItem(storageKey);
+    const storedPin = localStorage.getItem(storageKey);
 
     if (storedPin) {
       setAuthenticatedPin(storedPin);
     }
-  }, [
-    customerToken,
-    searchParams,
-    storageKey,
-  ]);
+  }, [customerToken, searchParams, storageKey]);
 
   useEffect(() => {
-    const paymentResult =
-      searchParams.get("balance_payment");
+    const paymentResult = searchParams.get("balance_payment");
 
     if (paymentResult === "success") {
-      setMessage(
-        "Je bijbetaling werd ontvangen.",
-      );
+      setMessage("Je bijbetaling werd ontvangen.");
     }
 
     if (paymentResult === "cancelled") {
-      setError(
-        "De betaling werd geannuleerd.",
-      );
+      setError("De betaling werd geannuleerd.");
     }
   }, [searchParams]);
 
@@ -213,88 +166,61 @@ export default function ReservationPage() {
 
     try {
       const response = await fetch(
-        "/api/bookings/menu",
-        {
-          cache: "no-store",
-        },
+        IS_LOCAL ? "/json/menu.json" : "/api/bookings/menu",
       );
 
       const result = await response.json();
 
-      if (!response.ok) {
-        throw new Error(
-          result.error ||
-            "Het pizzamenu kon niet worden geladen.",
-        );
-      }
-
-      setPizzas(result.pizzas || []);
-    } catch (loadError) {
-      console.error(loadError);
-
-      setError(loadError.message);
+      setPizzas(result.pizzas ?? []);
     } finally {
       setMenuLoading(false);
     }
   };
-
   const applyItems = (items = []) => {
     const next = {};
 
     items.forEach((item) => {
-      next[item.productId] =
-        Number(item.quantity);
+      next[item.productId] = Number(item.quantity);
     });
 
     setQuantities(next);
   };
 
-  const loadBooking = async (
-    activePin = authenticatedPin,
-  ) => {
+  const loadBooking = async (activePin = authenticatedPin) => {
     if (!activePin || !customerToken) return;
 
     setLoading(true);
     setError("");
 
+    const url = IS_LOCAL
+      ? "/json/reservation.json"
+      : `/api/bookings/reservation?token=${encodeURIComponent(customerToken)}`;
+
     try {
-      const response = await fetch(
-        `/api/bookings/reservation?token=${encodeURIComponent(
-          customerToken,
-        )}`,
-        {
-          headers: {
-            "x-booking-pin": activePin,
-          },
-          cache: "no-store",
+      const response = await fetch(url, {
+        headers: {
+          "x-booking-pin": activePin,
         },
-      );
+        cache: "no-store",
+      });
 
       const result = await response.json();
 
       if (!response.ok) {
-        if (
-          response.status === 401 ||
-          result.code === "INVALID_PIN"
-        ) {
+        if (response.status === 401 || result.code === "INVALID_PIN") {
           localStorage.removeItem(storageKey);
           setAuthenticatedPin("");
 
-          throw new Error(
-            "De pincode is niet correct.",
-          );
+          throw new Error("De pincode is niet correct.");
         }
 
         throw new Error(
-          result.error ||
-            "De reservatie kon niet worden geladen.",
+          result.error || "De reservatie kon niet worden geladen.",
         );
       }
 
       setBooking(result.booking);
-      setActivePayment(
-        Boolean(result.activePayment),
-      );
+      setActivePayment(Boolean(result.activePayment));
 
       applyItems(result.booking.items || []);
     } catch (loadError) {
@@ -320,46 +246,32 @@ export default function ReservationPage() {
       pizzas
         .map((pizza) => ({
           ...pizza,
-          quantity: Number(
-            quantities[pizza.id] || 0,
-          ),
+          quantity: Number(quantities[pizza.id] || 0),
         }))
-        .filter(
-          (pizza) => pizza.quantity > 0,
-        ),
+        .filter((pizza) => pizza.quantity > 0),
     [pizzas, quantities],
   );
 
   const selectedPizzaCount = useMemo(
-    () =>
-      selectedItems.reduce(
-        (total, pizza) =>
-          total + pizza.quantity,
-        0,
-      ),
+    () => selectedItems.reduce((total, pizza) => total + pizza.quantity, 0),
     [selectedItems],
   );
 
   const selectedPizzaSubtotal = useMemo(
     () =>
       selectedItems.reduce(
-        (total, pizza) =>
-          total +
-          pizza.quantity *
-            pizza.priceCents,
+        (total, pizza) => total + pizza.quantity * pizza.priceCents,
         0,
       ),
     [selectedItems],
   );
 
   const previewOrderTotal =
-    selectedPizzaSubtotal +
-    Number(booking?.cateringFeeCents || 0);
+    selectedPizzaSubtotal + Number(booking?.cateringFeeCents || 0);
 
   const previewAmountDue = Math.max(
     0,
-    previewOrderTotal -
-      Number(booking?.paidAmountCents || 0),
+    previewOrderTotal - Number(booking?.paidAmountCents || 0),
   );
 
   const handleLogin = (event) => {
@@ -372,10 +284,7 @@ export default function ReservationPage() {
       return;
     }
 
-    localStorage.setItem(
-      storageKey,
-      cleanedPin,
-    );
+    localStorage.setItem(storageKey, cleanedPin);
 
     setAuthenticatedPin(cleanedPin);
     setPin("");
@@ -391,26 +300,16 @@ export default function ReservationPage() {
     setError("");
   };
 
-  const changeQuantity = (
-    productId,
-    difference,
-  ) => {
+  const changeQuantity = (productId, difference) => {
     if (activePayment) return;
 
     setQuantities((current) => ({
       ...current,
-      [productId]: Math.max(
-        0,
-        Number(current[productId] || 0) +
-          difference,
-      ),
+      [productId]: Math.max(0, Number(current[productId] || 0) + difference),
     }));
   };
 
-  const handleQuantityInput = (
-    productId,
-    value,
-  ) => {
+  const handleQuantityInput = (productId, value) => {
     if (activePayment) return;
 
     if (value === "") {
@@ -424,10 +323,7 @@ export default function ReservationPage() {
 
     const quantity = Number(value);
 
-    if (
-      !Number.isInteger(quantity) ||
-      quantity < 0
-    ) {
+    if (!Number.isInteger(quantity) || quantity < 0) {
       return;
     }
 
@@ -438,10 +334,20 @@ export default function ReservationPage() {
   };
 
   const saveSelection = async () => {
+    if (IS_LOCAL) {
+      setBooking((prev) => ({
+        ...prev,
+        items: selectedItems.map((p) => ({
+          productId: p.id,
+          quantity: p.quantity,
+        })),
+      }));
+
+      setMessage("Mock: selectie opgeslagen.");
+      return;
+    }
     if (selectedItems.length === 0) {
-      setError(
-        "Selecteer minstens één pizza.",
-      );
+      setError("Selecteer minstens één pizza.");
       return;
     }
 
@@ -451,24 +357,18 @@ export default function ReservationPage() {
 
     try {
       const response = await fetch(
-        `/api/bookings/reservation?token=${encodeURIComponent(
-          customerToken,
-        )}`,
+        `/api/bookings/reservation?token=${encodeURIComponent(customerToken)}`,
         {
           method: "PATCH",
           headers: {
-            "Content-Type":
-              "application/json",
-            "x-booking-pin":
-              authenticatedPin,
+            "Content-Type": "application/json",
+            "x-booking-pin": authenticatedPin,
           },
           body: JSON.stringify({
-            items: selectedItems.map(
-              (pizza) => ({
-                productId: pizza.id,
-                quantity: pizza.quantity,
-              }),
-            ),
+            items: selectedItems.map((pizza) => ({
+              productId: pizza.id,
+              quantity: pizza.quantity,
+            })),
           }),
         },
       );
@@ -477,8 +377,7 @@ export default function ReservationPage() {
 
       if (!response.ok) {
         throw new Error(
-          result.error ||
-            "De pizzaselectie kon niet worden opgeslagen.",
+          result.error || "De pizzaselectie kon niet worden opgeslagen.",
         );
       }
 
@@ -486,9 +385,7 @@ export default function ReservationPage() {
       setActivePayment(false);
       applyItems(result.booking.items || []);
 
-      setMessage(
-        "Je pizzaselectie werd opgeslagen.",
-      );
+      setMessage("Je pizzaselectie werd opgeslagen.");
     } catch (saveError) {
       console.error(saveError);
       setError(saveError.message);
@@ -498,37 +395,32 @@ export default function ReservationPage() {
   };
 
   const startPayment = async () => {
+    if (IS_LOCAL) {
+      setMessage("Mock betaling gestart.");
+      return;
+    }
     setPaying(true);
     setError("");
 
     try {
-      const response = await fetch(
-        "/api/bookings/create-balance-checkout",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json",
-            "x-booking-pin":
-              authenticatedPin,
-          },
-          body: JSON.stringify({
-            customerToken,
-          }),
+      const response = await fetch("/api/bookings/create-balance-checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-booking-pin": authenticatedPin,
         },
-      );
+        body: JSON.stringify({
+          customerToken,
+        }),
+      });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          result.error ||
-            "De betaling kon niet worden gestart.",
-        );
+        throw new Error(result.error || "De betaling kon niet worden gestart.");
       }
 
-      window.location.href =
-        result.checkoutUrl;
+      window.location.href = result.checkoutUrl;
     } catch (paymentError) {
       console.error(paymentError);
       setError(paymentError.message);
@@ -538,43 +430,14 @@ export default function ReservationPage() {
 
   if (!authenticatedPin) {
     return (
-      <Box
-        sx={{
-          minHeight: "100vh",
-          display: "grid",
-          placeItems: "center",
-          bgcolor: "background.default",
-          py: 4,
-        }}
-      >
+      <Box className="reservation-login-page">
         <Container maxWidth="sm">
-          <Paper
-            elevation={0}
-            sx={{
-              p: {
-                xs: 3,
-                sm: 5,
-              },
-              border: "1px solid",
-              borderColor: "divider",
-              borderRadius: 4,
-            }}
-          >
-            <Stack
-              component="form"
-              onSubmit={handleLogin}
-              spacing={3}
-            >
+          <Paper elevation={0} className="reservation-login-card">
+            <Stack component="form" onSubmit={handleLogin} spacing={3} className="reservation-login-form">
               <Box textAlign="center">
-                <LockRounded
-                  color="primary"
-                  sx={{ fontSize: 54 }}
-                />
+                <LockRounded color="primary" sx={{ fontSize: 54 }} />
 
-                <Typography
-                  variant="h4"
-                  fontWeight={900}
-                >
+                <Typography variant="h4" fontWeight={900}>
                   Jouw reservatie
                 </Typography>
 
@@ -583,18 +446,12 @@ export default function ReservationPage() {
                 </Typography>
               </Box>
 
-              {error && (
-                <Alert severity="error">
-                  {error}
-                </Alert>
-              )}
+              {error && <Alert severity="error">{error}</Alert>}
 
               <TextField
                 label="Pincode"
                 value={pin}
-                onChange={(event) =>
-                  setPin(event.target.value)
-                }
+                onChange={(event) => setPin(event.target.value)}
                 inputMode="numeric"
                 fullWidth
                 slotProps={{
@@ -608,12 +465,8 @@ export default function ReservationPage() {
                 }}
               />
 
-              <Button
-                type="submit"
-                variant="contained"
-                size="large"
-              >
-                Open reservatie
+              <Button type="submit" variant="contained" size="large">
+                Enter
               </Button>
             </Stack>
           </Paper>
@@ -623,36 +476,18 @@ export default function ReservationPage() {
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        bgcolor: "background.default",
-        py: {
-          xs: 3,
-          md: 6,
-        },
-      }}
-    >
+    <Box className="reservation-page">
       <Container maxWidth="lg">
         <Stack spacing={3}>
           <Stack
-            direction={{
-              xs: "column",
-              sm: "row",
-            }}
+            direction={{ xs: "column", sm: "row" }}
             justifyContent="space-between"
             spacing={2}
+            className="reservation-header"
           >
             <Box>
-              <Typography
-                variant="h3"
-                fontWeight={900}
-              >
+              <Typography variant="h3" fontWeight={900}>
                 Jouw reservatie
-              </Typography>
-
-              <Typography color="text.secondary">
-                Beheer je selectie en betalingen.
               </Typography>
             </Box>
 
@@ -665,70 +500,31 @@ export default function ReservationPage() {
             </Button>
           </Stack>
 
-          {message && (
-            <Alert severity="success">
-              {message}
-            </Alert>
-          )}
-
-          {error && (
-            <Alert severity="error">
-              {error}
-            </Alert>
-          )}
-
           {activePayment && (
             <Alert severity="warning">
-              Er is momenteel een betaling actief.
-              Je selectie kan pas opnieuw gewijzigd
-              worden wanneer deze betaling voltooid
-              of verlopen is.
+              Er is momenteel een betaling actief. Je selectie kan pas opnieuw
+              gewijzigd worden wanneer deze betaling voltooid of verlopen is.
             </Alert>
           )}
 
           {loading && (
-            <Paper
-              elevation={0}
-              sx={{
-                p: 6,
-                textAlign: "center",
-                border: "1px solid",
-                borderColor: "divider",
-                borderRadius: 3,
-              }}
-            >
+            <Paper elevation={0} className="reservation-loading-card">
               <CircularProgress />
             </Paper>
           )}
 
           {!loading && booking && (
             <>
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 3,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 3,
-                }}
-              >
-                <Stack spacing={3}>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography
-                      variant="h5"
-                      fontWeight={900}
-                    >
+              <Paper elevation={0} className="reservation-card reservation-overview-card">
+                <Stack spacing={3} className="reservation-shell">
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography variant="h5" fontWeight={900}>
                       Reservatie bevestigd
                     </Typography>
 
                     <Chip
                       color="success"
-                      icon={
-                        <CheckCircleRounded />
-                      }
+                      icon={<CheckCircleRounded />}
                       label="Bevestigd"
                     />
                   </Stack>
@@ -746,19 +542,13 @@ export default function ReservationPage() {
                     }}
                   >
                     <DetailItem
-                      icon={
-                        <CalendarMonthRounded />
-                      }
+                      icon={<CalendarMonthRounded />}
                       label="Datum"
-                      value={formatDate(
-                        booking.eventDate,
-                      )}
+                      value={formatDate(booking.eventDate)}
                     />
 
                     <DetailItem
-                      icon={
-                        <LocationOnRounded />
-                      }
+                      icon={<LocationOnRounded />}
                       label="Locatie"
                       value={booking.location}
                     />
@@ -778,71 +568,34 @@ export default function ReservationPage() {
                     <DetailItem
                       icon={<EventRounded />}
                       label="Voorschot betaald"
-                      value={formatCurrency(
-                        booking.depositAmountCents,
-                      )}
+                      value={formatCurrency(booking.depositAmountCents)}
                     />
                   </Box>
                 </Stack>
               </Paper>
 
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 3,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 3,
-                }}
-              >
+              <Paper elevation={0} className="reservation-card reservation-cost-card">
                 <Stack spacing={3}>
-                  <Typography
-                    variant="h5"
-                    fontWeight={900}
-                  >
+                  <Typography variant="h5" fontWeight={900}>
                     Vaste kosten
                   </Typography>
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography>
-                      Cateringkost
-                    </Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography>Cateringkost</Typography>
 
                     <Typography fontWeight={900}>
-                      {formatCurrency(
-                        booking.cateringFeeCents,
-                      )}
+                      {formatCurrency(booking.cateringFeeCents)}
                     </Typography>
                   </Stack>
                 </Stack>
               </Paper>
 
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 3,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 3,
-                }}
-              >
+              <Paper elevation={0} className="reservation-card reservation-menu-card">
                 <Stack spacing={3}>
-                  <Stack
-                    direction="row"
-                    spacing={1.5}
-                    alignItems="center"
-                  >
-                    <LocalPizzaRounded
-                      color="primary"
-                    />
+                  <Stack direction="row" spacing={1.5} alignItems="center">
+                    <LocalPizzaRounded color="primary" />
 
-                    <Typography
-                      variant="h5"
-                      fontWeight={900}
-                    >
+                    <Typography variant="h5" fontWeight={900}>
                       Kies je pizza’s
                     </Typography>
                   </Stack>
@@ -851,20 +604,13 @@ export default function ReservationPage() {
                     <CircularProgress />
                   ) : (
                     pizzas.map((pizza) => {
-                      const quantity =
-                        Number(
-                          quantities[pizza.id] ||
-                            0,
-                        );
+                      const quantity = Number(quantities[pizza.id] || 0);
 
                       return (
                         <Paper
                           key={pizza.id}
                           variant="outlined"
-                          sx={{
-                            p: 2,
-                            borderRadius: 2,
-                          }}
+                          className="reservation-pizza-row"
                         >
                           <Stack
                             direction={{
@@ -879,17 +625,12 @@ export default function ReservationPage() {
                             spacing={2}
                           >
                             <Box>
-                              <Typography
-                                fontWeight={900}
-                              >
-                                {pizza.name}{" "}
-                                {pizza.icon}
+                              <Typography fontWeight={900}>
+                                {pizza.name} {pizza.icon}
                               </Typography>
 
                               <Typography color="text.secondary">
-                                {formatCurrency(
-                                  pizza.priceCents,
-                                )}
+                                {formatCurrency(pizza.priceCents)}
                               </Typography>
                             </Box>
 
@@ -899,51 +640,31 @@ export default function ReservationPage() {
                               spacing={1}
                             >
                               <IconButton
-                                onClick={() =>
-                                  changeQuantity(
-                                    pizza.id,
-                                    -1,
-                                  )
-                                }
-                                disabled={
-                                  activePayment ||
-                                  quantity === 0
-                                }
+                                onClick={() => changeQuantity(pizza.id, -1)}
+                                disabled={activePayment || quantity === 0}
                               >
                                 <RemoveRounded />
                               </IconButton>
 
                               <TextField
                                 type="number"
-                                value={
-                                  quantities[
-                                    pizza.id
-                                  ] ?? 0
-                                }
+                                value={quantities[pizza.id] ?? 0}
                                 onChange={(event) =>
                                   handleQuantityInput(
                                     pizza.id,
                                     event.target.value,
                                   )
                                 }
-                                disabled={
-                                  activePayment
-                                }
+                                disabled={activePayment}
                                 size="small"
                                 sx={{ width: 85 }}
                               />
 
                               <IconButton
-                                onClick={() =>
-                                  changeQuantity(
-                                    pizza.id,
-                                    1,
-                                  )
-                                }
+                                onClick={() => changeQuantity(pizza.id, 1)}
                                 disabled={
                                   activePayment ||
-                                  selectedPizzaCount >=
-                                    booking.maxPizzas
+                                  selectedPizzaCount >= booking.maxPizzas
                                 }
                               >
                                 <AddRounded />
@@ -956,10 +677,7 @@ export default function ReservationPage() {
                                   textAlign: "right",
                                 }}
                               >
-                                {formatCurrency(
-                                  quantity *
-                                    pizza.priceCents,
-                                )}
+                                {formatCurrency(quantity * pizza.priceCents)}
                               </Typography>
                             </Stack>
                           </Stack>
@@ -970,109 +688,57 @@ export default function ReservationPage() {
 
                   <Divider />
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography>
-                      Pizza’s
-                    </Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography>Pizza’s</Typography>
 
                     <Typography fontWeight={900}>
                       {selectedPizzaCount}
                     </Typography>
                   </Stack>
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography>
-                      Subtotaal pizza’s
-                    </Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography>Subtotaal pizza’s</Typography>
 
                     <Typography fontWeight={900}>
-                      {formatCurrency(
-                        selectedPizzaSubtotal,
-                      )}
+                      {formatCurrency(selectedPizzaSubtotal)}
                     </Typography>
                   </Stack>
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography>
-                      Cateringkost
-                    </Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography>Cateringkost</Typography>
 
                     <Typography fontWeight={900}>
-                      {formatCurrency(
-                        booking.cateringFeeCents,
-                      )}
+                      {formatCurrency(booking.cateringFeeCents)}
                     </Typography>
                   </Stack>
 
                   <Divider />
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography
-                      variant="h6"
-                      fontWeight={900}
-                    >
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography variant="h6" fontWeight={900}>
                       Nieuw totaal
                     </Typography>
 
-                    <Typography
-                      variant="h5"
-                      fontWeight={900}
-                    >
-                      {formatCurrency(
-                        previewOrderTotal,
-                      )}
+                    <Typography variant="h5" fontWeight={900}>
+                      {formatCurrency(previewOrderTotal)}
                     </Typography>
                   </Stack>
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography>
-                      Reeds betaald
-                    </Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography>Reeds betaald</Typography>
 
-                    <Typography
-                      color="success.main"
-                      fontWeight={900}
-                    >
-                      −{" "}
-                      {formatCurrency(
-                        booking.paidAmountCents,
-                      )}
+                    <Typography color="success.main" fontWeight={900}>
+                      − {formatCurrency(booking.paidAmountCents)}
                     </Typography>
                   </Stack>
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography
-                      variant="h6"
-                      fontWeight={900}
-                    >
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography variant="h6" fontWeight={900}>
                       Te betalen na opslaan
                     </Typography>
 
-                    <Typography
-                      variant="h5"
-                      fontWeight={900}
-                    >
-                      {formatCurrency(
-                        previewAmountDue,
-                      )}
+                    <Typography variant="h5" fontWeight={900}>
+                      {formatCurrency(previewAmountDue)}
                     </Typography>
                   </Stack>
 
@@ -1081,131 +747,76 @@ export default function ReservationPage() {
                     size="large"
                     startIcon={
                       saving ? (
-                        <CircularProgress
-                          size={18}
-                          color="inherit"
-                        />
+                        <CircularProgress size={18} color="inherit" />
                       ) : (
                         <SaveRounded />
                       )
                     }
                     onClick={saveSelection}
-                    disabled={
-                      saving ||
-                      activePayment ||
-                      selectedPizzaCount < 1
-                    }
+                    disabled={saving || activePayment || selectedPizzaCount < 1}
                   >
                     Pizzaselectie opslaan
                   </Button>
+                  
+          {message && <Alert severity="success">{message}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
                 </Stack>
               </Paper>
 
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 3,
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 3,
-                }}
-              >
+              <Paper elevation={0} className="reservation-card reservation-payment-card">
                 <Stack spacing={2}>
-                  <Typography
-                    variant="h5"
-                    fontWeight={900}
-                  >
+                  <Typography variant="h5" fontWeight={900}>
                     Betaling
                   </Typography>
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography>
-                      Huidig totaal
-                    </Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography>Huidig totaal</Typography>
 
                     <Typography fontWeight={900}>
-                      {formatCurrency(
-                        booking.orderTotalCents,
-                      )}
+                      {formatCurrency(booking.orderTotalCents)}
                     </Typography>
                   </Stack>
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography>
-                      Totaal betaald
-                    </Typography>
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography>Totaal betaald</Typography>
 
-                    <Typography
-                      color="success.main"
-                      fontWeight={900}
-                    >
-                      {formatCurrency(
-                        booking.paidAmountCents,
-                      )}
+                    <Typography color="success.main" fontWeight={900}>
+                      {formatCurrency(booking.paidAmountCents)}
                     </Typography>
                   </Stack>
 
                   <Divider />
 
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                  >
-                    <Typography
-                      variant="h6"
-                      fontWeight={900}
-                    >
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography variant="h6" fontWeight={900}>
                       Nog te betalen
                     </Typography>
 
-                    <Typography
-                      variant="h5"
-                      fontWeight={900}
-                    >
-                      {formatCurrency(
-                        booking.remainingAmountCents,
-                      )}
+                    <Typography variant="h5" fontWeight={900}>
+                      {formatCurrency(booking.remainingAmountCents)}
                     </Typography>
                   </Stack>
 
-                  {booking.remainingAmountCents >
-                  0 ? (
+                  {booking.remainingAmountCents > 0 ? (
                     <Button
                       variant="contained"
                       size="large"
                       startIcon={
                         paying ? (
-                          <CircularProgress
-                            size={18}
-                            color="inherit"
-                          />
+                          <CircularProgress size={18} color="inherit" />
                         ) : (
                           <CreditCardRounded />
                         )
                       }
                       onClick={startPayment}
-                      disabled={
-                        paying || activePayment
-                      }
+                      disabled={paying || activePayment}
                     >
-                      Betaal{" "}
-                      {formatCurrency(
-                        booking.remainingAmountCents,
-                      )}
+                      Betaal {formatCurrency(booking.remainingAmountCents)}
                     </Button>
                   ) : (
                     <Alert severity="success">
-                      Je huidige selectie is
-                      volledig betaald. Je kunt
-                      later nog pizza’s toevoegen
-                      en alleen het verschil
-                      bijbetalen.
+                      Je huidige selectie is volledig betaald. Je kunt later nog
+                      pizza’s toevoegen en alleen het verschil bijbetalen.
                     </Alert>
                   )}
                 </Stack>

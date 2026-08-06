@@ -1,0 +1,690 @@
+.reservation-page,
+.reservation-login-page {
+  --aliina-purple: #6237c8;
+  --aliina-purple-dark: #5735a7;
+  --aliina-lilac: #f3e9f7;
+  --aliina-cream: #fffaf3;
+  --aliina-card: rgba(255, 255, 255, 0.92);
+  --aliina-border: rgba(109, 47, 134, 0.14);
+  --aliina-text: #2f2433;
+  --aliina-muted: #786c7c;
+  --aliina-success: #2f7d54;
+}
+
+.reservation-login-page {
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.reservation-page {
+  padding: clamp(1.5rem, 4vw, 4rem) 0;
+}
+
+.reservation-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.reservation-header {
+  align-items: center;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.reservation-header h1,
+.reservation-header h2,
+.reservation-header h3,
+.reservation-login-card h1,
+.reservation-login-card h2,
+.reservation-login-card h3,
+.reservation-card h1,
+.reservation-card h2,
+.reservation-card h3,
+.reservation-card h4,
+.reservation-card h5,
+.reservation-card h6 {
+  color: var(--aliina-text);
+  letter-spacing: -0.035em;
+}
+
+.reservation-header .MuiTypography-h3 {
+  font-size: clamp(2.1rem, 5vw, 3.5rem);
+  line-height: 1;
+}
+
+.reservation-header .MuiTypography-body1 {
+  margin-top: 0.55rem;
+  color: var(--aliina-muted);
+}
+
+.reservation-login-card,
+.reservation-card,
+.reservation-loading-card {
+  border: 1px solid var(--aliina-border);
+  background: var(--aliina-card);
+  box-shadow: 0 20px 55px rgba(72, 38, 82, 0.09);
+  backdrop-filter: blur(12px);
+}
+
+.reservation-login-card {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 3.5rem);
+}
+
+.reservation-login-form {
+  text-align: center;
+}
+
+.reservation-login-form .MuiSvgIcon-root {
+  color: var(--aliina-purple);
+}
+
+.reservation-card {
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.reservation-loading-card {
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.reservation-overview-card {
+  position: relative;
+  overflow: hidden;
+}
+.reservation-cost-card {
+  background: linear-gradient(135deg, #fff 0%, #fff8ef 100%);
+}
+
+.reservation-menu-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(252, 247, 255, 0.94)
+  );
+}
+
+.reservation-payment-card {
+  background: linear-gradient(135deg, #fff 0%, #f2f8f4 100%);
+}
+
+.reservation-page .MuiButton-root,
+.reservation-login-page .MuiButton-root {
+  min-height: 48px;
+  padding-inline: 1.4rem;
+  font-weight: 800;
+  text-transform: none;
+  box-shadow: none;
+}
+
+.reservation-page .MuiButton-contained,
+.reservation-login-page .MuiButton-contained {
+  background: linear-gradient(
+    135deg,
+    var(--aliina-purple),
+    var(--aliina-purple-dark)
+  );
+  box-shadow: 0 10px 22px rgba(109, 47, 134, 0.22);
+}
+
+.reservation-page .MuiButton-contained:hover,
+.reservation-login-page .MuiButton-contained:hover {
+  background: linear-gradient(135deg, #7c3898, #57206f);
+  box-shadow: 0 14px 28px rgba(109, 47, 134, 0.28);
+  transform: translateY(-1px);
+}
+
+.reservation-page .MuiButton-outlined,
+.reservation-login-page .MuiButton-outlined {
+  color: var(--aliina-purple);
+  border-color: rgba(109, 47, 134, 0.28);
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.reservation-page .MuiButton-outlined:hover,
+.reservation-login-page .MuiButton-outlined:hover {
+  border-color: var(--aliina-purple);
+  background: var(--aliina-lilac);
+}
+
+.reservation-page .MuiTextField-root .MuiOutlinedInput-root,
+.reservation-login-page .MuiTextField-root .MuiOutlinedInput-root {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.reservation-page .MuiTextField-root .MuiOutlinedInput-notchedOutline,
+.reservation-login-page .MuiTextField-root .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(109, 47, 134, 0.18);
+}
+
+.reservation-page
+  .MuiTextField-root
+  .MuiOutlinedInput-root:hover
+  .MuiOutlinedInput-notchedOutline,
+.reservation-login-page
+  .MuiTextField-root
+  .MuiOutlinedInput-root:hover
+  .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(109, 47, 134, 0.45);
+}
+
+.reservation-page
+  .MuiTextField-root
+  .Mui-focused
+  .MuiOutlinedInput-notchedOutline,
+.reservation-login-page
+  .MuiTextField-root
+  .Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--aliina-purple);
+}
+
+.reservation-page .MuiInputLabel-root.Mui-focused,
+.reservation-login-page .MuiInputLabel-root.Mui-focused {
+  color: var(--aliina-purple);
+}
+
+.reservation-page .MuiAlert-root,
+.reservation-login-page .MuiAlert-root {
+  border: 1px solid transparent;
+}
+
+.reservation-page .MuiAlert-standardSuccess {
+  background: #eef8f1;
+  border-color: rgba(47, 125, 84, 0.16);
+}
+
+.reservation-page .MuiAlert-standardError,
+.reservation-login-page .MuiAlert-standardError {
+  background: #fff1f1;
+  border-color: rgba(170, 52, 52, 0.14);
+}
+
+.reservation-page .MuiAlert-standardWarning {
+  background: #fff7e7;
+  border-color: rgba(187, 126, 20, 0.16);
+}
+
+.reservation-page .MuiChip-root {
+  font-weight: 800;
+}
+
+.reservation-page .MuiChip-colorSuccess {
+  color: var(--aliina-success);
+  background: #eaf7ef;
+}
+
+.reservation-page .MuiDivider-root {
+  border-color: rgba(109, 47, 134, 0.1);
+}
+
+.reservation-page .reservation-overview-card > div > div:last-child > div {
+  padding: 0.4rem 0;
+}
+
+.reservation-page .reservation-overview-card .MuiBox-root[style],
+.reservation-page .reservation-overview-card .MuiBox-root {
+  position: relative;
+  z-index: 1;
+}
+
+.reservation-page
+  .reservation-overview-card
+  .MuiStack-root
+  > .MuiBox-root:first-child {
+  background: var(--aliina-lilac);
+  color: var(--aliina-purple);
+}
+
+.reservation-pizza-row {
+  padding: 1rem 1.1rem;
+  border-color: rgba(109, 47, 134, 0.12) !important;
+  background: rgba(255, 255, 255, 0.78);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.reservation-pizza-row:hover {
+  transform: translateY(-2px);
+  border-color: rgba(109, 47, 134, 0.28) !important;
+  box-shadow: 0 12px 30px rgba(72, 38, 82, 0.08);
+}
+
+.reservation-pizza-row .MuiTypography-root:first-child {
+  font-size: 1.05rem;
+}
+
+.reservation-pizza-row .MuiIconButton-root {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(109, 47, 134, 0.14);
+  background: var(--aliina-lilac);
+  color: var(--aliina-purple);
+}
+
+.reservation-pizza-row .MuiIconButton-root:hover {
+  background: #ead9f1;
+}
+
+.reservation-pizza-row .MuiIconButton-root.Mui-disabled {
+  opacity: 0.38;
+}
+
+.reservation-pizza-row .MuiTextField-root {
+  width: 72px !important;
+}
+
+.reservation-pizza-row input {
+  padding: 10px 8px;
+  text-align: center;
+  font-weight: 900;
+}reservation-login-card
+.reservation-menu-card .MuiButton-contained,
+.reservation-payment-card .MuiButton-contained {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.reservation-menu-card .MuiTypography-h5,
+.reservation-payment-card .MuiTypography-h5,
+.reservation-overview-card .MuiTypography-h5,
+.reservation-cost-card .MuiTypography-h5 {
+  font-size: 1.35rem;
+}
+
+.reservation-page .MuiCircularProgress-root,
+.reservation-login-page .MuiCircularProgress-root {
+  color: var(--aliina-purple);
+}
+
+@media (max-width: 700px) {
+  .reservation-page {
+    padding: 1rem 0 2rem;
+  }
+
+  .reservation-page .MuiContainer-root {
+    padding-inline: 0.9rem;
+  }
+
+  .reservation-card {
+    padding: 1.15rem;
+  }
+
+  .reservation-header {
+    align-items: stretch;
+  }
+
+  .reservation-header .MuiButton-root {
+    width: 100%;
+  }
+
+  .reservation-pizza-row {
+    padding: 1rem;
+  }
+
+  .reservation-pizza-row > .MuiStack-root > .MuiStack-root {
+    justify-content: space-between;
+  }
+
+  .reservation-pizza-row .MuiTypography-root[style] {
+    min-width: 76px !important;
+  }
+}
+Bibliotheek / ReservationPage.css .reservation-page,
+.reservation-login-page {
+  --aliina-purple: #6d2f86;
+  --aliina-purple-dark: #4f1e66;
+  --aliina-lilac: #f3e9f7;
+  --aliina-cream: #fffaf3;
+  --aliina-card: rgba(255, 255, 255, 0.92);
+  --aliina-border: rgba(109, 47, 134, 0.14);
+  --aliina-text: #2f2433;
+  --aliina-muted: #786c7c;
+  --aliina-success: #2f7d54;
+  min-height: 100vh;
+  color: var(--aliina-text);
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(202, 150, 219, 0.3),
+      transparent 32rem
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(255, 207, 145, 0.25),
+      transparent 28rem
+    ),
+    linear-gradient(180deg, #fffaf6 0%, #f9f1fb 100%);
+}
+
+.reservation-login-page {
+  display: grid;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
+.reservation-page {
+  padding: clamp(1.5rem, 4vw, 4rem) 0;
+}
+
+.reservation-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+
+.reservation-header {
+  align-items: center;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.reservation-header h1,
+.reservation-header h2,
+.reservation-header h3,
+.reservation-login-card h1,
+.reservation-login-card h2,
+.reservation-login-card h3,
+.reservation-card h1,
+.reservation-card h2,
+.reservation-card h3,
+.reservation-card h4,
+.reservation-card h5,
+.reservation-card h6 {
+  color: var(--aliina-text);
+  letter-spacing: -0.035em;
+}
+
+.reservation-header .MuiTypography-h3 {
+  font-size: clamp(2.1rem, 5vw, 3.5rem);
+  line-height: 1;
+}
+
+.reservation-header .MuiTypography-body1 {
+  margin-top: 0.55rem;
+  color: var(--aliina-muted);
+}
+
+.reservation-login-card,
+.reservation-card,
+.reservation-loading-card {
+  border: 1px solid var(--aliina-border);
+  background: var(--aliina-card);
+  box-shadow: 0 20px 55px rgba(72, 38, 82, 0.09);
+  backdrop-filter: blur(12px);
+}
+
+.reservation-login-card {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: clamp(2rem, 5vw, 3.5rem);
+}
+
+.reservation-login-form {
+  text-align: center;
+}
+
+.reservation-login-form .MuiSvgIcon-root {
+  color: var(--aliina-purple);
+}
+
+.reservation-card {
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.reservation-loading-card {
+  padding: 5rem 2rem;
+  text-align: center;
+}
+
+.reservation-overview-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.reservation-cost-card {
+  background: linear-gradient(135deg, #fff 0%, #fff8ef 100%);
+}
+
+.reservation-menu-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(252, 247, 255, 0.94)
+  );
+}
+
+.reservation-payment-card {
+  background: linear-gradient(135deg, #fff 0%, #f2f8f4 100%);
+}
+
+.reservation-page .MuiButton-root,
+.reservation-login-page .MuiButton-root {
+  min-height: 48px;
+  padding-inline: 1.4rem;
+  font-weight: 800;
+  text-transform: none;
+  box-shadow: none;
+}
+
+.reservation-page .MuiButton-contained,
+.reservation-login-page .MuiButton-contained {
+  background: linear-gradient(
+    135deg,
+    var(--aliina-purple),
+    var(--aliina-purple-dark)
+  );
+  box-shadow: 0 10px 22px rgba(109, 47, 134, 0.22);
+}
+
+.reservation-page .MuiButton-contained:hover,
+.reservation-login-page .MuiButton-contained:hover {
+  background: linear-gradient(135deg, #7c3898, #57206f);
+  box-shadow: 0 14px 28px rgba(109, 47, 134, 0.28);
+  transform: translateY(-1px);
+}
+
+.reservation-page .MuiButton-outlined,
+.reservation-login-page .MuiButton-outlined {
+  color: var(--aliina-purple);
+  border-color: rgba(109, 47, 134, 0.28);
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.reservation-page .MuiButton-outlined:hover,
+.reservation-login-page .MuiButton-outlined:hover {
+  border-color: var(--aliina-purple);
+  background: var(--aliina-lilac);
+}
+
+.reservation-page .MuiTextField-root .MuiOutlinedInput-root,
+.reservation-login-page .MuiTextField-root .MuiOutlinedInput-root {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.reservation-page .MuiTextField-root .MuiOutlinedInput-notchedOutline,
+.reservation-login-page .MuiTextField-root .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(109, 47, 134, 0.18);
+}
+
+.reservation-page
+  .MuiTextField-root
+  .MuiOutlinedInput-root:hover
+  .MuiOutlinedInput-notchedOutline,
+.reservation-login-page
+  .MuiTextField-root
+  .MuiOutlinedInput-root:hover
+  .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(109, 47, 134, 0.45);
+}
+
+.reservation-page
+  .MuiTextField-root
+  .Mui-focused
+  .MuiOutlinedInput-notchedOutline,
+.reservation-login-page
+  .MuiTextField-root
+  .Mui-focused
+  .MuiOutlinedInput-notchedOutline {
+  border-color: var(--aliina-purple);
+}
+
+.reservation-page .MuiInputLabel-root.Mui-focused,
+.reservation-login-page .MuiInputLabel-root.Mui-focused {
+  color: var(--aliina-purple);
+}
+
+.reservation-page .MuiAlert-root,
+.reservation-login-page .MuiAlert-root {
+  border: 1px solid transparent;
+}
+
+.reservation-page .MuiAlert-standardSuccess {
+  background: #eef8f1;
+  border-color: rgba(47, 125, 84, 0.16);
+}
+
+.reservation-page .MuiAlert-standardError,
+.reservation-login-page .MuiAlert-standardError {
+  background: #fff1f1;
+  border-color: rgba(170, 52, 52, 0.14);
+}
+
+.reservation-page .MuiAlert-standardWarning {
+  background: #fff7e7;
+  border-color: rgba(187, 126, 20, 0.16);
+}
+
+.reservation-page .MuiChip-root {
+  font-weight: 800;
+}
+
+.reservation-page .MuiChip-colorSuccess {
+  color: var(--aliina-success);
+  background: #eaf7ef;
+}
+
+.reservation-page .MuiDivider-root {
+  border-color: rgba(109, 47, 134, 0.1);
+}
+
+.reservation-page .reservation-overview-card > div > div:last-child > div {
+  padding: 0.4rem 0;
+}
+
+.reservation-page .reservation-overview-card .MuiBox-root[style],
+.reservation-page .reservation-overview-card .MuiBox-root {
+  position: relative;
+  z-index: 1;
+}
+
+.reservation-page
+  .reservation-overview-card
+  .MuiStack-root
+  > .MuiBox-root:first-child {
+  background: var(--aliina-lilac);
+  color: var(--aliina-purple);
+}
+
+.reservation-pizza-row {
+  padding: 1rem 1.1rem;
+  border-color: rgba(109, 47, 134, 0.12) !important;
+  background: rgba(255, 255, 255, 0.78);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    border-color 160ms ease;
+}
+
+.reservation-pizza-row:hover {
+  transform: translateY(-2px);
+  border-color: rgba(109, 47, 134, 0.28) !important;
+  box-shadow: 0 12px 30px rgba(72, 38, 82, 0.08);
+}
+
+.reservation-pizza-row .MuiTypography-root:first-child {
+  font-size: 1.05rem;
+}
+
+.reservation-pizza-row .MuiIconButton-root {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(109, 47, 134, 0.14);
+  background: var(--aliina-lilac);
+  color: var(--aliina-purple);
+}
+
+.reservation-pizza-row .MuiIconButton-root:hover {
+  background: #ead9f1;
+}
+
+.reservation-pizza-row .MuiIconButton-root.Mui-disabled {
+  opacity: 0.38;
+}
+
+.reservation-pizza-row .MuiTextField-root {
+  width: 72px !important;
+}
+
+.reservation-pizza-row input {
+  padding: 10px 8px;
+  text-align: center;
+  font-weight: 900;
+}
+
+.reservation-menu-card .MuiButton-contained,
+.reservation-payment-card .MuiButton-contained {
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.reservation-menu-card .MuiTypography-h5,
+.reservation-payment-card .MuiTypography-h5,
+.reservation-overview-card .MuiTypography-h5,
+.reservation-cost-card .MuiTypography-h5 {
+  font-size: 1.35rem;
+}
+
+.reservation-page .MuiCircularProgress-root,
+.reservation-login-page .MuiCircularProgress-root {
+  color: var(--aliina-purple);
+}
+
+@media (max-width: 700px) {
+  .reservation-page {
+    padding: 1rem 0 2rem;
+  }
+
+  .reservation-page .MuiContainer-root {
+    padding-inline: 0.9rem;
+  }
+
+  .reservation-card {
+    padding: 1.15rem;
+  }
+
+  .reservation-header {
+    align-items: stretch;
+  }
+
+  .reservation-header .MuiButton-root {
+    width: 100%;
+  }
+
+  .reservation-pizza-row {
+    padding: 1rem;
+  }
+
+  .reservation-pizza-row > .MuiStack-root > .MuiStack-root {
+    justify-content: space-between;
+  }
+
+  .reservation-pizza-row .MuiTypography-root[style] {
+    min-width: 76px !important;
+  }
+}
+
+.reservation-login-page {
+  margin-bottom: 15rem !important;
+}

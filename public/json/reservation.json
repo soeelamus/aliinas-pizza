@@ -1,0 +1,25 @@
+{
+  "booking": {
+    "eventDate": "2026-09-12",
+    "location": "Lochristi",
+    "guestCount": 50,
+    "email": "test@test.be",
+    "depositAmountCents": 30000,
+    "paidAmountCents": 30000,
+    "orderTotalCents": 98000,
+    "remainingAmountCents": 68000,
+    "cateringFeeCents": 15000,
+    "maxPizzas": 50,
+    "items": [
+      {
+        "productId": 1,
+        "quantity": 20
+      },
+      {
+        "productId": 2,
+        "quantity": 15
+      }
+    ]
+  },
+  "activePayment": false
+}

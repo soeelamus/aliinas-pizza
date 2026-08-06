@@ -1,0 +1,19 @@
+{
+  "pizzas": [
+    {
+      "id": 1,
+      "name": "Margherita",
+      "priceCents": 1100
+    },
+    {
+      "id": 2,
+      "name": "Pepperoni",
+      "priceCents": 1250
+    },
+    {
+      "id": 3,
+      "name": "Jaeger",
+      "priceCents": 1300
+    }
+  ]
+}

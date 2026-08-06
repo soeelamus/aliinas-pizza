@@ -139,7 +139,7 @@ const ContactForm = () => {
       setAvailability({
         status: "error",
         message:
-          "We konden onze beschikbaarheid voor deze datum niet controleren. Je kunt wel een vrijblijvende offerte voor jouw feestje aanvragen.",
+          "We kunnen de beschikbaarheid voor deze datum niet controleren. Je kunt wel een vrijblijvende offerte voor jouw feestje aanvragen.",
       });
     }
   };

@@ -2,9 +2,9 @@
   "name": "aliinas-pizza",
   "homepage": "https://www.aliinas.com",
   "private": false,
-  "version": "1.804",
+  "version": "1.80",
   "release": {
-    "date": "31-07-2026"
+    "date": "06-08-2026"
   },
   "type": "module",
   "scripts": {
@@ -27,6 +27,7 @@
     "@mui/material": "^9.2.0",
     "@mui/x-charts": "^9.10.1",
     "@supabase/supabase-js": "^2.110.8",
+    "canvas-confetti": "^1.9.4",
     "leaflet": "^1.9.4",
     "micro": "^10.0.1",
     "react": "^19.2.0",

@@ -13,6 +13,15 @@ function hasKitchenAccess(req) {
   );
 }
 
+function getBelgianDate() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Europe/Brussels",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date());
+}
+
 function getPaymentMethod(incoming) {
   if (incoming.paymentMethod) {
     return String(incoming.paymentMethod).toLowerCase();
@@ -38,17 +47,22 @@ function normalizeItems(items) {
       const productId = Number(item.product_id);
       const quantity = Number(item.quantity || 1);
       const unitPrice = Number(item.unit_price || 0);
-      const lineTotal = Number(item.line_total ?? unitPrice * quantity);
+      const lineTotal = Number(
+        item.line_total ?? unitPrice * quantity,
+      );
 
       return {
         product_id: productId,
-        product_name: String(item.product_name || "").trim(),
+        product_name: String(
+          item.product_name || "",
+        ).trim(),
         quantity,
         unit_price: unitPrice,
         line_total: lineTotal,
         item_type: item.item_type || "product",
         metadata:
-          item.metadata && typeof item.metadata === "object"
+          item.metadata &&
+          typeof item.metadata === "object"
             ? item.metadata
             : {},
       };
@@ -67,7 +81,9 @@ function normalizeItems(items) {
 function buildItemsText(items = []) {
   return items
     .map((item) => {
-      const drink = item.drink_name ? ` + 🥤 ${item.drink_name}` : "";
+      const drink = item.drink_name
+        ? ` + 🥤 ${item.drink_name}`
+        : "";
 
       return `${item.quantity}x ${item.product_name}${drink}`;
     })
@@ -83,6 +99,7 @@ function mapOrderForKitchen(order) {
 
     paymentid: order.payment_id,
     payment_id: order.payment_id,
+
     paymentmethod: order.payment_method,
     payment_method: order.payment_method,
 
@@ -93,6 +110,8 @@ function mapOrderForKitchen(order) {
 
     pickuptime: order.pickup_time,
     pickup_time: order.pickup_time,
+
+    pickup_date: order.pickup_date,
 
     orderedtime: order.ordered_at,
     ordered_time: order.ordered_at,
@@ -114,11 +133,20 @@ async function sendOrderEmail(incoming, items) {
   if (!incoming.customerEmail) return;
 
   const itemsText = buildItemsText(items);
+  const firstPizza =
+    items[0]?.product_name || "je pizza";
 
-  const firstPizza = items[0]?.product_name || "je pizza";
+  const emojis = [
+    "🍕",
+    "😄",
+    "😋",
+    "🔥",
+    "👀",
+    "🎉",
+  ];
 
-  const emojis = ["🍕", "😄", "😋", "🔥", "👀", "🤤", "🎉"];
-  const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+  const emoji =
+    emojis[Math.floor(Math.random() * emojis.length)];
 
   await resend.emails.send({
     from: "Aliina's Pizza <orders@aliinas.com>",
@@ -126,11 +154,14 @@ async function sendOrderEmail(incoming, items) {
     to: incoming.customerEmail,
     bcc: "aliinas.pizza@hotmail.com",
     subject: `Je bestelling kan worden opgehaald om ${incoming.pickupTime} 🍕`,
+
     html: `
       <!DOCTYPE html>
+
       <html lang="nl">
         <head>
           <meta charset="UTF-8" />
+
           <meta
             name="viewport"
             content="width=device-width, initial-scale=1.0"
@@ -167,22 +198,32 @@ async function sendOrderEmail(incoming, items) {
               Aliina's Pizza
             </div>
 
-            <div style="padding:20px; line-height:1.6;">
+            <div
+              style="
+                padding:20px;
+                line-height:1.6;
+              "
+            >
               <h2 style="color:#6237c8;">
-                Psst… ik ben het, je pizza ${firstPizza}! ${emoji}
+                Psst… ik ben het, je pizza
+                ${firstPizza}! ${emoji}
               </h2>
 
               <p>
                 Ik word graag opgehaald om
-                <strong>${incoming.pickupTime}</strong>.
+                <strong>
+                  ${incoming.pickupTime}
+                </strong>.
               </p>
 
               <p>
-                Tot straks, ${incoming.customerName || ""}!
+                Tot straks,
+                ${incoming.customerName || ""}!
               </p>
 
               <p>
-                Het afhaaladres vind je terug op onze kalender.
+                Het afhaaladres vind je terug
+                op onze kalender.
               </p>
 
               <div
@@ -194,13 +235,18 @@ async function sendOrderEmail(incoming, items) {
                 "
               >
                 <p>
-                  <strong>Bestelling:</strong><br />
+                  <strong>Bestelling:</strong>
+                  <br />
+
                   ${itemsText.replace(/,/g, "<br />")}
                 </p>
 
                 <p>
                   <strong>Totaal:</strong>
-                  €${Number(incoming.total || 0).toFixed(2)}
+
+                  €${Number(
+                    incoming.total || 0,
+                  ).toFixed(2)}
                 </p>
 
                 ${
@@ -208,6 +254,7 @@ async function sendOrderEmail(incoming, items) {
                     ? `
                       <p>
                         <strong>Opmerking:</strong>
+
                         ${incoming.customerNotes}
                       </p>
                     `
@@ -238,7 +285,8 @@ async function sendOrderEmail(incoming, items) {
                 padding:15px;
               "
             >
-              Een vraag? Je kan ze stellen door op deze mail te antwoorden.
+              Een vraag? Je kan ze stellen door
+              op deze mail te antwoorden.
             </div>
           </div>
         </body>
@@ -263,41 +311,64 @@ export default async function handler(req, res) {
         });
       }
 
+      const pickupDate = getBelgianDate();
+
       const { data, error } = await supabase
         .from("orders")
         .select(
           `
-          id,
-          external_id,
-          payment_id,
-          payment_method,
-          total,
-          pickup_time,
-          ordered_at,
-          customer_name,
-          customer_email,
-          customer_notes,
-          status,
-          order_items (
             id,
-            product_id,
-            product_name,
-            quantity,
-            unit_price,
-            line_total,
-            item_type,
-            metadata,
-            drink_name
-          )
-        `,
+            external_id,
+            payment_id,
+            payment_method,
+            total,
+            pickup_time,
+            pickup_date,
+            ordered_at,
+            customer_name,
+            customer_email,
+            customer_notes,
+            status,
+            order_items (
+              id,
+              product_id,
+              product_name,
+              quantity,
+              unit_price,
+              line_total,
+              item_type,
+              metadata,
+              drink_name
+            )
+          `,
         )
+        .eq("pickup_date", pickupDate)
+        .in("status", [
+          "new",
+          "preparing",
+          "ready",
+          "done",
+          "pickedup",
+        ])
         .order("ordered_at", {
-          ascending: false,
-        });
+          ascending: true,
+        })
+        .limit(200);
 
-      if (error) throw error;
+      if (error) {
+        console.error(
+          "Supabase GET orders error:",
+          error,
+        );
 
-      return res.status(200).json((data || []).map(mapOrderForKitchen));
+        throw error;
+      }
+
+      const orders = (data || []).map(
+        mapOrderForKitchen,
+      );
+
+      return res.status(200).json(orders);
     }
 
     // =====================================================
@@ -323,7 +394,9 @@ export default async function handler(req, res) {
         }
 
         const externalId = String(
-          incoming.id || incoming.externalId || "",
+          incoming.id ||
+            incoming.externalId ||
+            "",
         ).trim();
 
         if (!externalId) {
@@ -345,7 +418,9 @@ export default async function handler(req, res) {
           incoming.pickupTime !== undefined ||
           incoming.pickuptime !== undefined
         ) {
-          updates.pickup_time = incoming.pickupTime ?? incoming.pickuptime;
+          updates.pickup_time =
+            incoming.pickupTime ??
+            incoming.pickuptime;
         }
 
         if (
@@ -353,7 +428,8 @@ export default async function handler(req, res) {
           incoming.customername !== undefined
         ) {
           updates.customer_name =
-            incoming.customerName ?? incoming.customername;
+            incoming.customerName ??
+            incoming.customername;
         }
 
         const { data, error } = await supabase
@@ -376,10 +452,15 @@ export default async function handler(req, res) {
       // Nieuwe bestelling
       // -----------------------------------
 
-      const externalId = String(incoming.id || Date.now()).trim();
+      const externalId = String(
+        incoming.id || Date.now(),
+      ).trim();
 
       const paymentId = String(
-        incoming.sessionId || incoming.paymentId || incoming.id || "",
+        incoming.sessionId ||
+          incoming.paymentId ||
+          incoming.id ||
+          "",
       ).trim();
 
       if (!paymentId) {
@@ -391,21 +472,33 @@ export default async function handler(req, res) {
 
       const items = normalizeItems(incoming.items);
 
-      console.log("NORMALIZED ITEMS:", JSON.stringify(items, null, 2));
+      console.log(
+        "NORMALIZED ITEMS:",
+        JSON.stringify(items, null, 2),
+      );
+
       if (items.length === 0) {
         return res.status(400).json({
           ok: false,
-          error: "Bestelling bevat geen geldige items",
+          error:
+            "Bestelling bevat geen geldige items",
         });
       }
 
-      const { data: existingOrder, error: existingError } = await supabase
+      const {
+        data: existingOrder,
+        error: existingError,
+      } = await supabase
         .from("orders")
-        .select("id, external_id, payment_id")
+        .select(
+          "id, external_id, payment_id",
+        )
         .eq("payment_id", paymentId)
         .maybeSingle();
 
-      if (existingError) throw existingError;
+      if (existingError) {
+        throw existingError;
+      }
 
       if (existingOrder) {
         return res.status(200).json({
@@ -415,31 +508,64 @@ export default async function handler(req, res) {
         });
       }
 
-      const { data: createdOrder, error: createError } = await supabase.rpc(
+      const {
+        data: createdOrder,
+        error: createError,
+      } = await supabase.rpc(
         "create_order_with_items",
         {
           p_external_id: externalId,
           p_payment_id: paymentId,
-          p_payment_method: getPaymentMethod(incoming),
-          p_total: Number(incoming.total || 0),
-          p_pickup_time: incoming.pickupTime || "ASAP",
-          p_pickup_date: incoming.pickupDate,
-          p_ordered_at: incoming.orderedTime || new Date().toISOString(),
-          p_customer_name: incoming.customerName || "",
-          p_customer_email: incoming.customerEmail || "",
-          p_customer_notes: incoming.customerNotes || "",
-          p_status: incoming.status || "new",
+
+          p_payment_method:
+            getPaymentMethod(incoming),
+
+          p_total: Number(
+            incoming.total || 0,
+          ),
+
+          p_pickup_time:
+            incoming.pickupTime || "ASAP",
+
+          p_pickup_date:
+            incoming.pickupDate,
+
+          p_ordered_at:
+            incoming.orderedTime ||
+            new Date().toISOString(),
+
+          p_customer_name:
+            incoming.customerName || "",
+
+          p_customer_email:
+            incoming.customerEmail || "",
+
+          p_customer_notes:
+            incoming.customerNotes || "",
+
+          p_status:
+            incoming.status || "new",
+
           p_items: items,
         },
       );
 
-      if (createError) throw createError;
+      if (createError) {
+        throw createError;
+      }
 
       try {
-        await sendOrderEmail(incoming, items);
+        await sendOrderEmail(
+          incoming,
+          items,
+        );
+
         console.log("📧 Mail sent");
       } catch (mailError) {
-        console.error("❌ Mail failed:", mailError);
+        console.error(
+          "❌ Mail failed:",
+          mailError,
+        );
       }
 
       return res.status(201).json({
@@ -454,11 +580,15 @@ export default async function handler(req, res) {
       error: "Method not allowed",
     });
   } catch (error) {
-    console.error("Vercel API /orders error:", error);
+    console.error(
+      "Vercel API /orders error:",
+      error,
+    );
 
     return res.status(500).json({
       ok: false,
-      error: error.message || "Server error",
+      error:
+        error.message || "Server error",
     });
   }
 }
