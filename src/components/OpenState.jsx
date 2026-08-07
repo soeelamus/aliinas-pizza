@@ -26,17 +26,15 @@ const OpenState = ({ isOpen, events }) => {
       {isOpen ? (
         <div className="center background--purple">
           <p className="menu-openStatus-p">
-            🟢 We zijn vandaag geopend van {todayEvent.startTime} tot{" "}
-            {todayEvent.endTime}
+            🟢 We zijn vandaag geopend
+            <p>{todayEvent.startTime} tot {todayEvent.endTime}</p>
+            <p>Ophalen: {todayEvent.address}</p>
           </p>
 
           <a href="#ad" className="btn-purple btn-order">
             ✅ Bestellen
           </a>
 
-          <br />
-
-          <p className="menu-openStatus-p">Ophalen: {todayEvent.address}</p>
         </div>
       ) : todayEvent && !isPastClosingTime ? (
         <div className="center background--purple">
