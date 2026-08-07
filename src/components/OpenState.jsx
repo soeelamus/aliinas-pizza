@@ -25,10 +25,10 @@ const OpenState = ({ isOpen, events }) => {
     <div className="menu-openStatus" style={{ fontWeight: "bold" }}>
       {isOpen ? (
         <div className="center background--purple">
-          <h3 className="menu-openStatus">
+          <p className="menu-openStatus-p">
             🟢 We zijn vandaag geopend van {todayEvent.startTime} tot{" "}
             {todayEvent.endTime}
-          </h3>
+          </p>
 
           <a href="#ad" className="btn-purple btn-order">
             ✅ Bestellen
