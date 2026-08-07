@@ -60,6 +60,31 @@
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
+.box--btn-order {
+  border: none !important;
+}
+.btn-order--location {
+  position: relative;
+  top: -3.2rem;
+  margin-bottom: 0.5rem;
+  padding: 5px 12px;
+  background: var(--primary-purple);
+  color: var(--primary-white);
+  border: 2px solid var(--primary-pink);
+  font-size: 0.8rem;
+  border-radius: 0.5rem;
+}
+
+.btn-order--location::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -0.5rem;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid var(--primary-pink);
+}
 .btn-cta,
 .btn-order {
   position: fixed;

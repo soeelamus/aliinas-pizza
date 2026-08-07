@@ -27,14 +27,21 @@ const OpenState = ({ isOpen, events }) => {
         <div className="center background--purple">
           <p className="menu-openStatus-p">
             🟢 We zijn vandaag geopend
-            <p>{todayEvent.startTime} tot {todayEvent.endTime}</p>
+            <p>
+              {todayEvent.startTime} tot {todayEvent.endTime}
+            </p>
             <p>Ophalen: {todayEvent.address}</p>
           </p>
 
-          <a href="#ad" className="btn-purple btn-order">
-            ✅ Bestellen
-          </a>
+          <div className="box--btn-order btn-order">
+            <a href="#ad" className="btn-order--location">
+              📍 {todayEvent.location}
+            </a>
 
+            <a href="#ad" className="btn-purple btn-order">
+              ✅ Bestellen
+            </a>
+          </div>
         </div>
       ) : todayEvent && !isPastClosingTime ? (
         <div className="center background--purple">
