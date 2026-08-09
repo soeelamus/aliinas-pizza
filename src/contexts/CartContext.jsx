@@ -339,7 +339,7 @@ export const CartProvider = ({ children }) => {
       return isComboDrink ? sum + Number(item.quantity || 0) : sum;
     }, 0);
 
-    return Math.min(pizzaCount, drinkCount) * DEFAULT_SETTINGS.pricing.kitchenMenuDiscount;
+    return Math.min(pizzaCount, drinkCount) * DEFAULT_SETTINGS.pricing.menuDiscount;
   };
 
   const totalAmount = ({ isKitchen = false } = {}) => {

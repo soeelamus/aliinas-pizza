@@ -4,7 +4,7 @@ import { useCart } from "../contexts/CartContext";
 import { DEFAULT_SETTINGS } from "../config/settings";
 
 const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
-  const menuName = DEFAULT_SETTINGS.kitchen.menuName
+  const menuName = DEFAULT_SETTINGS.menu.menuName
   const { addItem, addMenu, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState(isKitchen ? "Pizza" : menuName);
   const [menuBuilder, setMenuBuilder] = useState({
@@ -50,11 +50,11 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
   );
 
   const extraCategories = stockCategories.filter(
-    (category) => !DEFAULT_SETTINGS.kitchen.categoryOrder.includes(category),
+    (category) => !DEFAULT_SETTINGS.menu.categoryOrder.includes(category),
   );
 
 const categories = [
-  ...DEFAULT_SETTINGS.kitchen.categoryOrder.filter(
+  ...DEFAULT_SETTINGS.menu.categoryOrder.filter(
     (category) =>
       (!isKitchen || category !== menuName) &&
       (

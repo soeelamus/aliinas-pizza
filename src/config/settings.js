@@ -1,7 +1,7 @@
 export const DEFAULT_SETTINGS = {
   pricing: {
     menuUpsell: 2,
-    kitchenComboDiscount: 0.5,
+    menuDiscount: 0.5,
   },
 
   stock: {
