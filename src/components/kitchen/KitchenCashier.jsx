@@ -15,12 +15,8 @@ const KitchenCashier = () => {
 
   return (
     <div className="pizza-shop">
-      <Cart isOpen={true} />
-      <Menu
-        stockSheet={stockSheetState}
-        isOpen={true}
-        isKitchen={true}
-      />
+      <Cart isOpen={true} isKitchen={true} />{" "}
+      <Menu stockSheet={stockSheetState} isOpen={true} isKitchen={true} />
     </div>
   );
 };

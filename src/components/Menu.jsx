@@ -1,23 +1,12 @@
 // Menu.jsx
 import React, { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
+import { DEFAULT_SETTINGS } from "../config/settings";
 
 const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
-  // Variables
-  const ComboMenu = "Menu";
-  const ComboMenuUpsell = 2;
-  const CATEGORY_ORDER = [
-    "Menu",
-    "Pizza",
-    "Drank",
-    "Dessert",
-    "Energy",
-    "Bier",
-    "Extra",
-  ];
-
+  const menuName = DEFAULT_SETTINGS.kitchen.menuName
   const { addItem, addMenu, getStock, cart } = useCart();
-  const [activeTab, setActiveTab] = useState(ComboMenu);
+  const [activeTab, setActiveTab] = useState(isKitchen ? "Pizza" : menuName);
   const [menuBuilder, setMenuBuilder] = useState({
     open: false,
     pizza: null,
@@ -53,7 +42,7 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
     price:
       pizza.menuPrice ??
       pizza.menu_price ??
-      Number(pizza.price) + ComboMenuUpsell,
+      Number(pizza.price) + DEFAULT_SETTINGS.pricing.menuUpsell,
   }));
 
   const stockCategories = Array.from(
@@ -61,23 +50,26 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
   );
 
   const extraCategories = stockCategories.filter(
-    (category) => !CATEGORY_ORDER.includes(category),
+    (category) => !DEFAULT_SETTINGS.kitchen.categoryOrder.includes(category),
   );
 
-  const categories = [
-    ...CATEGORY_ORDER.filter(
-      (category) =>
-        category === ComboMenu ||
+const categories = [
+  ...DEFAULT_SETTINGS.kitchen.categoryOrder.filter(
+    (category) =>
+      (!isKitchen || category !== menuName) &&
+      (
+        category === menuName ||
         category === "Pizza" ||
-        stockCategories.includes(category),
-    ),
-    ...extraCategories,
-  ];
+        stockCategories.includes(category)
+      ),
+  ),
+  ...extraCategories,
+];
 
   const itemsToRender =
     activeTab === "Pizza"
       ? pizzaItems
-      : activeTab === ComboMenu
+      : activeTab === menuName
         ? menuItems
         : sellableStockItems.filter((item) => item.category === activeTab);
   const softDrinks = stockSheet.filter(
@@ -116,7 +108,7 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
           {itemsToRender.map((item) => {
             const stock = getStock(item, cart, { isKitchen });
             const hasItemStock = stock > 0;
-            const isPizza = activeTab === "Pizza" || activeTab === ComboMenu;
+            const isPizza = activeTab === "Pizza" || activeTab === menuName;
             const isItemAvailable =
               typeof item.stock === "number" ? item.stock : hasItemStock;
 
@@ -166,7 +158,7 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
               >
                 {!item.special && (
                   <div className="pizza-wrapper">
-                    {activeTab === ComboMenu && (
+                    {activeTab === menuName && (
                       <div
                         style={{
                           backgroundImage: `url(/images/products/glass-${currentGlass}.png)`,
@@ -177,7 +169,7 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
 
                     <button
                       onClick={() => {
-                        if (activeTab === ComboMenu) {
+                        if (activeTab === menuName) {
                           setMenuBuilder({
                             open: true,
                             pizza: item,
@@ -229,7 +221,7 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
                         <button
                           className="btn-small btn-purple"
                           onClick={() => {
-                            if (activeTab === ComboMenu) {
+                            if (activeTab === menuName) {
                               setMenuBuilder({
                                 open: true,
                                 pizza: item,
@@ -252,13 +244,13 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
                   {allergens && (
                     <span className="allergen-icons">{allergens}</span>
                   )}
-                  {activeTab === ComboMenu && (
+                  {activeTab === menuName && (
                     <p className="pizza-ingredients">
                       <span className="ingredient-chip">Pizza {item.name}</span>
                       <span className="ingredient-chip">Drankje</span>
                     </p>
                   )}
-                  {activeTab !== ComboMenu && description && (
+                  {activeTab !== menuName && description && (
                     <p className="pizza-ingredients">{description}</p>
                   )}
                   {item.size && item.size !== 0 && (
@@ -275,7 +267,7 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
                   <div className="pizza--img-box">
                     <button
                       onClick={() => {
-                        if (activeTab === ComboMenu) {
+                        if (activeTab === menuName) {
                           setMenuBuilder({
                             open: true,
                             pizza: item,

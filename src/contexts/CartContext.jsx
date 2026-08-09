@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { useEvents } from "../contexts/EventsContext";
+import { DEFAULT_SETTINGS } from "../config/settings";
 
 const CartContext = createContext();
 
@@ -29,13 +30,13 @@ export const CartProvider = ({ children }) => {
         .map((item) => ({
           quantity: item.quantity || 0,
           type: item.type || null,
-
           product: {
             id: String(item.product.id ?? ""),
             name: item.product.name ?? "",
             price: item.product.price ?? 0,
             type: item.product.type ?? "",
             category: item.product.category ?? "",
+            product_type: item.product.product_type ?? "",
           },
 
           // 🔥 BELANGRIJK: menu behouden
@@ -180,7 +181,6 @@ export const CartProvider = ({ children }) => {
   // =========================
   // Stock helper
   // =========================
-  const DOUGH_RESERVE_ONLINE = 10;
 
   /**
    * getStock(product, currentCart, { isKitchen })
@@ -206,7 +206,7 @@ export const CartProvider = ({ children }) => {
 
       const effectiveStock = isKitchen
         ? totalStock
-        : Math.max(0, totalStock - DOUGH_RESERVE_ONLINE);
+        : Math.max(0, totalStock - DEFAULT_SETTINGS.stock.doughReserveOnline);
 
       const pizzasInCart = currentCart.reduce((sum, cartItem) => {
         if (cartItem.type === "menu") {
@@ -322,7 +322,38 @@ export const CartProvider = ({ children }) => {
       ];
     });
   };
+  const getKitchenDiscount = () => {
+    const pizzaCount = cart.reduce((sum, item) => {
+      const isPizza =
+        item.product?.product_type === "pizza" ||
+        item.product?.category === "Pizza";
 
+      return isPizza ? sum + Number(item.quantity || 0) : sum;
+    }, 0);
+
+    const drinkCount = cart.reduce((sum, item) => {
+      const category = item.product?.category;
+
+      const isComboDrink = category === "Drank" || category === "Bier";
+
+      return isComboDrink ? sum + Number(item.quantity || 0) : sum;
+    }, 0);
+
+    return Math.min(pizzaCount, drinkCount) * DEFAULT_SETTINGS.pricing.kitchenMenuDiscount;
+  };
+
+  const totalAmount = ({ isKitchen = false } = {}) => {
+    const subtotal = cart.reduce(
+      (sum, p) => sum + p.product.price * p.quantity,
+      0,
+    );
+
+    if (!isKitchen) {
+      return subtotal;
+    }
+
+    return subtotal - getKitchenDiscount();
+  };
   const removeItem = (product) =>
     setCart((prev) =>
       prev.filter((p) => String(p.product.id) !== String(product.id)),
@@ -388,20 +419,18 @@ export const CartProvider = ({ children }) => {
     localStorage.removeItem("cart");
   };
 
-  const totalAmount = () =>
-    cart.reduce((sum, p) => sum + p.product.price * p.quantity, 0);
-
   return (
     <CartContext.Provider
       value={{
         cart,
-        addItem, // addItem(product, { isKitchen:true })
+        addItem,
         addMenu,
         removeItem,
-        changeQuantity, // changeQuantity(product, +1/-1, { isKitchen:true })
+        changeQuantity,
         clearCart,
         totalAmount,
-        getStock, // getStock(product, cart, { isKitchen:true })
+        getKitchenDiscount,
+        getStock,
         stockSheetState,
         setStockSheetState,
         refreshStock,

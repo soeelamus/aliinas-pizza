@@ -22,81 +22,81 @@ const UserCart = ({ isOpen }) => {
     <aside className="cart">
       <ul>
         {cart.map((cartItem) => {
-  const isMenu = cartItem.type === "menu";
+          const isMenu = cartItem.type === "menu";
 
-  const stock = isMenu
-    ? Math.min(
-        getStock(cartItem.menu?.pizza, cart, { isKitchen }),
-        getStock(cartItem.menu?.drink, cart, { isKitchen })
-      )
-    : getStock(cartItem.product, cart, { isKitchen });
+          const stock = isMenu
+            ? Math.min(
+                getStock(cartItem.menu?.pizza, cart, { isKitchen }),
+                getStock(cartItem.menu?.drink, cart, { isKitchen }),
+              )
+            : getStock(cartItem.product, cart, { isKitchen });
 
-  return (
-    <li key={String(cartItem.product.id)} className="cart-item">
-      <div className="item-info">
-        <div className="item-details">
+          return (
+            <li key={String(cartItem.product.id)} className="cart-item">
+              <div className="item-info">
+                <div className="item-details">
+                  {/* ===== DISPLAY ===== */}
+                  {isMenu ? (
+                    <div>
+                      <span className="quant">
+                        {cartItem.quantity}x {cartItem.product.name}
+                      </span>
 
-          {/* ===== DISPLAY ===== */}
-          {isMenu ? (
-            <div>
-              <span className="quant">
-                {cartItem.quantity}x {cartItem.product.name}
-              </span>
+                      <p className="cart-subitems">
+                        {cartItem.menu?.drink?.name || "-"}
+                      </p>
+                    </div>
+                  ) : (
+                    <span className="quant">
+                      {cartItem.quantity}x {cartItem.product.name}
+                    </span>
+                  )}
 
-              <p className="cart-subitems">
-                {cartItem.menu?.drink?.name || "-"}
-              </p>
-            </div>
-          ) : (
-            <span className="quant">
-              {cartItem.quantity}x {cartItem.product.name}
-            </span>
-          )}
+                  <p>
+                    €{(cartItem.product.price * cartItem.quantity).toFixed(2)}
+                  </p>
+                </div>
+              </div>
 
-          <p>
-            €{(cartItem.product.price * cartItem.quantity).toFixed(2)}
-          </p>
+              {/* ===== ACTIONS ===== */}
+              <div className="item-actions">
+                <button
+                  className="btn-purple btn-small"
+                  onClick={() =>
+                    cartItem.quantity <= 1
+                      ? removeItem(cartItem.product)
+                      : changeQuantity(cartItem.product, -1, {
+                          isKitchen,
+                        })
+                  }
+                >
+                  -
+                </button>
 
-        </div>
-      </div>
-
-      {/* ===== ACTIONS ===== */}
-      <div className="item-actions">
-
-        <button
-          className="btn-purple btn-small"
-          onClick={() =>
-            cartItem.quantity <= 1
-              ? removeItem(cartItem.product)
-              : changeQuantity(cartItem.product, -1, { isKitchen: true })
-          }
-        >
-          -
-        </button>
-
-        <button
-          className="btn-purple btn-small"
-          onClick={() =>
-            changeQuantity(cartItem.product, 1, { isKitchen: true })
-          }
-          disabled={stock <= 0}
-        >
-          +
-        </button>
-
-      </div>
-    </li>
-  );
-})}
+                <button
+                  className="btn-purple btn-small"
+                  onClick={() =>
+                    changeQuantity(cartItem.product, 1, { isKitchen })
+                  }
+                  disabled={stock <= 0}
+                >
+                  +
+                </button>
+              </div>
+            </li>
+          );
+        })}
       </ul>
 
       <div className="checkout-section">
         <div className="checkout-total">
-          <p className="total">Totaal: €{totalAmount().toFixed(2)}</p>
+          <p className="total">
+            Totaal: €{totalAmount({ isKitchen }).toFixed(2)}
+          </p>{" "}
         </div>
 
         {isKitchen ? (
-          <KitchenCart total={totalAmount()} cart={cart} />
+          <KitchenCart total={totalAmount({ isKitchen })} cart={cart} />
         ) : (
           <button
             className="checkout-button btn-purple"

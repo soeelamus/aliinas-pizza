@@ -3,7 +3,7 @@ import UserCart from "./UserCart";
 import { FaShoppingCart } from "react-icons/fa";
 import { useCart } from "../contexts/CartContext";
 
-const Cart = ({ isOpen }) => {
+const Cart = ({ isOpen, isKitchen = false }) => {
   const { cart } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -20,13 +20,18 @@ const Cart = ({ isOpen }) => {
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <div className="btn-cta">
+      <div className="btn-cta">
       <button className="btn-purple btn-cart" onClick={toggleCart}>
         <FaShoppingCart />
         <span className="cart-count">{totalItems}</span>
       </button>
 
-      {isCartOpen && <UserCart isOpen={isOpen} />}
+      {isCartOpen && (
+        <UserCart
+          isOpen={isOpen}
+          isKitchen={isKitchen}
+        />
+      )}
     </div>
   );
 };

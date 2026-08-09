@@ -1,8 +1,9 @@
 // PaymentPage.jsx
 import React, { useState, useEffect } from "react";
-import { useCart } from "../../../contexts/CartContext";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../../../contexts/CartContext";
 import { useEvents } from "../../../contexts/EventsContext";
+import { DEFAULT_SETTINGS } from "../../../config/settings";
 
 import "./PaymentPage.css";
 import "../SuccessPage/SuccessPage.css";
@@ -30,12 +31,6 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const { events } = useEvents();
 
-  // ✅ Minuten per slot
-  const SLOTS_INTERVAL = 20;
-
-  // ✅ 1 bestelling per SLOTS_INTERVAL
-  const MAX_PER_SLOT = 1;
-
   const [slotCounts, setSlotCounts] = useState({});
   const [ordersLoading, setOrdersLoading] = useState(true);
   const [ordersLoaded, setOrdersLoaded] = useState(false);
@@ -59,7 +54,7 @@ const PaymentPage = () => {
   };
 
   const roundUpToQuarter = (date) => {
-    const ms = 1000 * 60 * SLOTS_INTERVAL;
+    const ms = 1000 * 60 * DEFAULT_SETTINGS.ordering.slotsInterval;
     return new Date(Math.ceil(date.getTime() / ms) * ms);
   };
 
@@ -213,11 +208,11 @@ const PaymentPage = () => {
       const slot = `${hh}:${mm}`;
 
       // ✅ filter volzette slots weg
-      if ((slotCounts[slot] || 0) < MAX_PER_SLOT) {
+      if ((slotCounts[slot] || 0) < DEFAULT_SETTINGS.ordering.maxPerTimeslot) {
         slots.push(slot);
       }
 
-      current = new Date(current.getTime() + SLOTS_INTERVAL * 60000);
+      current = new Date(current.getTime() + DEFAULT_SETTINGS.ordering.slotsInterval * 60000);
     }
 
     setTimeSlots(slots);
