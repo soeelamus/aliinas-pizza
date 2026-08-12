@@ -27,6 +27,8 @@ import CareerDetailPage from "./components/pages/CareersPage/CareerDetailPage";
 import SeoLandingPage from "./components/pages/SeoLandingPage/SeoLandingPage";
 import LocationsPage from "./components/pages/LocationsPage/LocationsPage";
 import ReservationPage from "./components/pages/ReservationPage/ReservationPage";
+import LegalPage from "./components/pages/LegalPage";
+import PrivacyPage from "./components/pages/PrivacyPage";
 
 // Employees
 import EmployeesLogin from "./components/employees/EmployeesLogin";
@@ -188,6 +190,28 @@ function App() {
                 <Navbar onMain={false} />
                 <Wave />
                 <LocationsPage />
+                <Wave reverse={true} />
+              </>
+            }
+          />
+           <Route
+            path="/legal"
+            element={
+              <>
+                <Navbar onMain={false} />
+                <Wave />
+                <LegalPage />
+                <Wave reverse={true} />
+              </>
+            }
+          />
+           <Route
+            path="/privacy"
+            element={
+              <>
+                <Navbar onMain={false} />
+                <Wave />
+                <PrivacyPage />
                 <Wave reverse={true} />
               </>
             }
