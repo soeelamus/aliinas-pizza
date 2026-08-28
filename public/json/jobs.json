@@ -24,43 +24,53 @@
       "Ervaring is een pluspunt maar niet vereist"
     ],
     "offer": [
-      "Correcte verloning",
+      "Correcte verloning, afgestemd op je ervaring",
       "Flexibele planning",
       "Werken in een klein en hecht team",
       "Interne opleiding voorzien",
-      "Gratis maaltijd tijdens de shift"
+      "Gratis maaltijd voor/na de shift"
     ]
   },
   {
-    "id": "foodtruck-helper",
-    "posted": false,
-    "title": "Foodtruck Helper",
+    "id": "foodtruck-medewerker",
+    "posted": true,
+    "title": "Foodtruck Medewerker",
     "type": "Flexi-job / Student / Bijverdienste",
-    "location": "Desteldonk, Oost-Vlaanderen",
-    "hours": "4 tot 10 uur per week",
-    "schedule": "Voornamelijk vrijdagavond",
-    "shortDescription": "Ondersteun de foodtruck tijdens service en zorg voor tevreden klanten.",
-    "description": "Als foodtruck helper ben je het aanspreekpunt voor klanten. Je helpt bij bestellingen, drankjes, desserts en zorgt ervoor dat alles vlot verloopt tijdens de service.",
+    "location": "Lokeren, Oostakker, Sint-Amandsberg of Desteldonk",
+    "hours": "3 tot 15 uur per week",
+    "schedule": "Avondshifts, meestal van 17u30 tot 20u30",
+    "shortDescription": "Help mee tijdens de drukste uren in onze pizzafoodtruck op verschillende standplaatsen.",
+    "description": "Als foodtruck medewerker spring je bij tijdens de drukste uren van onze service. Je komt toe wanneer de foodtruck al geopend is en helpt ervoor te zorgen dat bestellingen snel en correct verwerkt worden. Je neemt bestellingen op via ons digitale kassasysteem, rekent klanten af, snijdt pizza's en geeft de juiste bestellingen mee. Tussendoor hou je de foodtruck proper en georganiseerd. Aan het einde van de service help je alles opnieuw klaar te maken zodat de foodtruck kan vertrekken. Je werkt op verschillende standplaatsen in de regio en bent een belangrijke ondersteuning tijdens de piekmomenten.",
     "tasks": [
-      "Klanten ontvangen",
-      "Bestellingen opnemen",
-      "Drankjes en desserts klaarmaken",
-      "Bestellingen mee controleren",
-      "Meehelpen bij opruim en schoonmaak"
+      "Klanten vriendelijk ontvangen en bestellingen opnemen",
+      "Bestellingen ingeven in ons digitale POS-systeem",
+      "Betalingen ontvangen en klanten correct afrekenen",
+      "Pizza's snijden en verpakken",
+      "Controleren of elke klant de juiste en volledige bestelling meekrijgt",
+      "Drankjes en andere producten meegeven",
+      "De foodtruck tijdens de service proper en georganiseerd houden",
+      "Meehelpen met opruimen en de foodtruck opnieuw vertrekkensklaar maken"
     ],
     "requirements": [
       "Vriendelijk en klantgericht",
-      "Verzorgd voorkomen",
       "Stipt en betrouwbaar",
-      "Kunnen werken in een snel tempo",
-      "Minstens 16 jaar"
+      "Vlot kunnen werken tijdens drukke momenten",
+      "Nauwkeurig omgaan met bestellingen en betalingen",
+      "Zelfstandig taken zien en aanpakken",
+      "Comfortabel zijn met een digitaal kassasysteem",
+      "Bereid zijn om op verschillende standplaatsen te werken",
+      "Ervaring in horeca is een pluspunt, maar niet vereist"
     ],
     "offer": [
-      "Aangename werksfeer",
-      "Flexibele uren",
-      "Ideale studentenjob",
-      "Correcte verloning",
-      "Gratis maaltijd tijdens de shift"
+      "Werkuren voornamelijk tussen 17u30 en 20u30",
+      "Bij drukte kan de shift wat langer duren",
+      "Flexibele planning op verschillende standplaatsen",
+      "Interne opleiding voor ons kassasysteem en onze manier van werken",
+      "Werken in een kleine, informele foodtruckomgeving",
+      "Correcte verloning, afgestemd op je ervaring",
+      "Gratis maaltijd voor/na de shift",
+      "Je kan rechtstreeks met eigen vervoer naar de standplaats komen",
+      "Geen eigen vervoer? Meerijden vanuit Zaffelare is mogelijk om 15u45; je betaalde shift start pas om 17u30"
     ]
   }
 ]

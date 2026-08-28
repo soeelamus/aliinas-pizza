@@ -22,7 +22,7 @@ export const DEFAULT_SETTINGS = {
   },
 
   ordering: {
-    slotsInterval: 5,
+    slotsInterval: 10,
     maxPerTimeslot: 1,
   },
 };

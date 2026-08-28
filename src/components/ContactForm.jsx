@@ -115,7 +115,7 @@ const ContactForm = () => {
 
       if (result.success) {
         setSuccessMessage(
-          "Succesvol verzonden! We bekijken je aanvraag vandaag nog.",
+          "Succesvol verzonden! We bekijken je aanvraag doorgaans binnen 2 uur.",
         );
         setFormData({
           locatie: "",
