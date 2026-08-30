@@ -53,7 +53,7 @@ const PaymentPage = () => {
     return m ? `${m[1]}:${m[2]}` : s;
   };
 
-  const roundUpToQuarter = (date) => {
+  const roundUp = (date) => {
     const ms = 1000 * 60 * DEFAULT_SETTINGS.ordering.slotsInterval;
     return new Date(Math.ceil(date.getTime() / ms) * ms);
   };
@@ -195,7 +195,7 @@ const PaymentPage = () => {
     const eventStart = new Date(`${today}T${todaysEvent.startTime}`);
     const eventEnd = new Date(`${today}T${todaysEvent.endTime}`);
 
-    const nowPlus = roundUpToQuarter(new Date(Date.now() + 25 * 60000));
+    const nowPlus = roundUp(new Date(Date.now() + DEFAULT_SETTINGS.ordering.spareTime * 60000));
     const startTime = new Date(
       Math.max(eventStart.getTime(), nowPlus.getTime()),
     );

@@ -1,15 +1,15 @@
 export const DEFAULT_SETTINGS = {
   pricing: {
-    menuUpsell: 2,
-    menuDiscount: 0.5,
+    menuUpsell: 2, // Price for a menu. (pizza + drink)
+    menuDiscount: 0.5, // Discount relative to the price of the pizza + drink
   },
 
   stock: {
-    doughReserveOnline: 10,
+    doughReserveOnline: 10, // Online ordering halts when doughballs stock = 10
   },
 
   menu: {
-    menuName: "Menu",
+    menuName: "Menu", // Name of the Menu component
     categoryOrder: [
       "Menu",
       "Pizza",
@@ -22,7 +22,8 @@ export const DEFAULT_SETTINGS = {
   },
 
   ordering: {
-    slotsInterval: 10,
-    maxPerTimeslot: 1,
+    slotsInterval: 10, // Interval of ordering timeslot
+    maxPerTimeslot: 1, // Max. amount of orders per timeslot
+    spareTime: 20 // The minimum amount of preptime to select a timeslot
   },
 };
