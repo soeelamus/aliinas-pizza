@@ -1,20 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-const AdBox = () => {
-  const [i, setI] = useState(1);
+const AdBox = (src) => {
   const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    setLoaded(false);
-
-    const interval = setInterval(() => {
-      setI((prev) => (prev % 3) + 1);
-    }, 1500);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const src = `/images/ads/combo_ad${i}.png`;
 
   return (
     <div className="adbox">
@@ -23,7 +10,7 @@ const AdBox = () => {
       <a href="#ad" className="adbox--img-box">
         <img
           className="adbox--img"
-          src={src}
+          src={src.src}
           alt="Combo Deal"
           onLoad={() => setLoaded(true)}
           style={{ display: loaded ? "block" : "none" }}

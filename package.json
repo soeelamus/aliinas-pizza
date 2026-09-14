@@ -2,9 +2,9 @@
   "name": "aliinas-pizza",
   "homepage": "https://www.aliinas.com",
   "private": false,
-  "version": "1.816",
+  "version": "1.817",
   "release": {
-    "date": "31-08-2026"
+    "date": "14-09-2026"
   },
   "type": "module",
   "scripts": {

@@ -3,10 +3,13 @@ import { useLocation } from "react-router-dom";
 import Cart from "./Cart";
 import Menu from "./Menu";
 import OpenState from "./OpenState";
-import { useEvents } from "../contexts/EventsContext";
-import { useCart } from "../contexts/CartContext";
 import Wave from "./Wave";
 import Loading from "./Loading/Loading";
+import AdBox from "./AdBox";
+
+import { useEvents } from "../contexts/EventsContext";
+import { useCart } from "../contexts/CartContext";
+import { DEFAULT_SETTINGS } from "../config/settings";
 
 const PizzaShop = () => {
   const location = useLocation();
@@ -19,6 +22,8 @@ const PizzaShop = () => {
 
   const { events, isOpen, loading } = useEvents();
   const { stockSheetState, refreshStock } = useCart();
+
+  const src = DEFAULT_SETTINGS.adBox.src;
 
   // Stock laden indien nodig
   const ensureStockLoaded = useCallback(async () => {
@@ -45,13 +50,13 @@ const PizzaShop = () => {
   const isLoading =
     loading ||
     (isOrderingRoute && stockLoading && stockSheetState.length === 0);
-
+    
   return (
     <>
       <Wave reverse />
 
       <div id="menu" className="style2 main">
-        {/* <AdBox /> */}
+        {src && <AdBox src={src} />}
 
         <OpenState isOpen={isOpen} events={events} />
 

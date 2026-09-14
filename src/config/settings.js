@@ -26,4 +26,8 @@ export const DEFAULT_SETTINGS = {
     maxPerTimeslot: 1, // Max. amount of orders per timeslot
     spareTime: 20 // The minimum amount of preptime to select a timeslot
   },
+
+  adBox: {
+    src: `/images/ads/reviews_ad1.png` //Image source of AdBox, or null 
+  }
 };

@@ -281,8 +281,8 @@
   padding: 10px 8px;
   text-align: center;
   font-weight: 900;
-}reservation-login-card
-.reservation-menu-card .MuiButton-contained,
+}
+reservation-login-card .reservation-menu-card .MuiButton-contained,
 .reservation-payment-card .MuiButton-contained {
   width: 100%;
   margin-top: 0.25rem;
@@ -333,7 +333,7 @@
     min-width: 76px !important;
   }
 }
-Bibliotheek / ReservationPage.css .reservation-page,
+.reservation-page,
 .reservation-login-page {
   --aliina-purple: #6d2f86;
   --aliina-purple-dark: #4f1e66;
