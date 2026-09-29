@@ -56,7 +56,10 @@ export default function Success({ order }) {
         <br />
         Ophalen: <strong>{pickupAddress}</strong>
       </p>
-      <p>Er werd een bevestigingsmail verzonden. Controleer ook je spam folder</p>
+      <p>
+        Je ontvangt een bevestigingsmail. Dit kan 30 minuten duren.
+        Controleer ook je spamfolder.
+      </p>
 
       {pickupMapCoords ? (
         <div id="event-map" className="event-map">
@@ -79,7 +82,9 @@ export default function Success({ order }) {
         <p style={{ opacity: 0.8 }}>Geen items gevonden.</p>
       )}
 
-      <h4 className="success-total">Totaal: €{Number(order.total || 0).toFixed(2)}</h4>
+      <h4 className="success-total">
+        Totaal: €{Number(order.total || 0).toFixed(2)}
+      </h4>
 
       {order.customerNotes ? (
         <p className="success-notes">Notes: {order.customerNotes}</p>

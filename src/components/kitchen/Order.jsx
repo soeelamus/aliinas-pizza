@@ -28,7 +28,7 @@ const getLegacyOrderItems = (itemsText) => {
 
 const getItemLabel = (item) => {
   if (item.item_type === "menu_main") {
-    return `${item.product_name} — Menu`;
+    return `${item.product_name}`;
   }
 
   if (item.item_type === "menu_component") {
@@ -42,6 +42,36 @@ const getItemLabel = (item) => {
   }
 
   return item.product_name;
+};
+
+const getDisplayItems = (items) => {
+  let pizzaNumber = 0;
+  let currentPizzaNumber = null;
+
+  const numbered = items.map((item) => {
+    if (item.item_type === "menu_main") {
+      currentPizzaNumber = ++pizzaNumber;
+    }
+
+    return {
+      ...item,
+      pizzaNumber: currentPizzaNumber,
+    };
+  });
+
+  const drinks = numbered.filter(
+    (item) =>
+      item.item_type === "menu_component" &&
+      item.metadata?.component === "drink",
+  );
+
+  const otherItems = numbered.filter(
+    (item) =>
+      item.item_type !== "menu_component" ||
+      item.metadata?.component !== "drink",
+  );
+
+  return [...otherItems, ...drinks];
 };
 
 export default function Order({
@@ -203,28 +233,24 @@ export default function Order({
         style={{ display: isCollapsed ? "block" : "none" }}
         onClick={(e) => e.stopPropagation()}
       >
-        {orderItems.map((item, index) => {
+        {getDisplayItems(orderItems).map((item, index) => {
           const isMenuComponent = item.item_type === "menu_component";
 
           return (
             <div
-              className={`pizzas ${
-                isMenuComponent ? "menu-component" : ""
-              }`}
+              className={`pizzas ${isMenuComponent ? "menu-component" : ""}`}
               key={item.id || `${item.product_name}-${index}`}
             >
               <label className="pizza-item">
-                <input
-                  type="checkbox"
-                  onClick={(e) => e.stopPropagation()}
-                />
+                <input type="checkbox" onClick={(e) => e.stopPropagation()} />
 
-                <span className="pizza-qty">
-                  {item.quantity}x
-                </span>
+                <span className="pizza-qty">{item.quantity}x</span>
 
                 <span className="pizza-name">
                   {getItemLabel(item)}
+                  {item.pizzaNumber != null && (
+                    `   #${item.pizzaNumber}`
+                  )}
                 </span>
               </label>
             </div>
@@ -236,9 +262,7 @@ export default function Order({
         )}
 
         {order.customernotes && (
-          <span className="pizzas list">
-            Notes: {order.customernotes}
-          </span>
+          <span className="pizzas list">Notes: {order.customernotes}</span>
         )}
 
         <div className="kitchen-orders--actions">
@@ -283,10 +307,7 @@ export default function Order({
       </div>
 
       {showTimePopup && (
-        <div
-          className="order-edit-overlay"
-          onClick={closeTimePopup}
-        >
+        <div className="order-edit-overlay" onClick={closeTimePopup}>
           <div
             className="order-edit-popup"
             onClick={(e) => e.stopPropagation()}
@@ -312,10 +333,7 @@ export default function Order({
 
                 <div className="order-time-display">
                   {Array.from({ length: 4 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className="order-time-digit"
-                    >
+                    <span key={i} className="order-time-digit">
                       {timeInput[i] || "○"}
                     </span>
                   ))}
@@ -358,11 +376,7 @@ export default function Order({
                   </button>
                 </div>
 
-                {timeError && (
-                  <p className="order-edit-error">
-                    {timeError}
-                  </p>
-                )}
+                {timeError && <p className="order-edit-error">{timeError}</p>}
 
                 <div className="order-edit-actions">
                   <button
