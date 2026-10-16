@@ -228,7 +228,7 @@ Verzonden via het contactformulier
     }
 
     setSuccessMessage(
-      "Succesvol verzonden! We beantwoorden je aanvraag meestal binnen de 2 uur.",
+      "Succesvol verzonden! We bekijken je aanvraag doorgaans binnen 2 uur. Controleer ook je spam-folder!",
     );
 
     resetForm();
