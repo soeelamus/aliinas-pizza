@@ -117,7 +117,12 @@ const pizzaLocations = [
   "Zeveneken",
   "Beervelde",
   "Moerbeke",
-  "Sint-Niklaas"
+  "Sint-Niklaas",
+  "Oostakker",
+  "Sint-Amandsberg",
+  "Oude Bareel",
+  "Lourdes",
+  "Slotendries"
 ];
 
 const generalPages = [
