@@ -1483,9 +1483,8 @@ textarea.error {
 }
 .pizza {
   margin-bottom: 1.5rem;
-}
-.undefined {
   display: flex;
+  align-items: flex-start;
   gap: 1rem;
 }
 .pizza-wrapper {
@@ -1578,7 +1577,7 @@ textarea.error {
   width: 29rem;
 }
 .pizza-special {
-  width: 50rem;
+  width: 40rem;
   max-width: 100%;
 }
 .pizza-special h3 {

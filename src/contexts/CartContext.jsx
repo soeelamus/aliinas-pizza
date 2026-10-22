@@ -37,9 +37,9 @@ export const CartProvider = ({ children }) => {
             type: item.product.type ?? "",
             category: item.product.category ?? "",
             product_type: item.product.product_type ?? "",
+            special: item.product.special ?? ""
           },
 
-          // 🔥 BELANGRIJK: menu behouden
           menu: item.menu
             ? {
                 pizza: item.menu.pizza || null,
@@ -97,6 +97,7 @@ export const CartProvider = ({ children }) => {
           x.display_order === null || x.display_order === undefined
             ? null
             : Number(x.display_order),
+        special: x.special
       }));
   };
 

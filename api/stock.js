@@ -61,8 +61,11 @@ function normalizeProduct(product) {
       product.display_order === null || product.display_order === undefined
         ? null
         : Number(product.display_order),
+
+    special: product.special
   };
 }
+
 
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
@@ -104,7 +107,8 @@ export default async function handler(req, res) {
   ingredients,
   allergens,
   updated_at,
-  display_order
+  display_order,
+  special
 `,
         )
         .order("category", { ascending: true })
@@ -198,7 +202,8 @@ export default async function handler(req, res) {
   ingredients,
   allergens,
   updated_at,
-  display_order
+  display_order,
+  special
 `,
           )
           .single();

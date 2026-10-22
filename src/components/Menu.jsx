@@ -154,7 +154,7 @@ const categories = [
             return (
               <div
                 key={item.id}
-                className={`pizza ${item.special && "pizza-special"}`}
+                className={`pizza ${item.special ? "pizza-special" : ""}`}
               >
                 {!item.special && (
                   <div className="pizza-wrapper">
