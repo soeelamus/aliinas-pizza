@@ -4,7 +4,7 @@ import { useCart } from "../contexts/CartContext";
 import { DEFAULT_SETTINGS } from "../config/settings";
 
 const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
-  const menuName = DEFAULT_SETTINGS.menu.menuName
+  const menuName = DEFAULT_SETTINGS.menu.menuName;
   const { addItem, addMenu, getStock, cart } = useCart();
   const [activeTab, setActiveTab] = useState(isKitchen ? "Pizza" : menuName);
   const [menuBuilder, setMenuBuilder] = useState({
@@ -53,18 +53,16 @@ const Menu = ({ stockSheet = [], isOpen, isKitchen }) => {
     (category) => !DEFAULT_SETTINGS.menu.categoryOrder.includes(category),
   );
 
-const categories = [
-  ...DEFAULT_SETTINGS.menu.categoryOrder.filter(
-    (category) =>
-      (!isKitchen || category !== menuName) &&
-      (
-        category === menuName ||
-        category === "Pizza" ||
-        stockCategories.includes(category)
-      ),
-  ),
-  ...extraCategories,
-];
+  const categories = [
+    ...DEFAULT_SETTINGS.menu.categoryOrder.filter(
+      (category) =>
+        (!isKitchen || category !== menuName) &&
+        (category === menuName ||
+          category === "Pizza" ||
+          stockCategories.includes(category)),
+    ),
+    ...extraCategories,
+  ];
 
   const itemsToRender =
     activeTab === "Pizza"
@@ -156,41 +154,39 @@ const categories = [
                 key={item.id}
                 className={`pizza ${item.special ? "pizza-special" : ""}`}
               >
-                {!item.special && (
-                  <div className="pizza-wrapper">
-                    {activeTab === menuName && (
-                      <div
-                        style={{
-                          backgroundImage: `url(/images/products/glass-${currentGlass}.png)`,
-                        }}
-                        className="drink--image"
-                      />
-                    )}
-
-                    <button
-                      onClick={() => {
-                        if (activeTab === menuName) {
-                          setMenuBuilder({
-                            open: true,
-                            pizza: item,
-                            drink: null,
-                          });
-
-                          return;
-                        }
-
-                        addItem(item, { isKitchen });
-                      }}
-                      disabled={!canAdd}
-                      title={title}
-                      key={item.id}
-                      className="menu-options--item pizza--image item--pizza"
+                <div className="pizza-wrapper">
+                  {activeTab === menuName && (
+                    <div
                       style={{
-                        backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
+                        backgroundImage: `url(/images/products/glass-${currentGlass}.png)`,
                       }}
+                      className="drink--image"
                     />
-                  </div>
-                )}
+                  )}
+
+                  <button
+                    onClick={() => {
+                      if (activeTab === menuName) {
+                        setMenuBuilder({
+                          open: true,
+                          pizza: item,
+                          drink: null,
+                        });
+
+                        return;
+                      }
+
+                      addItem(item, { isKitchen });
+                    }}
+                    disabled={!canAdd}
+                    title={title}
+                    key={item.id}
+                    className="menu-options--item pizza--image item--pizza"
+                    style={{
+                      backgroundImage: `url(/images/products/${formatName(item.name)}.png)`,
+                    }}
+                  />
+                </div>
                 <div className="pizza-text--box">
                   <div className="pizza-text">
                     <h3 className={`pizza-name ${dashed}`}>

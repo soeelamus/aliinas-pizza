@@ -5,7 +5,7 @@
     "title": "Pizzaiolo",
     "type": "Flexi-job / Student / Bijverdienste",
     "location": "Desteldonk, Oost-Vlaanderen",
-    "hours": "4 tot 12 uur per week",
+    "hours": "4 tot 16 uur per week",
     "schedule": "Vrijdagavond en occasioneel zaterdag of zondag",
     "shortDescription": "Bereid en bak verse pizza's in onze artisanale foodtruck.",
     "description": "Als pizzaiolo ben je verantwoordelijk voor het afwerken, bakken en presenteren van onze pizza's tijdens service. Je werkt samen met een klein team in een gezellige en dynamische omgeving waar kwaliteit centraal staat.",
@@ -31,46 +31,38 @@
       "Gratis maaltijd voor/na de shift"
     ]
   },
-  {
-    "id": "foodtruck-medewerker",
-    "posted": true,
-    "title": "Foodtruck Medewerker",
-    "type": "Flexi-job / Student / Bijverdienste",
-    "location": "Lokeren, Oostakker, Sint-Amandsberg of Desteldonk",
-    "hours": "3 tot 15 uur per week",
-    "schedule": "Avondshifts, meestal van 17u30 tot 20u30",
-    "shortDescription": "Help mee tijdens de drukste uren in onze pizzafoodtruck op verschillende standplaatsen.",
-    "description": "Als foodtruck medewerker spring je bij tijdens de drukste uren van onze service. Je komt toe wanneer de foodtruck al geopend is en helpt ervoor te zorgen dat bestellingen snel en correct verwerkt worden. Je neemt bestellingen op via ons digitale kassasysteem, rekent klanten af, snijdt pizza's en geeft de juiste bestellingen mee. Tussendoor hou je de foodtruck proper en georganiseerd. Aan het einde van de service help je alles opnieuw klaar te maken zodat de foodtruck kan vertrekken. Je werkt op verschillende standplaatsen in de regio en bent een belangrijke ondersteuning tijdens de piekmomenten.",
-    "tasks": [
-      "Klanten vriendelijk ontvangen en bestellingen opnemen",
-      "Bestellingen ingeven in ons digitale POS-systeem",
-      "Betalingen ontvangen en klanten correct afrekenen",
-      "Pizza's snijden en verpakken",
-      "Controleren of elke klant de juiste en volledige bestelling meekrijgt",
-      "Drankjes en andere producten meegeven",
-      "De foodtruck tijdens de service proper en georganiseerd houden",
-      "Meehelpen met opruimen en de foodtruck opnieuw vertrekkensklaar maken"
-    ],
-    "requirements": [
-      "Vriendelijk en klantgericht",
-      "Stipt en betrouwbaar",
-      "Vlot kunnen werken tijdens drukke momenten",
-      "Nauwkeurig omgaan met bestellingen en betalingen",
-      "Zelfstandig taken zien en aanpakken",
-      "Comfortabel zijn met een digitaal kassasysteem",
-      "Bereid zijn om op verschillende standplaatsen te werken",
-      "Ervaring in horeca is een pluspunt, maar niet vereist"
-    ],
-    "offer": [
-      "Werkuren voornamelijk tussen 17u30 en 20u30",
-      "Bij drukte kan de shift wat langer duren",
-      "Flexibele planning op verschillende standplaatsen",
-      "Interne opleiding voor ons kassasysteem en onze manier van werken",
-      "Werken in een kleine, informele foodtruckomgeving",
-      "Correcte verloning, afgestemd op je ervaring",
-      "Gratis maaltijd voor/na de shift",
-      "Je kan rechtstreeks met eigen vervoer naar de standplaats komen",
-      "Geen eigen vervoer? Meerijden vanuit Zaffelare is mogelijk om 15u45; je betaalde shift start pas om 17u30"
-    ]
-  }
+
+{
+  "id": "foodtruck-medewerker",
+  "posted": true,
+  "title": "Pizza Medewerker",
+  "type": "Flexi-job / Student / Bijverdienste",
+  "location": "Lokeren, Oostakker, Sint-Amandsberg of Desteldonk",
+  "hours": "4 tot 16 uur per week",
+  "schedule": "Avondshifts, van 17u tot 20u30",
+  "shortDescription": "Start met het beleggen van onze pizza's en leer stap voor stap de andere taken in onze pizzafoodtruck.",
+  "description": "Als foodtruck medewerker begin je met één duidelijke taak: onze pizza's perfect beleggen volgens vaste recepten. Je leert de juiste ingrediënten, hoeveelheden en werkwijze kennen, zodat elke pizza met dezelfde zorg en kwaliteit wordt bereid. Zodra je dit goed onder de knie hebt, leiden we je stap voor stap op voor andere taken, zoals pizza's snijden, bestellingen opnemen via ons digitale kassasysteem en klanten afrekenen. Je hoeft dus niet alles vanaf dag één te kunnen! Je werkt op één of meerdere standplaatsen en helpt mee om onze service vlot te laten verlopen.",
+  "tasks": [
+    "Bij de start: pizza's nauwkeurig beleggen volgens onze recepten",
+    "De juiste ingrediënten en hoeveelheden leren kennen",
+    "Zorgen voor een nette en georganiseerde werkplek",
+    "Na opleiding: pizza's snijden en bestellingen afwerken",
+    "Na opleiding: klanten ontvangen en bestellingen opnemen",
+    "Na opleiding: werken met ons digitale kassasysteem en betalingen verwerken"
+  ],
+  "requirements": [
+    "Vriendelijk en klantgericht",
+    "Vlot kunnen werken tijdens drukke momenten",
+    "Bereid zijn om op verschillende standplaatsen te werken",
+    "Je kan zelf naar de standplaats komen",
+    "Geen eigen vervoer? Meerijden vanuit Zaffelare is mogelijk om 15u45",
+    "Ervaring is niet vereist"
+  ],
+  "offer": [
+    "Flexibele planning op verschillende standplaatsen",
+    "Verloning volgens barema, afgestemd op je ervaring",
+    "Gratis pizza voor/ na je shift"
+  ]
+}
+
 ]

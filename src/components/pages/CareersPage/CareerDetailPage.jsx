@@ -157,8 +157,7 @@ const copyEmail = async () => {
               </span>
 
               <p>
-                Denk je dat deze job bij je past? Laat iets van je horen en
-                vertel kort wie je bent en wanneer je beschikbaar bent.
+                Vertel ons via mail wie je bent en wanneer je beschikbaar bent.
               </p>
 
 <button
