@@ -34,11 +34,11 @@ const OpenState = ({ isOpen, events }) => {
           </p>
 
           <div className="box--btn-order btn-order">
-            <a href="#ad" className="btn-order--location">
+            <a href="#menu" className="btn-order--location">
               📍 {todayEvent.location}
             </a>
 
-            <a href="#ad" className="btn-purple btn-order">
+            <a href="#menu" className="btn-purple btn-order">
               ✅ Bestellen
             </a>
           </div>

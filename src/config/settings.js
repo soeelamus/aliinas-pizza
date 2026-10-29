@@ -28,6 +28,6 @@ export const DEFAULT_SETTINGS = {
   },
 
   adBox: {
-    src: null // `/images/ads/reviews_ad1.png` //Image source of AdBox, or null 
+    src: "/images/ads/halloween.png" // `/images/ads/reviews_ad1.png` //Image source of AdBox, or null 
   }
 };

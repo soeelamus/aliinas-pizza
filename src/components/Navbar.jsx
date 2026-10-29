@@ -10,7 +10,7 @@ const Navbar = ({ onMain = true }) => (
       )}
       {onMain && (
         <>
-          <a href="#menu" className="btn-purple scrolly">
+          <a href="#ad" className="btn-purple scrolly">
             Menu
           </a>
           <a href="#contact" className="btn-purple scrolly">
